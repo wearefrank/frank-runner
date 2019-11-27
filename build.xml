@@ -1,0 +1,143 @@
+<project default="build.tomcat4ibis" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
+	<property file="build.properties"/>
+
+	<property name="projects.dir" value=".."/>
+	<property name="project.dir" value="tomcat4ibis"/>
+
+	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
+
+	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
+
+	<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
+	<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
+	<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
+	<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
+
+	<property name="classes.dir" value="classes" unless:set="pom.xml.available"/>
+	<property name="configurations.dir" value="configurations" unless:set="pom.xml.available"/>
+	<property name="tests.dir" value="tests" unless:set="pom.xml.available"/>
+	<property name="context.xml" value="context.xml" unless:set="pom.xml.available"/>
+
+	<property name="java.version." value="8u40"/><!-- Extra . to prevent problems with standard java.version property -->
+	<property name="java.zip" value="jdk_ri-${java.version.}-b25-windows-i586-10_feb_2015.zip"/>
+	<property name="java.url" value="https://download.java.net/openjdk/jdk${java.version.}/ri/${java.zip}"/>
+	<property name="java.dir" value="build/java-se-${java.version.}-ri"/>
+	<property name="ant.version." value="1.10.7"/><!-- Extra . to prevent problems with standard ant.version property -->
+	<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
+	<property name="ant.url" value="http://apache.redkiwi.nl//ant/binaries/${ant.zip}"/>
+	<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
+	<property name="tomcat.version" value="7.0.96"/>
+	<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
+	<property name="tomcat.url" value="http://apache.proserve.nl/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
+	<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
+	<property name="ibis.version" value="7.5-20191118.162420"/>
+	<property name="ibis.war" value="ibis-adapterframework-webapp-${ibis.version}.war"/>
+	<property name="ibis.url" value="https://nexus.ibissource.org/service/local/repositories/releases/content/org/ibissource/ibis-adapterframework-webapp/${ibis.version}/${ibis.war}"/>
+	<property name="ibis.dir" value="${tomcat.dir}/webapps/ibis"/>
+	<property name="jms.version" value="1.1_spec-1.1"/>
+	<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
+	<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
+	<property name="h2.version" value="1.4.200"/>
+	<property name="h2.jar" value="h2-${h2.version}.jar"/>
+	<property name="h2.url" value="http://repo2.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
+	<property name="ojdbc.version" value="8-19.3.0.0"/>
+	<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
+	<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
+
+	<target name="init">
+		<mkdir dir="download"/>
+		<available property="java.zip.available" file="download/${java.zip}"/>
+		<available property="java.dir.available" file="${java.dir}"/>
+		<available property="ant.zip.available" file="download/${ant.zip}"/>
+		<available property="ant.dir.available" file="${ant.dir}"/>
+		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
+		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="ibis.war.available" file="download/${ibis.war}"/>
+		<available property="ibis.dir.available" file="${ibis.dir}"/>
+		<available property="jms.jar.available" file="download/${jms.jar}"/>
+		<available property="h2.jar.available" file="download/${h2.jar}"/>
+		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
+	</target>
+
+	<target name="build.tomcat4ibis" depends="init,get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
+		<unzip src="download/${java.zip}" dest="build" unless:set="java.dir.available"/>
+		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
+		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
+		<delete dir="${tomcat.dir}/webapps" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<unzip src="download/${ibis.war}" dest="${ibis.dir}" unless:set="ibis.dir.available"/>
+		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<replace file="${tomcat.dir}/conf/server.xml" token="8080" value="80" summary="true" unless:set="tomcat.dir.available"/>
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<delete file="${tomcat.dir}/webapps/ibis/META-INF/context.xml"/>
+		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF"/>
+		<delete dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
+		<mkdir dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
+		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
+		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" if:set="classes.dir.available">
+			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
+		</copy>
+		<loadresource property="java.dir.windows"><propertyresource name="java.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<echo file="tomcat4ibis.bat">@echo off
+if not exist "%~dp0${java.dir.windows}\" (
+	mkdir %~dp0build
+	echo Please download ${java.url} and unzip it in %~dp0build\
+	pause
+) else (
+	if not exist "%~dp0${ant.dir.windows}\" (
+		echo Please download ${ant.url} and unzip it in %~dp0build\
+		pause
+	) else (
+		set JAVA_HOME=${java.dir.windows}
+		cd %~dp0
+		${ant.dir.windows}\bin\ant
+		if errorlevel 1 (
+			pause
+		) else (
+			sub.bat
+		)
+	)
+)
+		</echo>
+		<echo file="sub.bat">@echo off
+set CATALINA_HOME=${tomcat.dir.windows}
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory=${projects.dir}/${project.dir}/${configurations.dir} -Dscenariosroot1.directory=../../../../../${projects.dir}/${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis
+${tomcat.dir.windows}\bin\catalina.bat run
+	)
+)
+		</echo>
+	</target>
+
+	<target name="get.java" unless="java.zip.available">
+		<get src="${java.url}" dest="download/${java.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.ant" unless="ant.zip.available">
+		<get src="${ant.url}" dest="download/${ant.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.tomcat" unless="tomcat.zip.available">
+		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.ibis" unless="ibis.war.available">
+		<get src="${ibis.url}" dest="download/${ibis.war}" verbose="on"/>
+	</target>
+
+	<target name="get.jms" unless="jms.jar.available">
+		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.h2" unless="h2.jar.available">
+		<get src="${h2.url}" dest="download/${h2.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.ojdbc" unless="ojdbc.jar.available">
+		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
+	</target>
+
+</project>

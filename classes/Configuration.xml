@@ -1,0 +1,11 @@
+<!DOCTYPE Configuration [
+	<!ENTITY Example1 SYSTEM "./ConfigurationExample1.xml">
+	<!ENTITY Example2 SYSTEM "./ConfigurationExample2.xml">
+]>
+<Configuration name="Ibis4Tomcat4Ibis">
+	<jmsRealms>
+		<jmsRealm datasourceName="jdbc/${instance.name.lc}" realmName="jdbc"/>
+	</jmsRealms>
+	&Example1;
+	&Example2;
+</Configuration>
