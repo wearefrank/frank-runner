@@ -107,9 +107,10 @@ use them can be found in the Ibis manual which will soon be available.
 
 # How to add custom jars and classes
 
-In case you need to for example add you own pipe which is not available in the
+In case you need to (for example) add you own pipe which is not available in the
 Ibis Adapter Framework or you would like to customize an existing pipe in the
-framework you can add a java folder to the project with you custom .java file.
+framework you can add a java folder to the project with your custom .java
+ file(s).
 
 For a Maven project the default value for the java folder is:
 
@@ -122,7 +123,7 @@ Otherwise:
 java.dir=java
 ```
 
-For jar files create the following folder(s):
+For custom jar files create the following folders:
 
 
 ```
@@ -130,6 +131,6 @@ lib.server.dir=lib/server
 lib.webapp.dir=lib/webapp
 ```
 
-All jars in lib/server are added to the Tomcat lib folder. All jars in
-lib/webapp are added to the WEB-INF/lib containing the Ibis Adapter Framework
-jar files and dependencies.
+All jars added to lib/server are copied to the Tomcat lib folder. All jars added
+to lib/webapp are copied to the WEB-INF/lib containing the Ibis Adapter
+Framework jar files and dependencies.
