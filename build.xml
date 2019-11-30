@@ -11,19 +11,24 @@
 
 	<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 	<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
+	<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
 	<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
 	<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
 
 	<property name="classes.dir" value="classes" unless:set="pom.xml.available"/>
 	<property name="configurations.dir" value="configurations" unless:set="pom.xml.available"/>
+	<property name="java.dir" value="java" unless:set="pom.xml.available"/>
 	<property name="tests.dir" value="tests" unless:set="pom.xml.available"/>
 	<property name="context.xml" value="context.xml" unless:set="pom.xml.available"/>
 
-	<property name="java.version." value="8u40"/><!-- Extra . to prevent problems with standard java.version property -->
-	<property name="java.zip" value="jdk_ri-${java.version.}-b25-windows-i586-10_feb_2015.zip"/>
-	<property name="java.url" value="https://download.java.net/openjdk/jdk${java.version.}/ri/${java.zip}"/>
-	<property name="java.dir" value="build/java-se-${java.version.}-ri"/>
-	<property name="ant.version." value="1.10.7"/><!-- Extra . to prevent problems with standard ant.version property -->
+	<property name="lib.server.dir" value="lib/server"/>
+	<property name="lib.webapp.dir" value="lib/webapp"/>
+
+	<property name="jdk.version." value="8u40"/>
+	<property name="jdk.zip" value="jdk_ri-${jdk.version.}-b25-windows-i586-10_feb_2015.zip"/>
+	<property name="jdk.url" value="https://download.java.net/openjdk/jdk${jdk.version.}/ri/${jdk.zip}"/>
+	<property name="jdk.dir" value="build/java-se-${jdk.version.}-ri"/>
+	<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
 	<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
 	<property name="ant.url" value="http://apache.redkiwi.nl//ant/binaries/${ant.zip}"/>
 	<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
@@ -47,8 +52,8 @@
 
 	<target name="init">
 		<mkdir dir="download"/>
-		<available property="java.zip.available" file="download/${java.zip}"/>
-		<available property="java.dir.available" file="${java.dir}"/>
+		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
+		<available property="jdk.dir.available" file="${jdk.dir}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
 		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
@@ -61,7 +66,7 @@
 	</target>
 
 	<target name="build.tomcat4ibis" depends="init,get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
-		<unzip src="download/${java.zip}" dest="build" unless:set="java.dir.available"/>
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<delete dir="${tomcat.dir}/webapps" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
@@ -71,28 +76,41 @@
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<replace file="${tomcat.dir}/conf/server.xml" token="8080" value="80" summary="true" unless:set="tomcat.dir.available"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
+		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
+		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<delete><fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
+		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
+		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<delete file="${tomcat.dir}/webapps/ibis/META-INF/context.xml"/>
 		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF"/>
 		<delete dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
 		<mkdir dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
+		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
+		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
+			<classpath>
+				<fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
+			</classpath>
+		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
 		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" if:set="classes.dir.available">
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
-		<loadresource property="java.dir.windows"><propertyresource name="java.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<echo file="tomcat4ibis.bat">@echo off
-if not exist "%~dp0${java.dir.windows}\" (
+if not exist "%~dp0${jdk.dir.windows}\" (
 	mkdir %~dp0build
-	echo Please download ${java.url} and unzip it in %~dp0build\
+	echo Please download ${jdk.url} and unzip it in %~dp0build\
 	pause
 ) else (
 	if not exist "%~dp0${ant.dir.windows}\" (
 		echo Please download ${ant.url} and unzip it in %~dp0build\
 		pause
 	) else (
-		set JAVA_HOME=${java.dir.windows}
+		set JAVA_HOME=${jdk.dir.windows}
 		cd %~dp0
 		${ant.dir.windows}\bin\ant
 		if errorlevel 1 (
@@ -112,8 +130,8 @@ ${tomcat.dir.windows}\bin\catalina.bat run
 		</echo>
 	</target>
 
-	<target name="get.java" unless="java.zip.available">
-		<get src="${java.url}" dest="download/${java.zip}" verbose="on"/>
+	<target name="get.java" unless="jdk.zip.available">
+		<get src="${jdk.url}" dest="download/${jdk.zip}" verbose="on"/>
 	</target>
 
 	<target name="get.ant" unless="ant.zip.available">
