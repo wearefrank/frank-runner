@@ -14,7 +14,7 @@ if not exist "%~dp0build\java-se-8u40-ri\" (
 		if errorlevel 1 (
 			pause
 		) else (
-			sub.bat
+			build\sub.bat
 		)
 	)
 )
