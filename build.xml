@@ -40,7 +40,7 @@
 	<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 	<property name="ibis.version" value="7.5-20191118.162420"/>
 	<property name="ibis.war" value="ibis-adapterframework-webapp-${ibis.version}.war"/>
-	<property name="ibis.url" value="https://nexus.ibissource.org/service/local/repositories/releases/content/org/ibissource/ibis-adapterframework-webapp/${ibis.version}/${ibis.war}"/>
+	<property name="ibis.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ibis.version}/${ibis.war}"/>
 	<property name="ibis.dir" value="${tomcat.dir}/webapps/ibis"/>
 	<property name="jms.version" value="1.1_spec-1.1"/>
 	<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
