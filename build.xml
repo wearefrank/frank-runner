@@ -36,7 +36,7 @@
 	<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 	<property name="tomcat.version" value="7.0.96"/>
 	<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
-	<property name="tomcat.url" value="http://apache.proserve.nl/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
+	<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
 	<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 	<property name="ibis.version" value="7.5-20191118.162420"/>
 	<property name="ibis.war" value="ibis-adapterframework-webapp-${ibis.version}.war"/>
