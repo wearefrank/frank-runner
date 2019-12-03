@@ -72,10 +72,6 @@
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<delete dir="${tomcat.dir}/webapps" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
-		<property file="${tomcat.dir}/webapps/ibis/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<condition property="ibis.version.changed"><not><equals arg1="${ibis.version}" arg2="${pom.properties.version}"/></not></condition>
-		<delete dir="${ibis.dir}" if:set="ibis.version.changed"/>
-		<unzip src="download/${ibis.war}" dest="${ibis.dir}" if:set="ibis.version.changed"/>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
@@ -84,6 +80,10 @@
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<property file="${tomcat.dir}/webapps/ibis/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
+		<condition property="ibis.version.changed"><not><equals arg1="${ibis.version}" arg2="${pom.properties.version}"/></not></condition>
+		<delete dir="${ibis.dir}" if:set="ibis.version.changed"/>
+		<unzip src="download/${ibis.war}" dest="${ibis.dir}" if:set="ibis.version.changed"/>
 		<delete><fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
