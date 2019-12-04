@@ -52,7 +52,7 @@ ctrl-c
 ```
 
 By default the example configurations in tomcat4ibis will be used. To use
-another project create a build.properties with the following content:
+another project create a build.properties in the main directory with the following content:
 
 ```
 project.dir=Ibis4Example
@@ -134,3 +134,20 @@ lib.webapp.dir=lib/webapp
 All jars added to lib/server are copied to the Tomcat lib folder. All jars added
 to lib/webapp are copied to the WEB-INF/lib containing the Ibis Adapter
 Framework jar files and dependencies.
+
+# Scripting
+
+You can call tomcat4ibis from a script. Any parameter to tomcat4ibis are passed to
+Ant. For instance, to create an with a specific ibis version (7.2 in the example), 
+the following call can be made:
+
+```
+tomcat4ibis -Dibis.version=7.2
+```
+
+This will create the instance, deploy on tomcat, start tomcat and return to the script.
+To shutdown the tomcat server, call shutdown:
+
+```
+shutdown
+```

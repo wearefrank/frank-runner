@@ -8,13 +8,12 @@ if not exist "%~dp0build\openjdk-8u232-b09\" (
 		echo Please download http://apache.redkiwi.nl//ant/binaries/apache-ant-1.10.7-bin.zip and unzip it in %~dp0build\
 		pause
 	) else (
-		set JAVA_HOME=build\openjdk-8u232-b09
-		cd %~dp0
-		build\apache-ant-1.10.7\bin\ant
+		set JAVA_HOME=%~dp0build\openjdk-8u232-b09
+		%~dp0build\apache-ant-1.10.7\bin\ant -buildfile %~dp0build.xml -Dprojects.dir=%~dp0.. %*
 		if errorlevel 1 (
 			pause
 		) else (
-			build\sub.bat
+			call %~dp0build\sub.bat
 		)
 	)
 )

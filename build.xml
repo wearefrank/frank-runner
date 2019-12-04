@@ -115,13 +115,12 @@ if not exist "%~dp0${jdk.dir.windows}\" (
 		echo Please download ${ant.url} and unzip it in %~dp0build\
 		pause
 	) else (
-		set JAVA_HOME=${jdk.dir.windows}
-		cd %~dp0
-		${ant.dir.windows}\bin\ant
+		set JAVA_HOME=%~dp0${jdk.dir.windows}
+		%~dp0${ant.dir.windows}\bin\ant -buildfile %~dp0build.xml -Dprojects.dir=%~dp0.. %*
 		if errorlevel 1 (
 			pause
 		) else (
-			build\sub.bat
+			call %~dp0build\sub.bat
 		)
 	)
 )
@@ -129,11 +128,15 @@ if not exist "%~dp0${jdk.dir.windows}\" (
 		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->
 		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
 		<echo file="build/sub.bat">@echo off
-set CATALINA_HOME=${tomcat.dir.windows}
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory=${projects.dir}/${project.dir}/${configurations.dir} -Dscenariosroot1.directory=../../../../../${projects.dir}/${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis
-${tomcat.dir.windows}\bin\catalina.bat run
+set CATALINA_HOME=%~dp0../${tomcat.dir.windows}
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory=${projects.dir}/${project.dir}/${configurations.dir} -Dscenariosroot1.directory=../../../../../../${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis
+%~dp0../${tomcat.dir.windows}\bin\catalina.bat start
 	)
 )
+		</echo>
+		<!-- shutdown.bat can be called from a script to stop tomcat -->
+		<echo file="shutdown.bat">@echo off
+call %~dp0${tomcat.dir.windows}\bin\catalina.bat stop
 		</echo>
 	</target>
 
