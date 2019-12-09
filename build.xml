@@ -1,10 +1,10 @@
 <project default="build.tomcat4ibis" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<property file="build.properties"/>
-
+	
 	<property name="projects.dir" value=".."/>
 	<property name="project.dir" value="tomcat4ibis"/>
-
+	
 	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
@@ -120,7 +120,7 @@ if not exist "%~dp0${jdk.dir.windows}\" (
 		if errorlevel 1 (
 			pause
 		) else (
-			call %~dp0build\sub.bat
+			call %~dp0build\sub.bat %*
 		)
 	)
 )
@@ -129,7 +129,7 @@ if not exist "%~dp0${jdk.dir.windows}\" (
 		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
 		<echo file="build/sub.bat">@echo off
 set CATALINA_HOME=%~dp0../${tomcat.dir.windows}
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory=${projects.dir}/${project.dir}/${configurations.dir} -Dscenariosroot1.directory=../../../../../../${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory=${projects.dir}/${project.dir}/${configurations.dir} -Dscenariosroot1.directory=../../../../../../${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis %*
 %~dp0../${tomcat.dir.windows}\bin\catalina.bat start
 	)
 )

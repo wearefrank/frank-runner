@@ -13,7 +13,7 @@ if not exist "%~dp0build\openjdk-8u232-b09\" (
 		if errorlevel 1 (
 			pause
 		) else (
-			call %~dp0build\sub.bat
+			call %~dp0build\sub.bat %*
 		)
 	)
 )
