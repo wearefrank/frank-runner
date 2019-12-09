@@ -2,7 +2,7 @@
 
 	<property file="build.properties"/>
 
-	<property name="projects.dir" value=".."/>
+	<property name="projects.dir" value="${basedir}/.."/>
 	<property name="project.dir" value="tomcat4ibis"/>
 
 	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
@@ -116,7 +116,7 @@ if not exist "%~dp0${jdk.dir.windows}\" (
 		pause
 	) else (
 		set JAVA_HOME=%~dp0${jdk.dir.windows}
-		%~dp0${ant.dir.windows}\bin\ant -buildfile %~dp0build.xml -Dprojects.dir=%~dp0.. %*
+		%~dp0${ant.dir.windows}\bin\ant -buildfile %~dp0build.xml %*
 		if errorlevel 1 (
 			pause
 		) else (

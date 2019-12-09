@@ -9,7 +9,7 @@ if not exist "%~dp0build\openjdk-8u232-b09\" (
 		pause
 	) else (
 		set JAVA_HOME=%~dp0build\openjdk-8u232-b09
-		%~dp0build\apache-ant-1.10.7\bin\ant -buildfile %~dp0build.xml -Dprojects.dir=%~dp0.. %*
+		%~dp0build\apache-ant-1.10.7\bin\ant -buildfile %~dp0build.xml %*
 		if errorlevel 1 (
 			pause
 		) else (
