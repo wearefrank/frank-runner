@@ -1,10 +1,10 @@
 <project default="build.tomcat4ibis" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<property file="build.properties"/>
-	
+
 	<property name="projects.dir" value=".."/>
 	<property name="project.dir" value="tomcat4ibis"/>
-	
+
 	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
