@@ -137,7 +137,7 @@ Framework jar files and dependencies.
 
 # Scripting
 
-You can call tomcat4ibis from a script. Any parameter to tomcat4ibis are passed to
+You can call tomcat4ibis from a script. Any parameter to tomcat4ibis is passed to
 Ant and Tomcat. For instance, to create an instance with a specific ibis version 
 (7.2 in the example), logging to a specific log directory, the following call can be made:
 
