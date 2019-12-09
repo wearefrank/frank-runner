@@ -138,11 +138,11 @@ Framework jar files and dependencies.
 # Scripting
 
 You can call tomcat4ibis from a script. Any parameter to tomcat4ibis are passed to
-Ant. For instance, to create an with a specific ibis version (7.2 in the example), 
-the following call can be made:
+Ant and Tomcat. For instance, to create an instance with a specific ibis version 
+(7.2 in the example), logging to a specific log directory, the following call can be made:
 
 ```
-tomcat4ibis -Dibis.version=7.2
+tomcat4ibis -Dibis.version=7.2 -Dlog.dir=logs/7.2
 ```
 
 This will create the instance, deploy on tomcat, start tomcat and return to the script.
