@@ -3,7 +3,7 @@
 	<property file="build.properties"/>
 
 	<property name="projects.dir" value="${basedir}/.."/>
-	<property name="project.dir" value="tomcat4ibis"/>
+	<property name="project.dir" value="tomcat4ibis/examples/ibis4example1"/>
 
 	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
 
