@@ -23,6 +23,8 @@
 
 	<property name="lib.server.dir" value="lib/server"/>
 	<property name="lib.webapp.dir" value="lib/webapp"/>
+	<property name="database.type" value="h2"/>
+	<property name="h2.dir" value="${basedir}/build/h2"/>
 
 	<property name="jdk.version" value="8"/>
 	<property name="jdk.version.u" value="232"/>
@@ -68,8 +70,11 @@
 	</target>
 
 	<target name="build.tomcat4ibis" depends="init,get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
+		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
+		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
+		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<delete dir="${tomcat.dir}/webapps" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
@@ -80,6 +85,7 @@
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<!-- webapp -->
 		<property file="${tomcat.dir}/webapps/ibis/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
 		<condition property="ibis.version.changed"><not><equals arg1="${ibis.version}" arg2="${pom.properties.version}"/></not></condition>
 		<delete dir="${ibis.dir}" if:set="ibis.version.changed"/>
@@ -87,8 +93,16 @@
 		<delete><fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<!-- context.xml -->
 		<delete file="${tomcat.dir}/webapps/ibis/META-INF/context.xml"/>
-		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF"/>
+		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
+		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF" if:set="context.xml.available"/>
+		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ibis/META-INF" unless:set="context.xml.available"/>
+		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
+		<lower name="instance.name.lc" value="${ds.properties.instance.name}"/>
+		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<!-- classes -->
 		<delete dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
 		<mkdir dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
@@ -102,6 +116,7 @@
 		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" if:set="classes.dir.available">
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
+		<!-- scripts -->
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -167,5 +182,11 @@ call %~dp0${tomcat.dir.windows}\bin\catalina.bat stop
 	<target name="get.ojdbc" unless="ojdbc.jar.available">
 		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
 	</target>
+
+	<scriptdef language="javascript" name="lower">
+		<attribute name="name"/>
+		<attribute name="value"/> 
+		project.setProperty(attributes.get("name"), attributes.get("value").toLowerCase());
+	</scriptdef>
 
 </project>

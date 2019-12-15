@@ -1,8 +1,8 @@
 <Context>
-	<Resource 
-		name="jdbc/ibis4tomcat4ibis"
+	<Resource
+		name="jdbc/@instance.name.lc@"
 		type="org.h2.jdbcx.JdbcDataSource"
 		factory="org.apache.naming.factory.BeanFactory"
-		URL="jdbc:h2:./h2/ibis4tomcat4ibis"
-	/> 
+		URL="jdbc:h2:@h2.dir@/@instance.name.lc@"
+	/>
 </Context>
