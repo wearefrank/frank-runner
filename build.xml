@@ -99,6 +99,7 @@
 		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF" if:set="context.xml.available"/>
 		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ibis/META-INF" unless:set="context.xml.available"/>
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
+		<fail message="Could not find instance.name in ${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" unless:set="ds.properties.instance.name"/>
 		<lower name="instance.name.lc" value="${ds.properties.instance.name}"/>
 		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
 		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
