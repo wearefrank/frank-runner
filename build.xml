@@ -122,23 +122,26 @@
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<echo file="tomcat4ibis.bat">@echo off
-if not exist "%~dp0${jdk.dir.windows}\" (
+if not exist "%~dp0download\" (
+	mkdir %~dp0download
+)
+if not exist "%~dp0build\" (
 	mkdir %~dp0build
-	echo Please download ${jdk.url} and unzip it in %~dp0build\
+)
+if not exist "%~dp0${jdk.dir.windows}\" (
+	curl -o %~dp0download\${jdk.zip} -L ${jdk.url}
+	tar xvf %~dp0download\${jdk.zip} -C %~dp0build
+)
+if not exist "%~dp0${ant.dir.windows}\" (
+	curl -o %~dp0download\${ant.zip} -L ${ant.url}
+	tar xvf %~dp0download\${ant.zip} -C %~dp0build
+)
+set JAVA_HOME=%~dp0${jdk.dir.windows}
+call %~dp0${ant.dir.windows}\bin\ant -buildfile %~dp0build.xml %*
+if errorlevel 1 (
 	pause
 ) else (
-	if not exist "%~dp0${ant.dir.windows}\" (
-		echo Please download ${ant.url} and unzip it in %~dp0build\
-		pause
-	) else (
-		set JAVA_HOME=%~dp0${jdk.dir.windows}
-		%~dp0${ant.dir.windows}\bin\ant -buildfile %~dp0build.xml %*
-		if errorlevel 1 (
-			pause
-		) else (
-			call %~dp0build\sub.bat %*
-		)
-	)
+	call %~dp0build\sub.bat %*
 )
 		</echo>
 		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->

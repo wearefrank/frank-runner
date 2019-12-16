@@ -1,10 +1,9 @@
 # Run Ibis Configurations with Tomcat
 
-This project will help you run your Ibis configuration(s) with Tomcat.
+This project will help you run your Ibis configurations with Tomcat.
 
-Basically all you have to do is to clone this project from within the same
-folder that contains your Ibis project folder(s) (or clone to an empty folder
-to start from scratch):
+Basically all you have to do is clone this project and run tomcat4ibis.bat by
+double clicking it. Or execute the following commands:
 
 ```
 projects> git clone https://github.com/ibissource/tomcat4ibis
@@ -19,7 +18,7 @@ projects> cd tomcat4ibis
 And on Windows run the following command:
 
 ```
-tomcat4ibis> ./tomcat4ibis.bat
+tomcat4ibis> tomcat4ibis.bat
 ```
 
 When not using Windows run:
@@ -27,16 +26,6 @@ When not using Windows run:
 ```
 tomcat4ibis> ./tomcat4ibis.sh
 ```
-
-When running this script for the first time it will ask you to download and
-unzip two files. After doing so run the script again.
-
-In case Java and Ant are available you can also run the build.xml to download
-and unzip the files.
-
-In case Eclipse is available you can also clone the Git project, run the
-build.xml and run the tomcat4ibis.bat or tomcat4ibis.sh using Eclipse (you might
-need to right click, Open With, System Editor).
 
 You can now browse to the following address to find the Ibis4Tomcat4Ibis
 console:
@@ -52,10 +41,12 @@ ctrl-c
 ```
 
 By default the example configurations in tomcat4ibis will be used. To use
-another project create a build.properties in the main directory with the following content:
+another project create a build.properties in the main directory with the
+following content (assuming your ibis4example project folder has the same parent
+folder as the tomcat4ibis folder):
 
 ```
-project.dir=Ibis4Example
+project.dir=ibis4example
 ```
 
 In case this projects contains a pom.xml it is assumed to be a Maven project and
