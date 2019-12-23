@@ -147,8 +147,8 @@ if errorlevel 1 (
 		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->
 		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
 		<echo file="build/sub.bat">@echo off
-set CATALINA_HOME=%~dp0../${tomcat.dir.windows}
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory=../../../../../../${project.dir}/${tests.dir} -Dscenariosroot1.description=Tomcat4Ibis %*
+set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Tomcat4Ibis %*
 "%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" start
 		</echo>
 		<!-- shutdown.bat can be called from a script to stop tomcat -->
