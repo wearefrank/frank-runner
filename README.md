@@ -42,14 +42,14 @@ ctrl-c
 
 By default the example configurations in tomcat4ibis will be used. To use
 another project create a build.properties in your tomcat4ibis directory with the
-following content (assuming your myExample project folder has the same parent
+following content (assuming your ibis4myExample  project folder has the same parent
 folder as the tomcat4ibis folder):
 
 ```
-project.dir=myExample
+project.dir=ibis4myExample 
 ```
 
-In case the myExample project contains a pom.xml it is assumed to be a Maven project and
+In case the ibis4myExample  project contains a pom.xml it is assumed to be a Maven project and
 the following default values are used:
 
 ```
@@ -73,7 +73,7 @@ Hence by default your folder structure will need to look like the following:
 ```
 |--projects
    |--tomcat4ibis
-   |--myExample
+   |--ibis4myExample 
       |--classes
       |--configurations
          |--Config1
@@ -81,7 +81,7 @@ Hence by default your folder structure will need to look like the following:
          |--Conf...
       |--tests
       |--context.xml
-   |--otherExample
+   |--ibis4otherExample 
 ```
 
 You can overwrite default values by creating tomcat4ibis.properties in the
