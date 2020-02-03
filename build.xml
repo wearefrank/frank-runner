@@ -120,6 +120,43 @@
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<antcall target="generate.tomcat4ibis.bat"/>
+		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->
+		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
+		<antcall target="generate.sub.bat"/>
+		<!-- shutdown.bat can be called to stop tomcat (e.g. when tomcat4ibis.bat is used by another script, this script can call shutdown.bat to stop tomcat -->
+		<antcall target="generate.shutdown.bat"/>
+	</target>
+
+	<target name="get.java" unless="jdk.zip.available">
+		<get src="${jdk.url}" dest="download/${jdk.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.ant" unless="ant.zip.available">
+		<get src="${ant.url}" dest="download/${ant.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.tomcat" unless="tomcat.zip.available">
+		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.ibis" unless="ibis.war.available">
+		<get src="${ibis.url}" dest="download/${ibis.war}" verbose="on"/>
+	</target>
+
+	<target name="get.jms" unless="jms.jar.available">
+		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.h2" unless="h2.jar.available">
+		<get src="${h2.url}" dest="download/${h2.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.ojdbc" unless="ojdbc.jar.available">
+		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
+	</target>
+
+	<target name="generate.tomcat4ibis.bat">
 		<echo file="tomcat4ibis.bat">@echo off
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
@@ -170,47 +207,19 @@ call "%~dp0build\sub.bat" %*
 goto end
 :error
 pause
-:end
-		</echo>
-		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->
-		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
+:end</echo>
+	</target>
+
+	<target name="generate.sub.bat">
 		<echo file="build/sub.bat">@echo off
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}
 set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Tomcat4Ibis %*
-"%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" start
-		</echo>
-		<!-- shutdown.bat can be called from a script to stop tomcat -->
+"%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" start</echo>
+	</target>
+
+	<target name="generate.shutdown.bat">
 		<echo file="shutdown.bat">@echo off
-call "%~dp0${tomcat.dir.windows}\bin\catalina.bat" stop
-		</echo>
-	</target>
-
-	<target name="get.java" unless="jdk.zip.available">
-		<get src="${jdk.url}" dest="download/${jdk.zip}" verbose="on"/>
-	</target>
-
-	<target name="get.ant" unless="ant.zip.available">
-		<get src="${ant.url}" dest="download/${ant.zip}" verbose="on"/>
-	</target>
-
-	<target name="get.tomcat" unless="tomcat.zip.available">
-		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
-	</target>
-
-	<target name="get.ibis" unless="ibis.war.available">
-		<get src="${ibis.url}" dest="download/${ibis.war}" verbose="on"/>
-	</target>
-
-	<target name="get.jms" unless="jms.jar.available">
-		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
-	</target>
-
-	<target name="get.h2" unless="h2.jar.available">
-		<get src="${h2.url}" dest="download/${h2.jar}" verbose="on"/>
-	</target>
-
-	<target name="get.ojdbc" unless="ojdbc.jar.available">
-		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
+call "%~dp0${tomcat.dir.windows}\bin\catalina.bat" stop</echo>
 	</target>
 
 	<scriptdef language="javascript" name="lower">
