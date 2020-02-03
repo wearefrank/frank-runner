@@ -2,8 +2,9 @@
 
 	<property file="build.properties"/>
 
+	<basename property="basedir.basename" file="${basedir}"/>
 	<property name="projects.dir" value="${basedir}/.."/>
-	<property name="project.dir" value="tomcat4ibis/examples/ibis4example1"/>
+	<property name="project.dir" value="${basedir.basename}/examples/ibis4example1"/>
 
 	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
 
