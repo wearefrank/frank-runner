@@ -55,22 +55,20 @@
 	<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 	<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
 
-	<target name="init">
-		<mkdir dir="download"/>
-		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
-		<available property="jdk.dir.available" file="${jdk.dir}"/>
-		<available property="ant.zip.available" file="download/${ant.zip}"/>
-		<available property="ant.dir.available" file="${ant.dir}"/>
-		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
-		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
-		<available property="ibis.war.available" file="download/${ibis.war}"/>
-		<available property="ibis.dir.available" file="${ibis.dir}"/>
-		<available property="jms.jar.available" file="download/${jms.jar}"/>
-		<available property="h2.jar.available" file="download/${h2.jar}"/>
-		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
-	</target>
+	<mkdir dir="download"/>
+	<available property="jdk.zip.available" file="download/${jdk.zip}"/>
+	<available property="jdk.dir.available" file="${jdk.dir}"/>
+	<available property="ant.zip.available" file="download/${ant.zip}"/>
+	<available property="ant.dir.available" file="${ant.dir}"/>
+	<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
+	<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+	<available property="ibis.war.available" file="download/${ibis.war}"/>
+	<available property="ibis.dir.available" file="${ibis.dir}"/>
+	<available property="jms.jar.available" file="download/${jms.jar}"/>
+	<available property="h2.jar.available" file="download/${h2.jar}"/>
+	<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 
-	<target name="build.tomcat4ibis" depends="init,get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
+	<target name="build.tomcat4ibis" depends="get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
