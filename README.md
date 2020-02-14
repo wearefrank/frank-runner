@@ -10,15 +10,15 @@ http://localhost/ibis
 ```
 
 By default the example configurations in tomcat4ibis will be used. To use
-another project create a build.properties in the main directory with the
-following content (assuming your ibis4example project folder has the same parent
+another project create a build.properties in your tomcat4ibis directory with the
+following content (assuming your ibis4myExample  project folder has the same parent
 folder as the tomcat4ibis folder):
 
 ```
-project.dir=ibis4example
+project.dir=ibis4myExample 
 ```
 
-In case this projects contains a pom.xml it is assumed to be a Maven project and
+In case the ibis4myExample  project contains a pom.xml it is assumed to be a Maven project and
 the following default values are used:
 
 ```
@@ -42,7 +42,7 @@ Hence by default your folder structure will need to look like the following:
 ```
 |--projects
    |--tomcat4ibis
-   |--Ibis4Example
+   |--ibis4myExample 
       |--classes
       |--configurations
          |--Config1
@@ -50,7 +50,7 @@ Hence by default your folder structure will need to look like the following:
          |--Conf...
       |--tests
       |--context.xml
-   |--Ibis4...
+   |--ibis4otherExample 
 ```
 
 You can overwrite default values by creating tomcat4ibis.properties in the
@@ -69,7 +69,7 @@ use them can be found in the Ibis manual which will soon be available.
 
 # How to add custom jars and classes
 
-In case you need to (for example) add you own pipe which is not available in the
+In case you need to (for example) add your own pipe which is not available in the
 Ibis Adapter Framework or you would like to customize an existing pipe in the
 framework you can add a java folder to the project with your custom .java
  file(s).
@@ -134,13 +134,13 @@ projects> cd tomcat4ibis
 And on Windows run the following command:
 
 ```
-tomcat4ibis> run.bat
+projects\tomcat4ibis> run.bat
 ```
 
 When not using Windows run:
 
 ```
-tomcat4ibis> ./run.sh
+projects\tomcat4ibis> ./run.sh
 ```
 
 You can now browse to the following address to find the Ibis4Tomcat4Ibis
