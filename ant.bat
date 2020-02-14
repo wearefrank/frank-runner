@@ -42,9 +42,8 @@ if not exist "%~dp0build\apache-ant-1.10.7\" (
 	)
 )
 set JAVA_HOME=%~dp0build\openjdk-8u232-b09
-call "%~dp0build\apache-ant-1.10.7\bin\ant" -buildfile "%~dp0build.xml" %*
+call "%~dp0build\apache-ant-1.10.7\bin\ant" %*
 if errorlevel 1 goto error
-call "%~dp0build\sub.bat" %*
 goto end
 :error
 pause

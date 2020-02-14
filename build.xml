@@ -1,4 +1,4 @@
-<project default="build.tomcat4ibis" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project default="restart" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<property file="build.properties"/>
 
@@ -55,7 +55,6 @@
 	<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 	<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
 
-	<mkdir dir="download"/>
 	<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 	<available property="jdk.dir.available" file="${jdk.dir}"/>
 	<available property="ant.zip.available" file="download/${ant.zip}"/>
@@ -68,7 +67,9 @@
 	<available property="h2.jar.available" file="download/${h2.jar}"/>
 	<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 
-	<target name="build.tomcat4ibis" depends="get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
+	<mkdir dir="download"/>
+
+	<target name="build" depends="get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
@@ -120,12 +121,41 @@
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
-		<antcall target="generate.tomcat4ibis.bat"/>
-		<!-- tomcat4ibis.bat will call sub.bat just after it called ant to generate it (this will make sure sub.bat reflects the latest changes) -->
-		<!-- tomcat4ibis.bat doesn't contain user specific data and can be committed to git whereas sub.bat may contain user specific data -->
-		<antcall target="generate.sub.bat"/>
-		<!-- shutdown.bat can be called to stop tomcat (e.g. when tomcat4ibis.bat is used by another script, this script can call shutdown.bat to stop tomcat -->
-		<antcall target="generate.shutdown.bat"/>
+		<!-- the generic scripts do not contain user specific data and should be committed to git -->
+		<antcall target="generate.generic.bat"><param name="param1" value="restart"/></antcall>
+		<antcall target="generate.generic.bat"><param name="param1" value="start"/></antcall>
+		<antcall target="generate.generic.bat"><param name="param1" value="stop"/></antcall>
+		<antcall target="generate.generic.bat"><param name="param1" value="run"/></antcall>
+		<antcall target="generate.generic.bat"><param name="param1" value="ant"/></antcall>
+		<!-- the user specific scripts may contain user specific data, hence are stored in the build folder -->
+		<antcall target="generate.user.specific.bat"><param name="param1" value="start"/></antcall>
+		<antcall target="generate.user.specific.bat"><param name="param1" value="stop"/></antcall>
+		<antcall target="generate.user.specific.bat"><param name="param1" value="run"/></antcall>
+	</target>
+
+	<target name="start" depends="build">
+		<exec executable="build\start.bat" vmlauncher="false"/>
+	</target>
+
+	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
+	<target name="stop">
+		<condition property="tomcat.running"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so stop.bat is not present yet -->
+		<condition property="stop.bat.not.present"><not><resourceexists><file file="build\stop.bat"/></resourceexists></not></condition>
+		<exec executable="build\stop.bat" vmlauncher="false" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
+		<sleep seconds="5" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
+		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
+		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<sleep seconds="10" if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
+		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<sleep seconds="20" if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
+		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<fail message="Tomcat (or another process) is still running on port 80, 8005 or 8009. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
+	</target>
+
+	<target name="restart" depends="stop,build">
+		<!-- Don't use an antcall with target="start" otherwise target build will run another time -->
+		<exec executable="build\start.bat" vmlauncher="false"/>
 	</target>
 
 	<target name="get.java" unless="jdk.zip.available">
@@ -156,8 +186,13 @@
 		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
 	</target>
 
-	<target name="generate.tomcat4ibis.bat">
-		<echo file="tomcat4ibis.bat">@echo off
+	<target name="generate.generic.bat">
+		<condition property="restart.or.stop"><or><equals arg1="${param1}" arg2="restart"/><equals arg1="${param1}" arg2="stop"/></or></condition>
+		<condition property="restart.start.or.run"><or><equals arg1="${param1}" arg2="restart"/><equals arg1="${param1}" arg2="start"/><equals arg1="${param1}" arg2="run"/></or></condition>
+		<condition property="restart"><equals arg1="${param1}" arg2="restart"/></condition>
+		<condition property="start.or.run"><or><equals arg1="${param1}" arg2="start"/><equals arg1="${param1}" arg2="run"/></or></condition>
+		<condition property="ant"><equals arg1="${param1}" arg2="ant"/></condition>
+		<echo file="${param1}.bat">@echo off
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
 )
@@ -200,26 +235,32 @@ if not exist "%~dp0${ant.dir.windows}\" (
 		goto error
 	)
 )
-set JAVA_HOME=%~dp0${jdk.dir.windows}
-call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" %*
-if errorlevel 1 goto error
-call "%~dp0build\sub.bat" %*
+set JAVA_HOME=%~dp0${jdk.dir.windows}</echo><echo file="${param1}.bat" append="true" if:set="restart.or.stop">
+call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" stop
+if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart.start.or.run">
+call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" build %*
+if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="ant">
+call "%~dp0${ant.dir.windows}\bin\ant" %*
+if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart">
+call "%~dp0build\start.bat" %*
+if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="start.or.run">
+call "%~dp0build\${param1}.bat" %*
+if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true">
 goto end
 :error
 pause
 :end</echo>
 	</target>
 
-	<target name="generate.sub.bat">
-		<echo file="build/sub.bat">@echo off
-set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Tomcat4Ibis %*
-"%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" start</echo>
-	</target>
-
-	<target name="generate.shutdown.bat">
-		<echo file="shutdown.bat">@echo off
-call "%~dp0${tomcat.dir.windows}\bin\catalina.bat" stop</echo>
+	<target name="generate.user.specific.bat">
+		<condition property="stop"><equals arg1="${param1}" arg2="stop"/></condition>
+		<echo file="build/${param1}.bat">@echo off
+echo Tomcat ${param1}:          http://localhost/ibis
+echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
+set JAVA_HOME=%~dp0..\${jdk.dir.windows}
+set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Tomcat4Ibis %*</echo><echo file="build/${param1}.bat" append="true">
+"%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" ${param1}</echo>
 	</target>
 
 	<scriptdef language="javascript" name="lower">

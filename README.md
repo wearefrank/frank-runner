@@ -2,42 +2,11 @@
 
 This project will help you run your Ibis configurations with Tomcat.
 
-Basically all you have to do is clone this project and run tomcat4ibis.bat by
-double clicking it. Or execute the following commands:
-
-```
-projects> git clone https://github.com/ibissource/tomcat4ibis
-```
-
-Change directory to tomcat4ibis:
-
-```
-projects> cd tomcat4ibis
-```
-
-And on Windows run the following command:
-
-```
-tomcat4ibis> tomcat4ibis.bat
-```
-
-When not using Windows run:
-
-```
-tomcat4ibis> ./tomcat4ibis.sh
-```
-
-You can now browse to the following address to find the Ibis4Tomcat4Ibis
-console:
+Basically all you have to do is clone or download this project and run start.bat by
+double clicking it and browse to the following address:
 
 ```
 http://localhost/ibis
-```
-
-You can stop Tomcat using the following combination of keys: 
-
-```
-ctrl-c
 ```
 
 By default the example configurations in tomcat4ibis will be used. To use
@@ -127,6 +96,66 @@ lib.webapp.dir=lib/webapp
 All jars added to lib/server are copied to the Tomcat lib folder. All jars added
 to lib/webapp are copied to the WEB-INF/lib containing the Ibis Adapter
 Framework jar files and dependencies.
+
+
+# Eclipse
+
+Right click on build.xml, Run As, Ant Build. The second time you can use the run
+button on the Toolbar.
+
+
+# VSCode
+
+Install plugin Ant Target Runner and configure it to use ant.bat or any other
+ant installation by adding the following to settings.json:
+
+```
+"ant.executable": "C:\\path\\to\\tomcat4ibis\\ant.bat",
+```
+
+Below the file explorer open de Ant Target Runner, select the restart target and
+push the Run Selected Ant Target button.
+
+
+# Command line
+
+Execute the following commands from the command line:
+
+```
+projects> git clone https://github.com/ibissource/tomcat4ibis
+```
+
+Change directory to tomcat4ibis:
+
+```
+projects> cd tomcat4ibis
+```
+
+And on Windows run the following command:
+
+```
+tomcat4ibis> run.bat
+```
+
+When not using Windows run:
+
+```
+tomcat4ibis> ./run.sh
+```
+
+You can now browse to the following address to find the Ibis4Tomcat4Ibis
+console:
+
+```
+http://localhost/ibis
+```
+
+You can stop Tomcat using the following combination of keys: 
+
+```
+ctrl-c
+```
+
 
 # Scripting
 
