@@ -1,4 +1,4 @@
-# Run Frank configurations with Tomcat
+# Frank!Runner
 
 This project will help you run your Frank configurations with Tomcat.
 
@@ -11,8 +11,8 @@ http://localhost/
 
 By default the example configurations in the Frank!Runner project will be used.
 To use the configurations in your own project create a build.properties in the
-frank!runner folder with the following content (assuming your frank2yourproject
-folder has the same parent folder as the frank!runner folder):
+frank-runner folder with the following content (assuming your frank2yourproject
+folder has the same parent folder as the frank-runner folder):
 
 ```
 project.dir=frank2yourproject
@@ -41,7 +41,7 @@ Hence by default your folder structure will need to look like the following:
 
 ```
 |--projects
-   |--frank!runner
+   |--frank-runner
    |--frank2yourproject
       |--classes
       |--configurations
@@ -53,9 +53,9 @@ Hence by default your folder structure will need to look like the following:
    |--frank2otherproject
 ```
 
-You can overwrite default values by creating a frank!runner.properties in the
+You can overwrite default values by creating a frank-runner.properties in the
 project to run. In case you need to change the default value for projects.dir
-(which is ..) you can create a build.properties in the frank!runner project
+(which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
 
 Your project doesn't need to contain a context.xml in case you want to use H2.
@@ -126,22 +126,22 @@ Execute the following commands from the command line:
 projects> git clone https://github.com/ibissource/frank!framework
 ```
 
-Change directory to frank!runner:
+Change directory to frank-runner:
 
 ```
-projects> cd frank!runner
+projects> cd frank-runner
 ```
 
 And on Windows run the following command:
 
 ```
-projects\frank!runner> run.bat
+projects\frank-runner> run.bat
 ```
 
 When not using Windows run:
 
 ```
-projects\frank!runner> ./run.sh
+projects\frank-runner> ./run.sh
 ```
 
 You can now browse to the following address to find the Frank!Framework

@@ -6,7 +6,7 @@
 	<property name="projects.dir" value="${basedir}/.."/>
 	<property name="project.dir" value="${basedir.basename}/examples/frank2example1"/>
 
-	<property file="${projects.dir}/${project.dir}/frank!runner.properties"/>
+	<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
