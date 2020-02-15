@@ -4,9 +4,9 @@
 
 	<basename property="basedir.basename" file="${basedir}"/>
 	<property name="projects.dir" value="${basedir}/.."/>
-	<property name="project.dir" value="${basedir.basename}/examples/ibis4example1"/>
+	<property name="project.dir" value="${basedir.basename}/examples/frank2example1"/>
 
-	<property file="${projects.dir}/${project.dir}/tomcat4ibis.properties"/>
+	<property file="${projects.dir}/${project.dir}/frank!runner.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
@@ -35,16 +35,16 @@
 	<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
 	<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
 	<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
-	<property name="ant.url" value="http://apache.redkiwi.nl//ant/binaries/${ant.zip}"/>
+	<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
 	<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-	<property name="tomcat.version" value="7.0.96"/>
+	<property name="tomcat.version" value="7.0.100"/>
 	<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 	<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
 	<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
-	<property name="ibis.version" value="7.5-20200203.173143"/>
-	<property name="ibis.war" value="ibis-adapterframework-webapp-${ibis.version}.war"/>
-	<property name="ibis.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ibis.version}/${ibis.war}"/>
-	<property name="ibis.dir" value="${tomcat.dir}/webapps/ibis"/>
+	<property name="ff.version" value="7.5-20200214.142106"/>
+	<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
+	<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+	<property name="ff.dir" value="${tomcat.dir}/webapps/ROOT"/>
 	<property name="jms.version" value="1.1_spec-1.1"/>
 	<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 	<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
@@ -61,15 +61,15 @@
 	<available property="ant.dir.available" file="${ant.dir}"/>
 	<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
 	<available property="tomcat.dir.available" file="${tomcat.dir}"/>
-	<available property="ibis.war.available" file="download/${ibis.war}"/>
-	<available property="ibis.dir.available" file="${ibis.dir}"/>
+	<available property="ff.war.available" file="download/${ff.war}"/>
+	<available property="ff.dir.available" file="${ff.dir}"/>
 	<available property="jms.jar.available" file="download/${jms.jar}"/>
 	<available property="h2.jar.available" file="download/${h2.jar}"/>
 	<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 
 	<mkdir dir="download"/>
 
-	<target name="build" depends="get.java,get.ant,get.tomcat,get.ibis,get.jms,get.h2,get.ojdbc">
+	<target name="build" depends="get.java,get.ant,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
@@ -86,35 +86,35 @@
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- webapp -->
-		<property file="${tomcat.dir}/webapps/ibis/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<condition property="ibis.version.changed"><not><equals arg1="${ibis.version}" arg2="${pom.properties.version}"/></not></condition>
-		<delete dir="${ibis.dir}" if:set="ibis.version.changed"/>
-		<unzip src="download/${ibis.war}" dest="${ibis.dir}" if:set="ibis.version.changed"/>
-		<delete><fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
+		<property file="${tomcat.dir}/webapps/ROOT/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
+		<condition property="ff.version.changed"><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not></condition>
+		<delete dir="${ff.dir}" if:set="ff.version.changed"/>
+		<unzip src="download/${ff.war}" dest="${ff.dir}" if:set="ff.version.changed"/>
+		<delete><fileset dir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<copy todir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- context.xml -->
-		<delete file="${tomcat.dir}/webapps/ibis/META-INF/context.xml"/>
+		<delete file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml"/>
 		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ibis/META-INF" if:set="context.xml.available"/>
-		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ibis/META-INF" unless:set="context.xml.available"/>
+		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ROOT/META-INF" if:set="context.xml.available"/>
+		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ROOT/META-INF" unless:set="context.xml.available"/>
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<fail message="Could not find instance.name in ${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" unless:set="ds.properties.instance.name"/>
 		<lower name="instance.name.lc" value="${ds.properties.instance.name}"/>
-		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${tomcat.dir}/webapps/ibis/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<!-- classes -->
-		<delete dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
-		<mkdir dir="${tomcat.dir}/webapps/ibis/WEB-INF/classes"/>
+		<delete dir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes"/>
+		<mkdir dir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
-		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
+		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
 			<classpath>
-				<fileset dir="${tomcat.dir}/webapps/ibis/WEB-INF/lib"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/ibis/WEB-INF/classes" if:set="classes.dir.available">
+		<copy todir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes" if:set="classes.dir.available">
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- scripts -->
@@ -128,9 +128,9 @@
 		<antcall target="generate.generic.bat"><param name="param1" value="run"/></antcall>
 		<antcall target="generate.generic.bat"><param name="param1" value="ant"/></antcall>
 		<!-- the user specific scripts may contain user specific data, hence are stored in the build folder -->
-		<antcall target="generate.user.specific.bat"><param name="param1" value="start"/></antcall>
-		<antcall target="generate.user.specific.bat"><param name="param1" value="stop"/></antcall>
-		<antcall target="generate.user.specific.bat"><param name="param1" value="run"/></antcall>
+		<antcall target="generate.user.specific.bat"><param name="param1" value="start"/><param name="param2" value=""/></antcall>
+		<antcall target="generate.user.specific.bat"><param name="param1" value="stop"/><param name="param2" value=" "/></antcall>
+		<antcall target="generate.user.specific.bat"><param name="param1" value="run"/><param name="param2" value="  "/></antcall>
 	</target>
 
 	<target name="start" depends="build">
@@ -170,8 +170,8 @@
 		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
 	</target>
 
-	<target name="get.ibis" unless="ibis.war.available">
-		<get src="${ibis.url}" dest="download/${ibis.war}" verbose="on"/>
+	<target name="get.ff" unless="ff.war.available">
+		<get src="${ff.url}" dest="download/${ff.war}" verbose="on"/>
 	</target>
 
 	<target name="get.jms" unless="jms.jar.available">
@@ -254,12 +254,22 @@ pause
 
 	<target name="generate.user.specific.bat">
 		<condition property="stop"><equals arg1="${param1}" arg2="stop"/></condition>
+		<!-- http://www.network-science.de/ascii/ font standard -->
 		<echo file="build/${param1}.bat">@echo off
-echo Tomcat ${param1}:          http://localhost/ibis
+echo                        _________________________________________________________________________
+echo "                      |     _____                _    _ ____                                  |
+echo "                      |    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __     |
+echo "                      |    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|    |
+echo "                      |    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |       |
+echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       |
+echo "                      |_______________________________________________________________________|
+echo "
+echo Tomcat ${param1}:${param2}          ${ds.properties.instance.name} on http://localhost/
+echo "
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Tomcat4Ibis %*</echo><echo file="build/${param1}.bat" append="true">
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Frank!Runner %*</echo><echo file="build/${param1}.bat" append="true">
 "%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" ${param1}</echo>
 	</target>
 
