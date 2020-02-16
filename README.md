@@ -104,11 +104,20 @@ files and dependencies.
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
 button on the Toolbar.
 
+Or open the Terminal view and execute the commands mentioned in the Command line
+section below.
+
 
 # VSCode
 
-Install plugin Ant Target Runner and configure it to use ant.bat or any other
-ant installation by adding the following to settings.json:
+Use the terminal (e.g. right click on one of the Frank!Runner files and click
+Open in Terminal) and execute the commands mentioned in the Command line
+section below.
+
+In case you have opened frank-runner as a folder/workspace you can use the Ant
+Target Runner plugin button. Install plugin Ant Target Runner and configure it
+to use ant.bat or any other ant installation by adding the following to
+settings.json:
 
 ```
 "ant.executable": "C:\\path\\to\\frank!framework\\ant.bat",
@@ -120,7 +129,13 @@ push the Run Selected Ant Target button.
 
 # Command line
 
-Execute the following commands from the command line:
+For Frank!Runner command line usage execute the commands below either from the
+Windows Command Prompt, Windows PowerShell, a terminal in Eclipse, VSCode or any
+other terminal.
+
+In case you did not already clone or download Frank!Runner and you have the git
+command available (otherwise download it manually or use another Git program to
+clone the project):
 
 ```
 projects> git clone https://github.com/ibissource/frank!framework
@@ -135,10 +150,10 @@ projects> cd frank-runner
 And on Windows run the following command:
 
 ```
-projects\frank-runner> run.bat
+projects\frank-runner> .\run.bat
 ```
 
-When not using Windows run:
+When not using Windows run (not available yet):
 
 ```
 projects\frank-runner> ./run.sh
@@ -157,6 +172,10 @@ You can stop Tomcat using the following combination of keys:
 ctrl-c
 ```
 
+Instead of the run script (.bat or .sh) you can also use the start, stop and
+restart scripts which will return after being executed (opening Tomcat in a
+separate window). 
+
 
 # Scripting
 
@@ -166,12 +185,12 @@ Frank!Framework version (7.2 in the example), logging to a specific log
 directory, the following call can be made:
 
 ```
-start -Dibis.version=7.2 -Dlog.dir=logs/7.2
+path\to\frank-runner\start.bat -Dibis.version=7.2 -Dlog.dir=logs/7.2
 ```
 
 This will create the instance, deploy on Tomcat, start Tomcat and return to the
 script. To shutdown Tomcat, call stop:
 
 ```
-stop
+path\to\frank-runner\stop.bat
 ```
