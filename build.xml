@@ -238,7 +238,7 @@ if not exist "%~dp0${ant.dir.windows}\" (
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo><echo file="${param1}.bat" append="true" if:set="restart.or.stop">
 call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" stop
 if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart.start.or.run">
-call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" build %*
+call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" %* build
 if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="ant">
 call "%~dp0${ant.dir.windows}\bin\ant" %*
 if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart">
