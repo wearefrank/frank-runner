@@ -174,7 +174,19 @@ ctrl-c
 
 Instead of the run script (.bat or .sh) you can also use the start, stop and
 restart scripts which will return after being executed (opening Tomcat in a
-separate window). 
+separate window):
+
+```
+projects\frank-runner> .\start.bat
+```
+
+```
+projects\frank-runner> .\stop.bat
+```
+
+```
+projects\frank-runner> .\restart.bat
+```
 
 
 # Scripting
