@@ -2,21 +2,48 @@
 
 This project will help you run your Frank configurations with Tomcat.
 
-Basically all you have to do is clone or download this project and run start.bat by
-double clicking it and browse to the following address:
+Basically all you have to do is clone or download this project and run start.bat
+by double clicking it. When Tomcat has started you can browse to the following
+address:
 
 ```
 http://localhost/
 ```
 
-By default the example configurations in the Frank!Runner project will be used.
-To use the configurations in your own project create a build.properties in the
-frank-runner folder with the following content (assuming your frank2yourproject
-folder has the same parent folder as the frank-runner folder):
+By default the frank2example1 project in the examples folder of the Frank!Runner
+project will be used. To use your own project specify the project.dir. This can
+be done in several ways. One way is to create a build.properties in the
+frank-runner folder with the following content:
 
 ```
 project.dir=frank2yourproject
 ```
+
+Another way (when using the command line) is to add a -Dproject.dir argument
+like:
+
+```
+projects\frank-runner> .\start.bat -Dproject.dir=frank2yourproject
+```
+
+Or to make it easy to switch between projects you can give every project it's
+own small build.xml and run it for example from Eclipse or VSCode (see the
+sections Eclipse and VSCode). An example build.xml for the frank2yourproject
+could be:
+
+```
+<project default="restart.frank2yourproject">
+	<target name="restart.frank2yourproject">
+		<exec executable="../frank-runner/restart.bat" vmlauncher="false">
+			<arg value="-Dproject.dir=frank2yourproject"/>
+		</exec>
+	</target>
+</project>
+```
+
+The project.dir needs to be specified relative to the parent folder of the
+frank-runner folder. In this case it is assumed that the frank2yourproject and
+frank-runner folder share the same parent folder.
 
 In case frank2yourproject contains a pom.xml it is assumed to be a Maven project
 and the following default values are used:
@@ -102,7 +129,9 @@ files and dependencies.
 # Eclipse
 
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
-button on the Toolbar.
+button on the Toolbar. You can either run the build.xml in the Frank!Runner
+project or a small build.xml in your own project depending on how you want to
+switch between projects (see the beginning of this README).
 
 Or open the Terminal view and execute the commands mentioned in the Command line
 section below.
@@ -110,21 +139,47 @@ section below.
 
 # VSCode
 
-Use the terminal (e.g. right click on one of the Frank!Runner files and click
-Open in Terminal) and execute the commands mentioned in the Command line
-section below.
-
-In case you have opened frank-runner as a folder/workspace you can use the Ant
-Target Runner plugin button. Install plugin Ant Target Runner and configure it
-to use ant.bat or any other ant installation by adding the following to
-settings.json:
+Install plugin Ant Target Runner and configure it to use ant.bat or any other
+ant installation by adding the following to settings.json:
 
 ```
 "ant.executable": "C:\\path\\to\\frank!framework\\ant.bat",
 ```
 
-Below the file explorer open de Ant Target Runner, select the restart target and
-push the Run Selected Ant Target button.
+You might need to restart VSCode for the Ant Target Runner plugin to detect the
+build.xml in the project you have opened. In case you have opened frank-runner
+as a folder/workspace you can use the Ant Target Runner plugin to run it's
+build.xml. Below the file explorer open the Ant Target Runner, select the
+restart target and push the Run Selected Ant Target button. Because the Ant
+Target Runner will only be able to use the build.xml in the currently opened
+folder/workspace it is recommended to create a small build.xml in the projects
+that need the Frank!Runner (see the beginning of this README).
+
+Or use the terminal (e.g. right click on one of the Frank!Runner files and click
+Open in Terminal) and execute the commands mentioned in the Command line
+section below.
+
+It is also possible to define a task (Terminal, Run Task...) and for example
+add the following to .vscode/tasks.json:
+
+```
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Restart",
+            "type": "shell",
+            "command": "../frank-runner/restart.bat '-Dproject.dir=frank2yourproject'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
+```
+
+This will make it possible to restart using ctrl-shift-B.
 
 
 # Command line
