@@ -99,7 +99,7 @@ in the Frank!Framework console (or restart Tomcat).
 
 More information on Frank configuration files and Frank property files and how
 to use them can be found in the
-[Frank!Framework Manual](https://ibis4manual.readthedocs.io/).
+[Frank!Manual](https://frank-manual.readthedocs.io/).
 
 # How to add custom jars and classes
 
