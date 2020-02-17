@@ -260,7 +260,7 @@ Frank!Framework version (7.2 in the example), logging to a specific log
 directory, the following call can be made:
 
 ```
-path\to\frank-runner\start.bat -Dibis.version=7.2 -Dlog.dir=logs/7.2
+path\to\frank-runner\start.bat -Dff.version=7.2 -Dlog.dir=logs/7.2
 ```
 
 This will create the instance, deploy on Tomcat, start Tomcat and return to the
