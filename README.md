@@ -10,6 +10,9 @@ address:
 http://localhost/
 ```
 
+
+# Switching projects
+
 By default the frank2example1 project in the examples folder of the Frank!Runner
 project will be used. To use your own project specify the project.dir. This can
 be done in several ways. One way is to create a build.properties in the
@@ -28,8 +31,8 @@ projects\frank-runner> .\start.bat -Dproject.dir=frank2yourproject
 
 Or to make it easy to switch between projects you can give every project it's
 own small build.xml and run it for example from Eclipse or VSCode (see the
-sections Eclipse and VSCode). An example build.xml for the frank2yourproject
-could be:
+sections [Eclipse](#eclipse) and [VSCode](#vscode)). An example build.xml for
+the frank2yourproject could be:
 
 ```
 <project default="restart.frank2yourproject">
@@ -44,6 +47,9 @@ could be:
 The project.dir needs to be specified relative to the parent folder of the
 frank-runner folder. In this case it is assumed that the frank2yourproject and
 frank-runner folder share the same parent folder.
+
+
+# Project structure and customisation
 
 In case frank2yourproject contains a pom.xml it is assumed to be a Maven project
 and the following default values are used:
@@ -131,10 +137,11 @@ files and dependencies.
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
 button on the Toolbar. You can either run the build.xml in the Frank!Runner
 project or a small build.xml in your own project depending on how you want to
-switch between projects (see the beginning of this README).
+switch between projects (see section [Switching projects](#switching-projects)
+above).
 
-Or open the Terminal view and execute the commands mentioned in the Command line
-section below.
+Or open the Terminal view and execute the commands mentioned in the
+[Command line](#command-line) section below.
 
 
 # VSCode
@@ -153,11 +160,12 @@ build.xml. Below the file explorer open the Ant Target Runner, select the
 restart target and push the Run Selected Ant Target button. Because the Ant
 Target Runner will only be able to use the build.xml in the currently opened
 folder/workspace it is recommended to create a small build.xml in the projects
-that need the Frank!Runner (see the beginning of this README).
+that need the Frank!Runner (see section
+[Switching projects](#switching-projects) above).
 
 Or use the terminal (e.g. right click on one of the Frank!Runner files and click
-Open in Terminal) and execute the commands mentioned in the Command line
-section below.
+Open in Terminal) and execute the commands mentioned in the
+[Command line](#command-line) section below.
 
 It is also possible to define a task (Terminal, Run Task...) and for example
 add the following to .vscode/tasks.json:
