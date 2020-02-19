@@ -201,7 +201,7 @@ command available (otherwise download it manually or use another Git program to
 clone the project):
 
 ```
-projects> git clone https://github.com/ibissource/frank!framework
+projects> git clone https://github.com/ibissource/frank-runner
 ```
 
 Change directory to frank-runner:
