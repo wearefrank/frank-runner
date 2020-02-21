@@ -1,11 +1,9 @@
 <project default="restart" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
-	<property file="build.properties"/>
-
 	<basename property="basedir.basename" file="${basedir}"/>
+	<property file="build.properties"/>
 	<property name="projects.dir" value="${basedir}/.."/>
 	<property name="project.dir" value="${basedir.basename}/examples/frank2example1"/>
-
 	<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
@@ -99,8 +97,9 @@
 		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ROOT/META-INF" if:set="context.xml.available"/>
 		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ROOT/META-INF" unless:set="context.xml.available"/>
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
-		<fail message="Could not find instance.name in ${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" unless:set="ds.properties.instance.name"/>
-		<lower name="instance.name.lc" value="${ds.properties.instance.name}"/>
+		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
+		<basename property="instance.name" file="${project.dir}"/>
+		<lower name="instance.name.lc" value="${instance.name}"/>
 		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
 		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<!-- classes -->
@@ -264,12 +263,12 @@ echo "                      |    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| |
 echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       |
 echo "                      |_______________________________________________________________________|
 echo "
-echo Tomcat ${param1}:${param2}          ${ds.properties.instance.name} on http://localhost/
+echo Tomcat ${param1}:${param2}          ${instance.name} on http://localhost/
 echo "
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Frank!Runner %*</echo><echo file="build/${param1}.bat" append="true">
+set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dinstance.name=${instance.name} -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Frank!Runner %*</echo><echo file="build/${param1}.bat" append="true">
 "%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" ${param1}</echo>
 	</target>
 
