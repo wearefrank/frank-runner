@@ -3,7 +3,7 @@
 	<basename property="basedir.basename" file="${basedir}"/>
 	<property file="build.properties"/>
 	<property name="projects.dir" value="${basedir}/.."/>
-	<property name="project.dir" value="${basedir.basename}/examples/frank2example1"/>
+	<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 	<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
 	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
@@ -24,6 +24,27 @@
 	<property name="lib.webapp.dir" value="lib/webapp"/>
 	<property name="database.type" value="h2"/>
 	<property name="h2.dir" value="${basedir}/build/h2"/>
+
+	<property name="dtap.stage" value="LOC"/>
+	<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
+	<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
+	<basename property="instance.name" file="${project.dir}"/>
+	<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
+	<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
+	<pathconvert property="configurations.names" refid="configurations.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
+	<scriptdef language="javascript" name="classLoaderTypeProperties">
+		<attribute name="from"/> 
+		<attribute name="to"/>
+		project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
+		var from = attributes.get("from").split(',');
+		var to = '';
+		for (var i = 0; i &lt; from.length; i++) {
+			to = to + ' -Dconfigurations.' + from[i] + '.classLoaderType=DirectoryClassLoader';
+		}
+		project.setProperty(attributes.get("to"), to);
+	</scriptdef>
+	<classLoaderTypeProperties from="${configurations.names}" to="classloader.type.properties"/>
+	<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;../../../../../../${project.dir}/${tests.dir}&quot; -Dscenariosroot1.description=Frank!Runner -Dconfigurations.names=${configurations.names} ${classloader.type.properties}"/>
 
 	<property name="jdk.version" value="8"/>
 	<property name="jdk.version.u" value="232"/>
@@ -96,10 +117,7 @@
 		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
 		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ROOT/META-INF" if:set="context.xml.available"/>
 		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ROOT/META-INF" unless:set="context.xml.available"/>
-		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
-		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
-		<basename property="instance.name" file="${project.dir}"/>
-		<lower name="instance.name.lc" value="${instance.name}"/>
+		<lower from="${instance.name}" to="instance.name.lc"/>
 		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
 		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<!-- classes -->
@@ -268,14 +286,14 @@ echo "
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
-set JAVA_OPTS=-Xmx1024M -Dotap.stage=LOC -Dinstance.name=${instance.name} -Dconfigurations.directory="${projects.dir}/${project.dir}/${configurations.dir}" -Dscenariosroot1.directory="../../../../../../${project.dir}/${tests.dir}" -Dscenariosroot1.description=Frank!Runner %*</echo><echo file="build/${param1}.bat" append="true">
+set JAVA_OPTS=-Xmx1024M ${system.properties} %*</echo><echo file="build/${param1}.bat" append="true">
 "%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" ${param1}</echo>
 	</target>
 
 	<scriptdef language="javascript" name="lower">
-		<attribute name="name"/>
-		<attribute name="value"/> 
-		project.setProperty(attributes.get("name"), attributes.get("value").toLowerCase());
+		<attribute name="from"/> 
+		<attribute name="to"/>
+		project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
 	</scriptdef>
 
 </project>

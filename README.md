@@ -13,46 +13,57 @@ http://localhost/
 
 # Switching projects
 
-By default the frank2example1 project in the examples folder of the Frank!Runner
+By default the Frank2Example1 project in the examples folder of the Frank!Runner
 project will be used. To use your own project specify the project.dir. This can
 be done in several ways. One way is to create a build.properties in the
 frank-runner folder with the following content:
 
 ```
-project.dir=frank2yourproject
+project.dir=Frank2YourApplication
 ```
 
-Another way (when using the command line) is to add a -Dproject.dir argument
-like:
+The project.dir needs to be specified relative to the parent folder of the
+frank-runner folder. In this case it is assumed that the Frank2YourApplication and
+frank-runner folder share the same parent folder. Hence no other path elements
+like in the following example are necessary.
 
 ```
-projects\frank-runner> .\start.bat -Dproject.dir=frank2yourproject
+project.dir=../path/to/your/Frank2YourApplication
+```
+
+To use Frank2Example2 use:
+
+```
+project.dir=${basedir.basename}/examples/Frank2Example2
+```
+
+Another way to specify the project.dir (when using the command line) is to add
+a -Dproject.dir argument like:
+
+```
+projects\frank-runner> .\start.bat -Dproject.dir=Frank2YourApplication
 ```
 
 Or to make it easy to switch between projects you can give every project it's
 own small build.xml and run it for example from Eclipse or VSCode (see the
 sections [Eclipse](#eclipse) and [VSCode](#vscode)). An example build.xml for
-the frank2yourproject could be:
+the Frank2YourApplication could be:
 
 ```
-<project default="restart.frank2yourproject">
-	<target name="restart.frank2yourproject">
+<project default="restart.frank2yourapplication">
+	<target name="restart.frank2yourapplication">
 		<exec executable="../frank-runner/restart.bat" vmlauncher="false">
-			<arg value="-Dproject.dir=frank2yourproject"/>
+			<arg value="-Dproject.dir=Frank2YourApplication"/>
 		</exec>
 	</target>
 </project>
 ```
 
-The project.dir needs to be specified relative to the parent folder of the
-frank-runner folder. In this case it is assumed that the frank2yourproject and
-frank-runner folder share the same parent folder.
-
 
 # Project structure and customisation
 
-In case frank2yourproject contains a pom.xml it is assumed to be a Maven project
-and the following default values are used:
+In case Frank2YourApplication contains a pom.xml it is assumed to be a Maven
+project and the following default values are used:
 
 ```
 classes.dir=src/main/resources
@@ -75,7 +86,7 @@ Hence by default your folder structure will need to look like the following:
 ```
 |--projects
    |--frank-runner
-   |--frank2yourproject
+   |--Frank2YourApplication
       |--classes
       |--configurations
          |--Config1
@@ -83,7 +94,7 @@ Hence by default your folder structure will need to look like the following:
          |--Conf...
       |--tests
       |--context.xml
-   |--frank2otherproject
+   |--Frank2YourOtherApplication
 ```
 
 You can overwrite default values by creating a frank-runner.properties in the
@@ -177,7 +188,7 @@ add the following to .vscode/tasks.json:
         {
             "label": "Restart",
             "type": "shell",
-            "command": "../frank-runner/restart.bat '-Dproject.dir=frank2yourproject'",
+            "command": "../frank-runner/restart.bat '-Dproject.dir=Frank2YourApplication'",
             "group": {
                 "kind": "build",
                 "isDefault": true
