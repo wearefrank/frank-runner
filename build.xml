@@ -44,7 +44,9 @@
 		project.setProperty(attributes.get("to"), to);
 	</scriptdef>
 	<classLoaderTypeProperties from="${configurations.names}" to="classloader.type.properties"/>
-	<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;../../../../../../${project.dir}/${tests.dir}&quot; -Dscenariosroot1.description=Frank!Runner -Dconfigurations.names=${configurations.names} ${classloader.type.properties}"/>
+	<property name="configurations.auto.load" value="" if:set="ds.properties.configurations.names"/>
+	<property name="configurations.auto.load" value="-Dconfigurations.names=${configurations.names} ${classloader.type.properties}" unless:set="ds.properties.configurations.names"/>
+	<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;../../../../../../${project.dir}/${tests.dir}&quot; -Dscenariosroot1.description=Frank!Runner ${configurations.auto.load}"/>
 
 	<property name="jdk.version" value="8"/>
 	<property name="jdk.version.u" value="232"/>
