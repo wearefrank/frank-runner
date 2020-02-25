@@ -1,6 +1,6 @@
 <Configuration name="Example1">
-	<Adapter name="Example1">
-		<Receiver name="Example1">
+	<Adapter name="Example1Adapter">
+		<Receiver name="Example1Receiver">
 			<JavaListener name="Example1" serviceName="Example1"/>
 		</Receiver>
 		<Pipeline firstPipe="Example">
