@@ -29,6 +29,7 @@
 	<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 	<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 	<basename property="instance.name" file="${project.dir}"/>
+	<property name="context.path" value="ROOT"/>
 	<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
 	<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
 	<pathconvert property="configurations.names" refid="configurations.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
@@ -65,7 +66,7 @@
 	<property name="ff.version" value="7.5-20200214.142106"/>
 	<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 	<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
-	<property name="ff.dir" value="${tomcat.dir}/webapps/ROOT"/>
+	<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 	<property name="jms.version" value="1.1_spec-1.1"/>
 	<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 	<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
@@ -107,33 +108,35 @@
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- webapp -->
-		<property file="${tomcat.dir}/webapps/ROOT/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<condition property="ff.version.changed"><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not></condition>
-		<delete dir="${ff.dir}" if:set="ff.version.changed"/>
-		<unzip src="download/${ff.war}" dest="${ff.dir}" if:set="ff.version.changed"/>
-		<delete><fileset dir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
+		<property file="${tomcat.dir}/webapps/${context.path}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
+		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
+		<pathconvert property="contexts.dirs" refid="contexts.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
+		<condition property="ff.version.or.context.path.changed"><or><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
+		<delete dir="${tomcat.dir}/webapps" if:set="ff.version.or.context.path.changed"/>
+		<unzip src="download/${ff.war}" dest="${ff.dir}" if:set="ff.version.or.context.path.changed"/>
+		<delete><fileset dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<copy todir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- context.xml -->
-		<delete file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml"/>
+		<delete file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml"/>
 		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/ROOT/META-INF" if:set="context.xml.available"/>
-		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/ROOT/META-INF" unless:set="context.xml.available"/>
+		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/${context.path}/META-INF" if:set="context.xml.available"/>
+		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/${context.path}/META-INF" unless:set="context.xml.available"/>
 		<lower from="${instance.name}" to="instance.name.lc"/>
-		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${tomcat.dir}/webapps/ROOT/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<replace file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<!-- classes -->
-		<delete dir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes"/>
-		<mkdir dir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes"/>
+		<delete dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes"/>
+		<mkdir dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
-		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
+		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
 			<classpath>
-				<fileset dir="${tomcat.dir}/webapps/ROOT/WEB-INF/lib"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/ROOT/WEB-INF/classes" if:set="classes.dir.available">
+		<copy todir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes" if:set="classes.dir.available">
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- scripts -->
@@ -272,6 +275,7 @@ pause
 	</target>
 
 	<target name="generate.user.specific.bat">
+		<condition property="context.path.is.root"><equals arg1="${context.path}" arg2="ROOT"/></condition>
 		<condition property="stop"><equals arg1="${param1}" arg2="stop"/></condition>
 		<!-- http://www.network-science.de/ascii/ font standard -->
 		<echo file="build/${param1}.bat">@echo off
@@ -283,7 +287,7 @@ echo "                      |    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| |
 echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       |
 echo "                      |_______________________________________________________________________|
 echo "
-echo Tomcat ${param1}:${param2}          ${instance.name} on http://localhost/
+echo Tomcat ${param1}:${param2}          ${instance.name} on http://localhost/</echo><echo file="build/${param1}.bat" append="true" unless:set="context.path.is.root">${context.path}</echo><echo file="build/${param1}.bat" append="true">
 echo "
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
