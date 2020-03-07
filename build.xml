@@ -1,97 +1,112 @@
 <project default="restart" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
-	<basename property="basedir.basename" file="${basedir}"/>
-	<property file="build.properties"/>
-	<property name="projects.dir" value="${basedir}/.."/>
-	<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
-	<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
+	<target name="init">
+		<basename property="basedir.basename" file="${basedir}"/>
+		<property file="build.properties"/>
+		<property name="projects.dir" value="${basedir}/.."/>
+		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
+		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
-	<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
+		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
-	<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
-	<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
-	<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
-	<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
-	<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
+		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
+		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
+		<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
+		<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
+		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
 
-	<property name="classes.dir" value="classes" unless:set="pom.xml.available"/>
-	<property name="configurations.dir" value="configurations" unless:set="pom.xml.available"/>
-	<property name="java.dir" value="java" unless:set="pom.xml.available"/>
-	<property name="tests.dir" value="tests" unless:set="pom.xml.available"/>
-	<property name="context.xml" value="context.xml" unless:set="pom.xml.available"/>
+		<property name="classes.dir" value="classes" unless:set="pom.xml.available"/>
+		<property name="configurations.dir" value="configurations" unless:set="pom.xml.available"/>
+		<property name="java.dir" value="java" unless:set="pom.xml.available"/>
+		<property name="tests.dir" value="tests" unless:set="pom.xml.available"/>
+		<property name="context.xml" value="context.xml" unless:set="pom.xml.available"/>
 
-	<property name="lib.server.dir" value="lib/server"/>
-	<property name="lib.webapp.dir" value="lib/webapp"/>
-	<property name="database.type" value="h2"/>
-	<property name="h2.dir" value="${basedir}/build/h2"/>
+		<property name="lib.server.dir" value="lib/server"/>
+		<property name="lib.webapp.dir" value="lib/webapp"/>
+		<property name="database.type" value="h2"/>
+		<property name="h2.dir" value="${basedir}/build/h2"/>
 
-	<property name="dtap.stage" value="LOC"/>
-	<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
-	<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
-	<basename property="instance.name" file="${project.dir}"/>
-	<property name="context.path" value="ROOT"/>
-	<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
-	<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
-	<pathconvert property="configurations.names" refid="configurations.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
-	<scriptdef language="javascript" name="classLoaderTypeProperties">
-		<attribute name="from"/> 
-		<attribute name="to"/>
-		project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
-		var from = attributes.get("from").split(',');
-		var to = '';
-		for (var i = 0; i &lt; from.length; i++) {
-			to = to + ' -Dconfigurations.' + from[i] + '.classLoaderType=DirectoryClassLoader';
-		}
-		project.setProperty(attributes.get("to"), to);
-	</scriptdef>
-	<classLoaderTypeProperties from="${configurations.names}" to="classloader.type.properties"/>
-	<property name="configurations.auto.load" value="" if:set="ds.properties.configurations.names"/>
-	<property name="configurations.auto.load" value="-Dconfigurations.names=${configurations.names} ${classloader.type.properties}" unless:set="ds.properties.configurations.names"/>
-	<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;../../../../../../${project.dir}/${tests.dir}&quot; -Dscenariosroot1.description=Frank!Runner ${configurations.auto.load}"/>
+		<property name="dtap.stage" value="LOC"/>
+		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
+		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
+		<basename property="instance.name" file="${project.dir}"/>
+		<property name="context.path" value="ROOT"/>
 
-	<property name="jdk.version" value="8"/>
-	<property name="jdk.version.u" value="232"/>
-	<property name="jdk.version.b" value="09"/>
-	<property name="jdk.zip" value="OpenJDK8U-jdk_x64_windows_${jdk.version}.zip"/>
-	<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
-	<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
-	<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
-	<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
-	<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
-	<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-	<property name="tomcat.version" value="7.0.100"/>
-	<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
-	<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
-	<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
-	<property name="ff.version" value="7.5-20200214.142106"/>
-	<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
-	<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
-	<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
-	<property name="jms.version" value="1.1_spec-1.1"/>
-	<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
-	<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
-	<property name="h2.version" value="1.4.200"/>
-	<property name="h2.jar" value="h2-${h2.version}.jar"/>
-	<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
-	<property name="ojdbc.version" value="8-19.3.0.0"/>
-	<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
-	<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
+		<property name="update.strategy" value="latest"/>
+		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
+		<tstamp><format property="get.metadata.tstamp" pattern="yyyyddMM-HH"/></tstamp>
+		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not></and></condition>
+		<property name="get.metadata.maxtime" value="10"/>
+		<property name="get.metadata.ignoreerrors" value="true"/>
+		<get src="https://nexus.ibissource.org/service/local/repo_groups/public/content/org/ibissource/ibis-adapterframework-core/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
+		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
+		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 
-	<available property="jdk.zip.available" file="download/${jdk.zip}"/>
-	<available property="jdk.dir.available" file="${jdk.dir}"/>
-	<available property="ant.zip.available" file="download/${ant.zip}"/>
-	<available property="ant.dir.available" file="${ant.dir}"/>
-	<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
-	<available property="tomcat.dir.available" file="${tomcat.dir}"/>
-	<available property="ff.war.available" file="download/${ff.war}"/>
-	<available property="ff.dir.available" file="${ff.dir}"/>
-	<available property="jms.jar.available" file="download/${jms.jar}"/>
-	<available property="h2.jar.available" file="download/${h2.jar}"/>
-	<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
+		<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
+		<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
+		<pathconvert property="configurations.names" refid="configurations.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
+		<scriptdef language="javascript" name="classLoaderTypeProperties">
+			<attribute name="from"/> 
+			<attribute name="to"/>
+			project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
+			var from = attributes.get("from").split(',');
+			var to = '';
+			for (var i = 0; i &lt; from.length; i++) {
+				to = to + ' -Dconfigurations.' + from[i] + '.classLoaderType=DirectoryClassLoader';
+			}
+			project.setProperty(attributes.get("to"), to);
+		</scriptdef>
+		<classLoaderTypeProperties from="${configurations.names}" to="classloader.type.properties"/>
+		<property name="configurations.auto.load" value="" if:set="ds.properties.configurations.names"/>
+		<property name="configurations.auto.load" value="-Dconfigurations.names=${configurations.names} ${classloader.type.properties}" unless:set="ds.properties.configurations.names"/>
+		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;../../../../../../${project.dir}/${tests.dir}&quot; -Dscenariosroot1.description=Frank!Runner ${configurations.auto.load}"/>
 
-	<mkdir dir="download"/>
+		<property name="jdk.version" value="8"/>
+		<property name="jdk.version.u" value="232"/>
+		<property name="jdk.version.b" value="09"/>
+		<property name="jdk.zip" value="OpenJDK8U-jdk_x64_windows_${jdk.version}.zip"/>
+		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
+		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
+		<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
+		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
+		<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
+		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
+		<property name="tomcat.version" value="7.0.100"/>
+		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
+		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
+		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
+		<property name="ff.version" value="7.5-20200214.142106"/>
+		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
+		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
+		<property name="jms.version" value="1.1_spec-1.1"/>
+		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
+		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
+		<property name="h2.version" value="1.4.200"/>
+		<property name="h2.jar" value="h2-${h2.version}.jar"/>
+		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
+		<property name="ojdbc.version" value="8-19.3.0.0"/>
+		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
+		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
 
-	<target name="build" depends="get.java,get.ant,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc">
+		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
+		<available property="jdk.dir.available" file="${jdk.dir}"/>
+		<available property="ant.zip.available" file="download/${ant.zip}"/>
+		<available property="ant.dir.available" file="${ant.dir}"/>
+		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
+		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="ff.war.available" file="download/${ff.war}"/>
+		<available property="ff.dir.available" file="${ff.dir}"/>
+		<available property="jms.jar.available" file="download/${jms.jar}"/>
+		<available property="h2.jar.available" file="download/${h2.jar}"/>
+		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
+
+		<mkdir dir="download"/>
+	</target>
+
+	<target name="build" depends="init,get.java,get.ant,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
@@ -287,7 +302,7 @@ echo "                      |    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| |
 echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       |
 echo "                      |_______________________________________________________________________|
 echo "
-echo Tomcat ${param1}:${param2}          ${instance.name} on http://localhost/</echo><echo file="build/${param1}.bat" append="true" unless:set="context.path.is.root">${context.path}</echo><echo file="build/${param1}.bat" append="true">
+echo Tomcat ${param1}:${param2}          ${instance.name} with Frank!Framework ${ff.version} on http://localhost/</echo><echo file="build/${param1}.bat" append="true" unless:set="context.path.is.root">${context.path}</echo><echo file="build/${param1}.bat" append="true">
 echo "
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
