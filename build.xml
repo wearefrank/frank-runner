@@ -35,7 +35,7 @@
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyddMM-HH"/></tstamp>
-		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not></and></condition>
+		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
 		<get src="https://nexus.ibissource.org/service/local/repo_groups/public/content/org/ibissource/ibis-adapterframework-core/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
@@ -294,7 +294,7 @@ pause
 		<condition property="stop"><equals arg1="${param1}" arg2="stop"/></condition>
 		<!-- http://www.network-science.de/ascii/ font standard -->
 		<echo file="build/${param1}.bat">@echo off
-echo                        _________________________________________________________________________
+echo "                      _________________________________________________________________________
 echo "                      |     _____                _    _ ____                                  |
 echo "                      |    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __     |
 echo "                      |    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|    |
