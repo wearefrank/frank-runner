@@ -87,6 +87,8 @@
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
+		<property name="tomcat.connector.port" value="80"/>
+		<property name="tomcat.server.port" value="8005"/>
 		<property name="ff.version" value="7.6-20200306.163142"/>
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
@@ -123,11 +125,12 @@
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<delete dir="${tomcat.dir}/webapps" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- Speed up startup time -->
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<replace file="${tomcat.dir}/conf/server.xml" token="8080" value="80" summary="true" unless:set="tomcat.dir.available"/>
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
@@ -185,19 +188,19 @@
 	</target>
 
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
-	<target name="stop">
-		<condition property="tomcat.running"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+	<target name="stop" depends="init">
+		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so stop.bat is not present yet -->
 		<condition property="stop.bat.not.present"><not><resourceexists><file file="build\stop.bat"/></resourceexists></not></condition>
 		<exec executable="build\stop.bat" vmlauncher="false" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<sleep seconds="5" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
-		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<sleep seconds="10" if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
-		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
+		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<sleep seconds="20" if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
-		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="80"/><socket server="localhost" port="8005"/><socket server="localhost" port="8009"/></or></condition>
-		<fail message="Tomcat (or another process) is still running on port 80, 8005 or 8009. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
+		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
+		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
 	</target>
 
 	<target name="restart" depends="stop,build">
