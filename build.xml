@@ -38,11 +38,21 @@
 		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
+		<mkdir dir="download/metadata"/>
 		<get src="https://nexus.ibissource.org/service/local/repo_groups/public/content/org/ibissource/ibis-adapterframework-core/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
 		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
+
+		<tstamp><format property="get.build.tstamp" pattern="yyyyddMM"/></tstamp>
+		<condition property="get.build"><not><resourceexists><file file="download/frank-runner/build-${get.build.tstamp}.txt"/></resourceexists></not></condition>
+		<property name="get.build.maxtime" value="10"/>
+		<property name="get.build.ignoreerrors" value="true"/>
+		<mkdir dir="download/frank-runner"/>
+		<get src="https://raw.githubusercontent.com/ibissource/frank-runner/master/build.xml" dest="download/frank-runner/build.xml" maxtime="${get.build.maxtime}" ignoreerrors="${get.build.ignoreerrors}" verbose="on" if:set="get.build"/>
+		<echo file="download/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
+		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 
 		<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
 		<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
@@ -303,7 +313,11 @@ echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|
 echo "                      |_______________________________________________________________________|
 echo "
 echo Tomcat ${param1}:${param2}          ${instance.name} with Frank!Framework ${ff.version} on http://localhost/</echo><echo file="build/${param1}.bat" append="true" unless:set="context.path.is.root">${context.path}</echo><echo file="build/${param1}.bat" append="true">
-echo "
+echo "</echo><echo file="build/${param1}.bat" append="true" unless:set="frank.runner.up.to.date">
+echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+echo "                      !! Your Frank!Runner is out of date, please pull or download new version !!
+echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+echo "</echo><echo file="build/${param1}.bat" append="true">
 echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
