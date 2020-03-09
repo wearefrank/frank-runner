@@ -6,6 +6,11 @@ if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
 if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_8.zip" (
+	echo Download:
+	echo https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_windows_8u232b09.zip
+	echo To:
+	echo %~dp0download\OpenJDK8U-jdk_x64_windows_8.zip
+	echo In case of errors you might want to do this manually
 	curl -o "%~dp0download\OpenJDK8U-jdk_x64_windows_8.zip.tmp" -L https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_windows_8u232b09.zip
 	if errorlevel 1 (
 		goto error
@@ -20,7 +25,12 @@ if not exist "%~dp0build\openjdk-8u232-b09\" (
 	move "%~dp0build\tmp\build\openjdk-8u232-b09" "%~dp0build\openjdk-8u232-b09"
 )
 if not exist "%~dp0download\apache-ant-1.10.7-bin.zip" (
-	curl -o "%~dp0download\apache-ant-1.10.7-bin.zip.tmp" -L http://apache.redkiwi.nl//ant/binaries/apache-ant-1.10.7-bin.zip
+	echo Download:
+	echo http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.7-bin.zip
+	echo To:
+	echo %~dp0download\apache-ant-1.10.7-bin.zip
+	echo In case of errors you might want to do this manually
+	curl -o "%~dp0download\apache-ant-1.10.7-bin.zip.tmp" -L http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.7-bin.zip
 	if errorlevel 1 (
 		goto error
 	)
