@@ -1,3 +1,5 @@
+# stel een precontrole voor die de benodigde bestanden en directories checkt op aanwezigheid
+# ik mis de shell uitvoering
 @echo off
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
