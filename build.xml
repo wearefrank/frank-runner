@@ -246,44 +246,36 @@
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
 )
-if not exist "%~dp0build\" (
-	mkdir "%~dp0build"
+if not exist "%~dp0build\tmp\build\" (
+	mkdir "%~dp0build\tmp\build"
 )
 if not exist "%~dp0download\${jdk.zip}" (
-	curl -o "%~dp0download\${jdk.zip}" -L https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_windows_8u232b09.zip
+	curl -o "%~dp0download\${jdk.zip}.tmp" -L https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_x64_windows_8u232b09.zip
 	if errorlevel 1 (
-		if exist "%~dp0download\${jdk.zip}" (
-			del "%~dp0download\${jdk.zip}"
-		)
 		goto error
 	)
+	move "%~dp0download\${jdk.zip}.tmp" "%~dp0download\${jdk.zip}"
 )
 if not exist "%~dp0${jdk.dir.windows}\" (
-	tar xvf "%~dp0download\${jdk.zip}" -C "%~dp0build"
+	tar xvf "%~dp0download\${jdk.zip}" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
-		if exist "%~dp0${jdk.dir.windows}\" (
-			rmdir /S /Q "%~dp0${jdk.dir.windows}\"
-		)
 		goto error
 	)
+	move "%~dp0build\tmp\${jdk.dir.windows}" "%~dp0${jdk.dir.windows}"
 )
 if not exist "%~dp0download\${ant.zip}" (
-	curl -o "%~dp0download\${ant.zip}" -L http://apache.redkiwi.nl//ant/binaries/apache-ant-1.10.7-bin.zip
+	curl -o "%~dp0download\${ant.zip}.tmp" -L http://apache.redkiwi.nl//ant/binaries/apache-ant-1.10.7-bin.zip
 	if errorlevel 1 (
-		if exist "%~dp0download\${ant.zip}" (
-			del "%~dp0download\${ant.zip}"
-		)
 		goto error
 	)
+	move "%~dp0download\${ant.zip}.tmp" "%~dp0download\${ant.zip}"
 )
 if not exist "%~dp0${ant.dir.windows}\" (
-	tar xvf "%~dp0download\${ant.zip}" -C "%~dp0build"
+	tar xvf "%~dp0download\${ant.zip}" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
-		if exist "%~dp0${ant.dir.windows}\" (
-			rmdir /S /Q "%~dp0${ant.dir.windows}\"
-		)
 		goto error
 	)
+	move "%~dp0build\tmp\${ant.dir.windows}" "%~dp0${ant.dir.windows}"
 )
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo><echo file="${param1}.bat" append="true" if:set="restart.or.stop">
 call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" stop
