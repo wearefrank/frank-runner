@@ -254,7 +254,9 @@ if not exist "%~dp0download\${jdk.zip}" (
 	echo ${jdk.url}
 	echo To:
 	echo %~dp0download\${jdk.zip}
-	echo In case of errors you might want to do this manually
+	echo !!
+	echo !! In case of errors you might want to do this manually and/or restart this script
+	echo !!
 	curl -o "%~dp0download\${jdk.zip}.tmp" -L ${jdk.url}
 	if errorlevel 1 (
 		goto error
