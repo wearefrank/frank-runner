@@ -24,8 +24,6 @@
 		<property name="lib.server.dir" value="lib/server"/>
 		<property name="lib.webapp.dir" value="lib/webapp"/>
 		<property name="database.type" value="h2"/>
-		<property name="h2.dir" value="${basedir}/build/h2"/>
-
 		<property name="dtap.stage" value="LOC"/>
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
@@ -99,6 +97,7 @@
 		<property name="h2.version" value="1.4.200"/>
 		<property name="h2.jar" value="h2-${h2.version}.jar"/>
 		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
+		<property name="h2.dir" value="${basedir}/build/h2"/>
 		<property name="ojdbc.version" value="8-19.3.0.0"/>
 		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
