@@ -6,9 +6,7 @@ Basically all you have to do is clone or download this project and run start.bat
 by double clicking it. When Tomcat has started you can browse to the following
 address:
 
-```
 http://localhost/
-```
 
 
 # Switching projects
@@ -111,6 +109,86 @@ in the Frank!Framework console (or restart Tomcat).
 More information on Frank configuration files and Frank property files and how
 to use them can be found in the
 [Frank!Manual](https://frank-manual.readthedocs.io/).
+
+
+# Frank!Framework version
+
+By default the Frank!Runner will check once every hour at startup whether a new
+Frank!Framework version is available and download and use the latest
+Frank!Framework version. This means you are running a Frank!Framework version
+with the latest and greatest features but also a version that did not yet pass
+all quality checks yet. Hence, you might run into a bug in the Frank!Framework.
+Please report any Frank!Framework bugs at:
+
+https://github.com/ibissource/iaf/issues
+
+We appreciate your help but in case you would like to use a more reliable
+version and/or like to disable the update mechanism add the following to either
+a build.properties in the frank-runner folder or a frank-runner.properties in
+the root folder of your project:
+
+```
+update.strategy=none
+```
+
+Or specify a specific Frank!Framework version like:
+
+```
+ff.version=7.4
+```
+
+Or:
+
+```
+ff.version=7.6-20200306.163142
+```
+
+Check the following url to see all available Frank!Framework versions:
+
+https://nexus.ibissource.org/service/local/repo_groups/public/content/org/ibissource/ibis-adapterframework-core/maven-metadata.xml
+
+Please note that very old versions might not run correctly with the
+Frank!Runner.
+
+
+# Other properties and software versions
+
+At the top of the build.xml (in the init target) you will find a lot of
+properties which you can override in either a build.properties in the
+frank-runner folder or a frank-runner.properties in the root folder of your
+project.
+
+You could for example specify a different JDK, Ant or Tomcat version. E.g. for
+Tomcat use:
+
+```
+tomcat.version=7.0.100
+```
+
+Please consider making a pull request in case you find a newer software version
+to keep the Frank!Runner up to date with the latest software versions.
+
+In some cases you might want to run on a different port and/or context. E.g. to
+run on:
+
+http://localhost:81/test
+
+Use:
+
+```
+tomcat.connector.port=81
+context.path=test
+```
+
+In case you have another Tomcat running on port 80 (possible using another
+Frank!Runner instance) you probably also want to change the tomcat.server.port
+which defaults to 8005 to prevent a conflict between the two Tomcat instances.
+E.g. use:
+
+```
+tomcat.server.port=8105
+```
+
 
 # How to add custom jars and classes
 
@@ -236,9 +314,7 @@ projects\frank-runner> ./run.sh
 You can now browse to the following address to find the Frank!Framework
 console:
 
-```
 http://localhost/
-```
 
 You can stop Tomcat using the following combination of keys: 
 
