@@ -7,7 +7,14 @@
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
+		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/war/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
+
+		<property name="classes.dir" value="war/src/main/resources" if:set="war.pom.xml.available"/>
+		<property name="configurations.dir" value="war/src/main/configurations" if:set="war.pom.xml.available"/>
+		<property name="java.dir" value="war/src/main/java" if:set="war.pom.xml.available"/>
+		<property name="tests.dir" value="war/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="context.xml" value="war/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
@@ -15,14 +22,11 @@
 		<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
 		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
 
-		<property name="classes.dir" value="classes" unless:set="pom.xml.available"/>
-		<property name="configurations.dir" value="configurations" unless:set="pom.xml.available"/>
-		<property name="java.dir" value="java" unless:set="pom.xml.available"/>
-		<property name="tests.dir" value="tests" unless:set="pom.xml.available"/>
-		<property name="context.xml" value="context.xml" unless:set="pom.xml.available"/>
-
-		<property name="scenariosroot1.directory" location="${projects.dir}/${project.dir}/${tests.dir}"/>
-		<property name="scenariosroot1.description" value="Frank!Runner"/>
+		<property name="classes.dir" value="classes"/>
+		<property name="configurations.dir" value="configurations"/>
+		<property name="java.dir" value="java"/>
+		<property name="tests.dir" value="tests"/>
+		<property name="context.xml" value="context.xml"/>
 
 		<property name="lib.server.dir" value="lib/server"/>
 		<property name="lib.webapp.dir" value="lib/webapp"/>
@@ -55,24 +59,59 @@
 		<echo file="download/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 
-		<!-- automatically load all configurations in configurations.directory (this can be removed when implemented in the framework) -->
-		<dirset id="configurations.dirs.id" dir="${projects.dir}/${project.dir}/${configurations.dir}" includes="*"/>
-		<pathconvert property="configurations.names" refid="configurations.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
-		<scriptdef language="javascript" name="classLoaderTypeProperties">
-			<attribute name="from"/> 
-			<attribute name="to"/>
-			project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
-			var from = attributes.get("from").split(',');
-			var to = '';
-			for (var i = 0; i &lt; from.length; i++) {
-				to = to + ' -Dconfigurations.' + from[i] + '.classLoaderType=DirectoryClassLoader';
+		<property name="configurations.dirset.dir" value="${projects.dir}"/>
+		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
+		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*"/>
+		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
+		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
+		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<scriptdef language="javascript" name="configurationssystemproperties">
+			<attribute name="name"/>
+			<attribute name="configurationsdir"/>
+			<attribute name="configurationsnames"/>
+			<attribute name="configurationsnamesds"/>
+			<attribute name="configurationsdirs"/>
+			<attribute name="configurationsdirsflat"/>
+			var configurationsDir = attributes.get("configurationsdir");
+			var configurationsNames = attributes.get("configurationsnames");
+			var configurationsNamesDs = attributes.get("configurationsnamesds");
+			var configurationsDirs = attributes.get("configurationsdirs").split('|');
+			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
+			var value = '-Dconfigurations.directory="' + configurationsDir + '"';
+			if (configurationsNames != '${configurations.names}') {
+				value += ' -Dconfigurations.names="' + configurationsNames + '"';
+			} else {
+				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
+					value += ' -Dconfigurations.names="' + configurationsDirsFlat + '"';
+				}
 			}
-			project.setProperty(attributes.get("to"), to);
+			for (var i = 0; i &lt; configurationsDirs.length; i++) {
+				value += ' -Dconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
+				value += ' -Dconfigurations.' + configurationsDirsFlat[i] + '.directory="' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1) + '"';
+			}
+			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<classLoaderTypeProperties from="${configurations.names}" to="classloader.type.properties"/>
-		<property name="configurations.auto.load" value="" if:set="ds.properties.configurations.names"/>
-		<property name="configurations.auto.load" value="-Dconfigurations.names=${configurations.names} ${classloader.type.properties}" unless:set="ds.properties.configurations.names"/>
-		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} -Dconfigurations.directory=&quot;${projects.dir}/${project.dir}/${configurations.dir}&quot; -Dscenariosroot1.directory=&quot;${scenariosroot1.directory}&quot; -Dscenariosroot1.description=&quot;${scenariosroot1.description}&quot; ${configurations.auto.load}"/>
+		<configurationssystemproperties name="configurations.system.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}"/>
+
+		<property name="tests.dirset.dir" value="${projects.dir}"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir}"/>
+		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
+		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
+		<scriptdef language="javascript" name="testssystemproperties">
+			<attribute name="name"/>
+			<attribute name="testsdirs"/> 
+			var testsDirs = attributes.get("testsdirs").split('|');
+			var value = '';
+			for (var i = 0; i &lt; testsDirs.length; i++) {
+				value += ' -Dscenariosroot' + (i + 1) + '.directory="' + testsDirs[i] + '"';
+				value += ' -Dscenariosroot' + (i + 1) + '.description="' + testsDirs[i] + '"';
+			}
+			project.setProperty(attributes.get("name"), value);
+		</scriptdef>
+		<testssystemproperties name="tests.system.properties" testsdirs="${tests.dirs}"/>
+
+		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} ${configurations.system.properties} ${tests.system.properties}"/>
 
 		<property name="jdk.version" value="8"/>
 		<property name="jdk.version.u" value="232"/>
@@ -327,7 +366,7 @@ echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 echo "                      !! Your Frank!Runner is out of date, please pull or download new version !!
 echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 echo "</echo><echo file="build/${param1}.bat" append="true">
-echo Using configurations:  "${projects.dir}/${project.dir}/${configurations.dir}"
+echo Using configurations:  "${configurations.dirset.dir}/${configurations.dirset.includes}"
 set JAVA_HOME=%~dp0..\${jdk.dir.windows}
 set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
 set JAVA_OPTS=-Xmx1024M ${system.properties} %*</echo><echo file="build/${param1}.bat" append="true">
