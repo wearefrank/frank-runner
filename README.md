@@ -44,14 +44,15 @@ projects\frank-runner> .\start.bat -Dproject.dir=Frank2YourApplication
 
 Or to make it easy to switch between projects you can give every project it's
 own small build.xml and run it for example from Eclipse or VSCode (see the
-sections [Eclipse](#eclipse) and [VSCode](#vscode)). An example build.xml for
-the Frank2YourApplication could be:
+sections [Eclipse](#eclipse) and [VSCode](#vscode)). Create a build.xml in the
+root folder of your project with the following content:
 
 ```
-<project default="restart.frank2yourapplication">
-	<target name="restart.frank2yourapplication">
+<project default="restart">
+	<target name="restart">
+		<basename property="project.dir" file="${basedir}"/>
 		<exec executable="../frank-runner/restart.bat" vmlauncher="false">
-			<arg value="-Dproject.dir=Frank2YourApplication"/>
+			<arg value="-Dproject.dir=${project.dir}"/>
 		</exec>
 	</target>
 </project>
