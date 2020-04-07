@@ -101,15 +101,22 @@
 		<scriptdef language="javascript" name="testssystemproperties">
 			<attribute name="name"/>
 			<attribute name="testsdirs"/> 
+			<attribute name="projectsdir"/> 
 			var testsDirs = attributes.get("testsdirs").split('|');
+			var projectsdir = attributes.get("projectsdir");
 			var value = '';
 			for (var i = 0; i &lt; testsDirs.length; i++) {
 				value += ' -Dscenariosroot' + (i + 1) + '.directory="' + testsDirs[i] + '"';
-				value += ' -Dscenariosroot' + (i + 1) + '.description="' + testsDirs[i] + '"';
+				var description = testsDirs[i];
+				if (description.startsWith(projectsdir)) {
+					description = description.substring(projectsdir.length());
+				}
+				value += ' -Dscenariosroot' + (i + 1) + '.description="' + description + '"';
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<testssystemproperties name="tests.system.properties" testsdirs="${tests.dirs}"/>
+		<property name="projects.dir.absolute" location="${projects.dir}"/>
+		<testssystemproperties name="tests.system.properties" testsdirs="${tests.dirs}" projectsdir="${projects.dir.absolute}"/>
 
 		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} ${configurations.system.properties} ${tests.system.properties}"/>
 
