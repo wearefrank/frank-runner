@@ -240,7 +240,7 @@ Install plugin Ant Target Runner and configure it to use ant.bat or any other
 ant installation by adding the following to settings.json:
 
 ```
-"ant.executable": "C:\\path\\to\\frank!framework\\ant.bat",
+"ant.executable": "C:\\path\\to\\frank-runner\\ant.bat",
 ```
 
 You might need to restart VSCode for the Ant Target Runner plugin to detect the
