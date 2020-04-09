@@ -180,10 +180,10 @@
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- Speed up startup time -->
-		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
+		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
+		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
+		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
