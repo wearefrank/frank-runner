@@ -65,7 +65,7 @@
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
 		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><mapper type="flatten"/></pathconvert>
-		<scriptdef language="javascript" name="configurationssystemproperties">
+		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
 			<attribute name="configurationsdir"/>
 			<attribute name="configurationsnames"/>
@@ -77,48 +77,48 @@
 			var configurationsNamesDs = attributes.get("configurationsnamesds");
 			var configurationsDirs = attributes.get("configurationsdirs").split('|');
 			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
-			var value = '-Dconfigurations.directory="' + configurationsDir + '"';
+			var value = '\nconfigurations.directory=' + configurationsDir.replace(/\\/g, "\\\\");
 			if (configurationsNames != '${configurations.names}') {
-				value += ' -Dconfigurations.names="' + configurationsNames + '"';
+				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
-					value += ' -Dconfigurations.names="' + configurationsDirsFlat + '"';
+					value += '\nconfigurations.names=' + configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
 				}
 			}
 			for (var i = 0; i &lt; configurationsDirs.length; i++) {
-				value += ' -Dconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
-				value += ' -Dconfigurations.' + configurationsDirsFlat[i] + '.directory="' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1) + '"';
+				value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
+				value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<configurationssystemproperties name="configurations.system.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}"/>
+		<configurationsproperties name="configurations.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}"/>
 
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir}"/>
 		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
 		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
-		<scriptdef language="javascript" name="testssystemproperties">
+		<scriptdef language="javascript" name="testsproperties">
 			<attribute name="name"/>
-			<attribute name="testsdirs"/> 
-			<attribute name="projectsdir"/> 
+			<attribute name="testsdirs"/>
+			<attribute name="projectsdir"/>
 			var testsDirs = attributes.get("testsdirs").split('|');
 			var projectsdir = attributes.get("projectsdir");
 			var value = '';
 			for (var i = 0; i &lt; testsDirs.length; i++) {
-				value += ' -Dscenariosroot' + (i + 1) + '.directory="' + testsDirs[i] + '"';
+				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace(/\\/g, "\\\\");
 				var description = testsDirs[i];
 				if (description.startsWith(projectsdir)) {
 					description = description.substring(projectsdir.length());
 				}
-				value += ' -Dscenariosroot' + (i + 1) + '.description="' + description + '"';
+				value += '\nscenariosroot' + (i + 1) + '.description=' + description.replace(/\\/g, "\\\\");
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
 		<property name="projects.dir.absolute" location="${projects.dir}"/>
-		<testssystemproperties name="tests.system.properties" testsdirs="${tests.dirs}" projectsdir="${projects.dir.absolute}"/>
+		<testsproperties name="tests.properties" testsdirs="${tests.dirs}" projectsdir="${projects.dir.absolute}"/>
 
-		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name} ${configurations.system.properties} ${tests.system.properties}"/>
+		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name}"/>
 
 		<property name="jdk.version" value="8"/>
 		<property name="jdk.version.u" value="232"/>
@@ -187,6 +187,8 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
+		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
