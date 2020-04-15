@@ -123,8 +123,8 @@
 		<property name="jdk.version" value="8"/>
 		<property name="jdk.version.u" value="232"/>
 		<property name="jdk.version.b" value="09"/>
-		<property name="jdk.zip" value="OpenJDK8U-jdk_x64_windows_${jdk.version}.zip"/>
-		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
+		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}.zip"/>
+		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
 		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
 		<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
 		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
