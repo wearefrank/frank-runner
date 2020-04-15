@@ -150,11 +150,9 @@
 		<property name="ojdbc.version" value="8-19.3.0.0"/>
 		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
-		<!-- MSSQL driver -->
 		<property name="mssql.version" value="7.4.1.jre8"/>
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
-		<property name="mssql.dir" value="${basedir}/build/mssql"/>
 
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
