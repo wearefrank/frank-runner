@@ -248,11 +248,14 @@
 		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so stop.bat is not present yet -->
 		<condition property="stop.bat.not.present"><not><resourceexists><file file="build\stop.bat"/></resourceexists></not></condition>
 		<exec executable="build\stop.bat" vmlauncher="false" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
+		<echo message="Wait 5 seconds for Tomcat to stop..." if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<sleep seconds="5" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
 		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
+		<echo message="Wait 10 seconds for Tomcat to stop..." if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
 		<sleep seconds="10" if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
 		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
+		<echo message="Wait 20 seconds for Tomcat to stop..." if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
 		<sleep seconds="20" if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
 		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
