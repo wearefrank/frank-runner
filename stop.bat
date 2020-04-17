@@ -50,5 +50,8 @@ call "%~dp0build\apache-ant-1.10.7\bin\ant" -buildfile "%~dp0build.xml" stop
 if errorlevel 1 goto error
 goto end
 :error
-pause
+set exiterrorlevel=%errorlevel%
+set arg0=%0
+if [%arg0:~2,1%]==[:] pause
+exit /b %exiterrorlevel%
 :end

@@ -126,7 +126,7 @@
 		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}.zip"/>
 		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
 		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
-		<property name="ant.version." value="1.10.7"/><!-- Extra . because ant.version is a build-in property -->
+		<property name="ant.version." value="1.10.7"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
 		<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
@@ -177,7 +177,7 @@
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- Speed up startup time -->
+		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- speed up startup time -->
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
@@ -239,7 +239,7 @@
 	</target>
 
 	<target name="start" depends="build">
-		<exec executable="build\start.bat" vmlauncher="false"/>
+		<exec executable="build\start.bat" vmlauncher="false" failonerror="true"/>
 	</target>
 
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
@@ -247,7 +247,7 @@
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so stop.bat is not present yet -->
 		<condition property="stop.bat.not.present"><not><resourceexists><file file="build\stop.bat"/></resourceexists></not></condition>
-		<exec executable="build\stop.bat" vmlauncher="false" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
+		<exec executable="build\stop.bat" vmlauncher="false" failonerror="true" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<echo message="Wait 5 seconds for Tomcat to stop..." if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<sleep seconds="5" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
 		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
@@ -262,8 +262,8 @@
 	</target>
 
 	<target name="restart" depends="stop,build">
-		<!-- Don't use an antcall with target="start" otherwise target build will run another time -->
-		<exec executable="build\start.bat" vmlauncher="false"/>
+		<!-- don't use an antcall with target="start" otherwise target build will run another time -->
+		<exec executable="build\start.bat" vmlauncher="false" failonerror="true"/>
 	</target>
 
 	<target name="get.java" unless="jdk.zip.available">
@@ -364,7 +364,10 @@ call "%~dp0build\${param1}.bat" %*
 if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true">
 goto end
 :error
-pause
+set exiterrorlevel=%errorlevel%<!-- exit with errorlevel of previous command -->
+set arg0=%0<!-- https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window -->
+if [%arg0:~2,1%]==[:] pause
+exit /b %exiterrorlevel%
 :end</echo>
 	</target>
 

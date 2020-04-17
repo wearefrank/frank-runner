@@ -54,5 +54,8 @@ call "%~dp0build\start.bat" %*
 if errorlevel 1 goto error
 goto end
 :error
-pause
+set exiterrorlevel=%errorlevel%
+set arg0=%0
+if [%arg0:~2,1%]==[:] pause
+exit /b %exiterrorlevel%
 :end

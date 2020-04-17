@@ -51,7 +51,7 @@ root folder of your project with the following content:
 <project default="restart">
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false">
+		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=${project.dir}"/>
 		</exec>
 	</target>
