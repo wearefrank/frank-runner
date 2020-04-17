@@ -7,7 +7,7 @@
 		username="@instance.name.lc@_user"
 		password="@instance.name.lc@_password"
 		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-		url="jdbc:sqlserver://localhost:60772"
+		url="jdbc:sqlserver://localhost:60086"
 	/> 
 
 </Context>
