@@ -52,6 +52,6 @@ goto end
 :error
 set exiterrorlevel=%errorlevel%
 set arg0=%0
-if [%arg0:~2,1%]==[:] pause
+if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 exit /b %exiterrorlevel%
 :end
