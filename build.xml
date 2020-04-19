@@ -366,7 +366,6 @@ goto end
 :error
 set exiterrorlevel=%errorlevel%<!-- exit with errorlevel of previous command -->
 set arg0=%0<!-- https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window -->
-if [%arg0:~2,1%]==[:] pause
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 exit /b %exiterrorlevel%
 :end</echo>
