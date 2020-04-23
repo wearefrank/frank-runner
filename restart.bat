@@ -46,11 +46,7 @@ if not exist "%~dp0build\apache-ant-1.10.7\" (
 	move "%~dp0build\tmp\build\apache-ant-1.10.7" "%~dp0build\apache-ant-1.10.7"
 )
 set JAVA_HOME=%~dp0build\openjdk-8u232-b09
-call "%~dp0build\apache-ant-1.10.7\bin\ant" -buildfile "%~dp0build.xml" stop
-if errorlevel 1 goto error
-call "%~dp0build\apache-ant-1.10.7\bin\ant" -buildfile "%~dp0build.xml" %* build
-if errorlevel 1 goto error
-call "%~dp0build\start.bat" %*
+call "%~dp0build\apache-ant-1.10.7\bin\ant" -buildfile "%~dp0build.xml" %* restart
 if errorlevel 1 goto error
 goto end
 :error

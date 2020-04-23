@@ -37,6 +37,55 @@
 		<basename property="instance.name" file="${project.dir}"/>
 		<property name="context.path" value="ROOT"/>
 
+		<property name="maxmemory" value="1024M"/>
+
+		<property name="jdk.version" value="8"/>
+		<property name="jdk.version.u" value="232"/>
+		<property name="jdk.version.b" value="09"/>
+		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}.zip"/>
+		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
+		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
+		<property name="ant.version." value="1.10.7"/><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
+		<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
+		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
+		<property name="tomcat.version" value="7.0.100"/>
+		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
+		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
+		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
+		<property name="tomcat.connector.port" value="80"/>
+		<property name="tomcat.server.port" value="8005"/>
+		<property name="ff.version" value="7.6-20200306.163142"/>
+		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
+		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
+		<property name="jms.version" value="1.1_spec-1.1"/>
+		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
+		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
+		<property name="h2.version" value="1.4.200"/>
+		<property name="h2.jar" value="h2-${h2.version}.jar"/>
+		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
+		<property name="h2.dir" value="${basedir}/build/h2"/>
+		<property name="ojdbc.version" value="8-19.3.0.0"/>
+		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
+		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
+		<property name="mssql.version" value="7.4.1.jre8"/>
+		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
+		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
+
+		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
+		<available property="jdk.dir.available" file="${jdk.dir}"/>
+		<available property="ant.zip.available" file="download/${ant.zip}"/>
+		<available property="ant.dir.available" file="${ant.dir}"/>
+		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
+		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="ff.war.available" file="download/${ff.war}"/>
+		<available property="ff.dir.available" file="${ff.dir}"/>
+		<available property="jms.jar.available" file="download/${jms.jar}"/>
+		<available property="h2.jar.available" file="download/${h2.jar}"/>
+		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
+		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
+
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyddMM-HH"/></tstamp>
@@ -58,6 +107,26 @@
 		<get src="https://raw.githubusercontent.com/ibissource/frank-runner/master/build.xml" dest="download/frank-runner/build.xml" maxtime="${get.build.maxtime}" ignoreerrors="${get.build.ignoreerrors}" verbose="on" if:set="get.build"/>
 		<echo file="download/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
+		
+		<propertyset id="system.properties.set">
+			<propertyref builtin="commandline"/>
+			<propertyref name="dtap.stage"/>
+			<propertyref name="instance.name"/>
+		</propertyset>
+		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
+		<scriptdef language="javascript" name="systemproperties">
+			<attribute name="name"/>
+			<attribute name="commaseparated"/>
+			var commaSeparated = attributes.get("commaseparated").split(', ');
+			var value = '';
+			for (var i = 0; i &lt; commaSeparated.length; i++) {
+				if (!commaSeparated[i].startsWith('ant.')) {
+					value += '\n' + commaSeparated[i].replace(/\\/g, "\\\\");
+				}
+			}
+			project.setProperty(attributes.get("name"), value);
+		</scriptdef>
+		<systemproperties name="system.properties" commaseparated="${system.properties.comma.separated}"/>
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
@@ -118,54 +187,9 @@
 		<property name="projects.dir.absolute" location="${projects.dir}"/>
 		<testsproperties name="tests.properties" testsdirs="${tests.dirs}" projectsdir="${projects.dir.absolute}"/>
 
-		<property name="system.properties" value="-Dotap.stage=${dtap.stage} -Dinstance.name=${instance.name}"/>
-
-		<property name="jdk.version" value="8"/>
-		<property name="jdk.version.u" value="232"/>
-		<property name="jdk.version.b" value="09"/>
-		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}.zip"/>
-		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
-		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
-		<property name="ant.version." value="1.10.7"/><!-- extra . because ant.version is a build-in property -->
-		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
-		<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
-		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-		<property name="tomcat.version" value="7.0.100"/>
-		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
-		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
-		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
-		<property name="tomcat.connector.port" value="80"/>
-		<property name="tomcat.server.port" value="8005"/>
-		<property name="ff.version" value="7.6-20200306.163142"/>
-		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
-		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
-		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
-		<property name="jms.version" value="1.1_spec-1.1"/>
-		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
-		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
-		<property name="h2.version" value="1.4.200"/>
-		<property name="h2.jar" value="h2-${h2.version}.jar"/>
-		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
-		<property name="h2.dir" value="${basedir}/build/h2"/>
-		<property name="ojdbc.version" value="8-19.3.0.0"/>
-		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
-		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
-		<property name="mssql.version" value="7.4.1.jre8"/>
-		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
-		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
-
-		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
-		<available property="jdk.dir.available" file="${jdk.dir}"/>
-		<available property="ant.zip.available" file="download/${ant.zip}"/>
-		<available property="ant.dir.available" file="${ant.dir}"/>
-		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
-		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
-		<available property="ff.war.available" file="download/${ff.war}"/>
-		<available property="ff.dir.available" file="${ff.dir}"/>
-		<available property="jms.jar.available" file="download/${jms.jar}"/>
-		<available property="h2.jar.available" file="download/${h2.jar}"/>
-		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
-		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
+		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 
 		<mkdir dir="download"/>
 	</target>
@@ -186,7 +210,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
-		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
+		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
@@ -223,47 +247,101 @@
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- scripts -->
-		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
-		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
-		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
-		<!-- the generic scripts do not contain user specific data and should be committed to git -->
-		<antcall target="generate.generic.bat"><param name="param1" value="restart"/></antcall>
-		<antcall target="generate.generic.bat"><param name="param1" value="start"/></antcall>
-		<antcall target="generate.generic.bat"><param name="param1" value="stop"/></antcall>
-		<antcall target="generate.generic.bat"><param name="param1" value="run"/></antcall>
-		<antcall target="generate.generic.bat"><param name="param1" value="ant"/></antcall>
-		<!-- the user specific scripts may contain user specific data, hence are stored in the build folder -->
-		<antcall target="generate.user.specific.bat"><param name="param1" value="start"/><param name="param2" value=""/></antcall>
-		<antcall target="generate.user.specific.bat"><param name="param1" value="stop"/><param name="param2" value=" "/></antcall>
-		<antcall target="generate.user.specific.bat"><param name="param1" value="run"/><param name="param2" value="  "/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="ant"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="start"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="stop"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="run"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="restart"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="rerun"/></antcall>
 	</target>
 
 	<target name="start" depends="build">
-		<exec executable="build\start.bat" vmlauncher="false" failonerror="true"/>
+		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
+		<!-- with exec in windows a new window will be opened -->
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg line="start > ${tomcat.dir.windows}\logs\tomcat-start.txt"/>
+			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
+		</exec>
+		<!-- with java in windows no new window will be opened -->
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true" maxmemory="${maxmemory}" if:set="use.java">
+			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
+			<arg line="start"/>
+			<classpath>
+				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
+			</classpath>
+		</java>
+		<antcall target="splash"/>
+	</target>
+
+	<target name="run" depends="build">
+		<condition property="use.exec"><equals arg1="${use}" arg2="exec"/></condition>
+		<condition property="use.java"><not><equals arg1="${use}" arg2="exec"/></not></condition>
+		<antcall target="splash"/>
+		<echo message=""/>
+		<echo message=""/>
+		<!-- with exec in windows a ctrl-c will not kill tomcat -->
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg line="run"/>
+			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
+		</exec>
+		<!-- with java in windows a ctrl-c will kill tomcat -->
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" maxmemory="${maxmemory}" if:set="use.java">
+			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
+			<arg line="start"/>
+			<classpath>
+				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
+			</classpath>
+		</java>
 	</target>
 
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so stop.bat is not present yet -->
-		<condition property="stop.bat.not.present"><not><resourceexists><file file="build\stop.bat"/></resourceexists></not></condition>
-		<exec executable="build\stop.bat" vmlauncher="false" failonerror="true" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
-		<echo message="Wait 5 seconds for Tomcat to stop..." if:set="tomcat.running" unless:set="stop.bat.not.present"/>
-		<sleep seconds="5" if:set="tomcat.running" unless:set="stop.bat.not.present"/>
+		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
+		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir.windows}\bin\catalina.bat"/></resourceexists></not></condition>
+		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg line="stop > ${tomcat.dir.windows}\logs\tomcat-stop.txt"/>
+			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+		</exec>
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" if:set="use.java">
+			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
+			<arg line="stop"/>
+			<classpath>
+				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
+				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
+			</classpath>
+		</java>
+		<echo message="Wait 5 seconds for Tomcat to stop..." if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
+		<sleep seconds="5" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
 		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
 		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<echo message="Wait 10 seconds for Tomcat to stop..." if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
-		<sleep seconds="10" if:set="tomcat.running2" unless:set="stop.bat.not.present"/>
+		<echo message="Wait 10 seconds for Tomcat to stop..." if:set="tomcat.running2" unless:set="catalina.bat.not.present"/>
+		<sleep seconds="10" if:set="tomcat.running2" unless:set="catalina.bat.not.present"/>
 		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<echo message="Wait 20 seconds for Tomcat to stop..." if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
-		<sleep seconds="20" if:set="tomcat.running3" unless:set="stop.bat.not.present"/>
+		<echo message="Wait 20 seconds for Tomcat to stop..." if:set="tomcat.running3" unless:set="catalina.bat.not.present"/>
+		<sleep seconds="20" if:set="tomcat.running3" unless:set="catalina.bat.not.present"/>
 		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
 	</target>
 
-	<target name="restart" depends="stop,build">
-		<!-- don't use an antcall with target="start" otherwise target build will run another time -->
-		<exec executable="build\start.bat" vmlauncher="false" failonerror="true"/>
+	<target name="restart">
+		<antcall target="stop"/>
+		<antcall target="start"/>
+	</target>
+
+	<target name="rerun">
+		<antcall target="stop"/>
+		<antcall target="run"/>
 	</target>
 
 	<target name="get.java" unless="jdk.zip.available">
@@ -298,11 +376,7 @@
 		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
 	</target>
 
-	<target name="generate.generic.bat">
-		<condition property="restart.or.stop"><or><equals arg1="${param1}" arg2="restart"/><equals arg1="${param1}" arg2="stop"/></or></condition>
-		<condition property="restart.start.or.run"><or><equals arg1="${param1}" arg2="restart"/><equals arg1="${param1}" arg2="start"/><equals arg1="${param1}" arg2="run"/></or></condition>
-		<condition property="restart"><equals arg1="${param1}" arg2="restart"/></condition>
-		<condition property="start.or.run"><or><equals arg1="${param1}" arg2="start"/><equals arg1="${param1}" arg2="run"/></or></condition>
+	<target name="generate.bat">
 		<condition property="ant"><equals arg1="${param1}" arg2="ant"/></condition>
 		<echo file="${param1}.bat">@echo off
 if not exist "%~dp0download\" (
@@ -351,17 +425,9 @@ if not exist "%~dp0${ant.dir.windows}\" (
 	)
 	move "%~dp0build\tmp\${ant.dir.windows}" "%~dp0${ant.dir.windows}"
 )
-set JAVA_HOME=%~dp0${jdk.dir.windows}</echo><echo file="${param1}.bat" append="true" if:set="restart.or.stop">
-call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" stop
-if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart.start.or.run">
-call "%~dp0${ant.dir.windows}\bin\ant" -buildfile "%~dp0build.xml" %* build
-if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="ant">
-call "%~dp0${ant.dir.windows}\bin\ant" %*
-if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="restart">
-call "%~dp0build\start.bat" %*
-if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true" if:set="start.or.run">
-call "%~dp0build\${param1}.bat" %*
-if errorlevel 1 goto error</echo><echo file="${param1}.bat" append="true">
+set JAVA_HOME=%~dp0${jdk.dir.windows}
+call "%~dp0${ant.dir.windows}\bin\ant"</echo><echo file="${param1}.bat" append="true" unless:set="ant"> -buildfile "%~dp0build.xml"</echo><echo file="${param1}.bat" append="true"> %*</echo><echo file="${param1}.bat" append="true" unless:set="ant"> ${param1}</echo><echo file="${param1}.bat" append="true">
+if errorlevel 1 goto error
 goto end
 :error
 set exiterrorlevel=%errorlevel%<!-- exit with errorlevel of previous command -->
@@ -371,30 +437,21 @@ exit /b %exiterrorlevel%
 :end</echo>
 	</target>
 
-	<target name="generate.user.specific.bat">
-		<condition property="context.path.is.root"><equals arg1="${context.path}" arg2="ROOT"/></condition>
-		<condition property="stop"><equals arg1="${param1}" arg2="stop"/></condition>
+	<target name="splash">
 		<!-- http://www.network-science.de/ascii/ font standard -->
-		<echo file="build/${param1}.bat">@echo off
-echo "                      _________________________________________________________________________
-echo "                      |     _____                _    _ ____                                  |
-echo "                      |    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __     |
-echo "                      |    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|    |
-echo "                      |    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |       |
-echo "                      |    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       |
-echo "                      |_______________________________________________________________________|
-echo "
-echo Tomcat ${param1}:${param2}          ${instance.name} with Frank!Framework ${ff.version} on http://localhost/</echo><echo file="build/${param1}.bat" append="true" unless:set="context.path.is.root">${context.path}</echo><echo file="build/${param1}.bat" append="true">
-echo "</echo><echo file="build/${param1}.bat" append="true" unless:set="frank.runner.up.to.date">
-echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-echo "                      !! Your Frank!Runner is out of date, please pull or download new version !!
-echo "                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-echo "</echo><echo file="build/${param1}.bat" append="true">
-echo Using configurations:  "${configurations.dirset.dir}/${configurations.dirset.includes}"
-set JAVA_HOME=%~dp0..\${jdk.dir.windows}
-set CATALINA_HOME=%~dp0..\${tomcat.dir.windows}</echo><echo file="build/${param1}.bat" append="true" unless:set="stop">
-set JAVA_OPTS=-Xmx1024M ${system.properties} %*</echo><echo file="build/${param1}.bat" append="true">
-"%~dp0..\${tomcat.dir.windows}\bin\catalina.bat" ${param1}</echo>
+		<echo message="     _____                _    _ ____                                  "/>
+		<echo message="    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __     "/>
+		<echo message="    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|    "/>
+		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |       "/>
+		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       "/>
+		<echo message="    "/>
+		<condition property="context.path.is.root"><equals arg1="${context.path}" arg2="ROOT"/></condition>
+		<echo message="    ${instance.name} on http://localhost" if:set="context.path.is.root"/>
+		<echo message="    ${instance.name} on http://localhost/${context.path}" unless:set="context.path.is.root"/>
+		<echo message="    " unless:set="frank.runner.up.to.date"/>
+		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
+		<echo message="    !! Your Frank!Runner is out of date, please pull or download new version !!" unless:set="frank.runner.up.to.date"/>
+		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
 	</target>
 
 	<scriptdef language="javascript" name="lower">
