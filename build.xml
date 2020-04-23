@@ -88,7 +88,7 @@
 
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
-		<tstamp><format property="get.metadata.tstamp" pattern="yyyyddMM-HH"/></tstamp>
+		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
 		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
@@ -99,7 +99,7 @@
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 
-		<tstamp><format property="get.build.tstamp" pattern="yyyyddMM"/></tstamp>
+		<tstamp><format property="get.build.tstamp" pattern="yyyyMMdd"/></tstamp>
 		<condition property="get.build"><not><resourceexists><file file="download/frank-runner/build-${get.build.tstamp}.txt"/></resourceexists></not></condition>
 		<property name="get.build.maxtime" value="10"/>
 		<property name="get.build.ignoreerrors" value="true"/>
