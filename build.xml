@@ -321,17 +321,16 @@
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</java>
-		<echo message="Wait 5 seconds for Tomcat to stop..." if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
-		<sleep seconds="5" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
-		<!-- task condition socket takes a couple of seconds to execute, hence if:set="tomcat.running" is added to not run it unnecessary -->
-		<condition property="tomcat.running2" if:set="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<echo message="Wait 10 seconds for Tomcat to stop..." if:set="tomcat.running2" unless:set="catalina.bat.not.present"/>
-		<sleep seconds="10" if:set="tomcat.running2" unless:set="catalina.bat.not.present"/>
-		<condition property="tomcat.running3" if:set="tomcat.running2"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<echo message="Wait 20 seconds for Tomcat to stop..." if:set="tomcat.running3" unless:set="catalina.bat.not.present"/>
-		<sleep seconds="20" if:set="tomcat.running3" unless:set="catalina.bat.not.present"/>
-		<condition property="tomcat.running4" if:set="tomcat.running3"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again..." if:set="tomcat.running4"/>
+		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
+		<property name="stop.maxwait" value="300"/>
+		<property name="stop.maxwaitunit" value="second"/>
+		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
+		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="catalina.bat.not.present">
+			<not><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></not>
+		</waitfor>
+		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again" if:set="stop.failed"/>
+		<tstamp><format property="stop.end" pattern="HH:mm:ss"/></tstamp>
+		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
 	</target>
 
 	<target name="restart">
