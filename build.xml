@@ -151,12 +151,16 @@
 				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
-					value += '\nconfigurations.names=' + configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
+					if (configurationsDirsFlat.toString().length() > 0) {
+						value += '\nconfigurations.names=' + configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
+					}
 				}
 			}
-			for (var i = 0; i &lt; configurationsDirs.length; i++) {
-				value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
-				value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
+			if (configurationsDirsFlat.toString().length() > 0) {
+				for (var i = 0; i &lt; configurationsDirs.length; i++) {
+					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
+					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
+				}
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
