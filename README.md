@@ -169,19 +169,27 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |--...
 ```
 
-The build.xml in the frank2application_config1,2,3,... projects need to be
-customized to look like the following:
+The build.xml in the config projects need to have to following content (see
+section [Switching projects](#switching-projects) for the content of the
+build.xml that should be added to the main project):
 
 ```
 <project default="restart">
 	<target name="restart">
-		<property name="use" value="exec"/>
+		<basename property="project.dir" file="${basedir}"/>
+		<split projectdir="${project.dir}"/>
 		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
-			<arg value="-Dproject.dir=frank2application"/>
-			<arg value="-Dconfigurations.names=&quot;frank2application,config1&quot;"/>
-			<arg value="-Dscenariosroot.default=&quot;\frank2application_config1\src\test\testtool&quot;"/>
+			<arg value="-Dproject.dir=${main.project.dir}"/>
+			<arg value="-Dconfigurations.names=&quot;${main.project.dir},${config.name}&quot;"/>
+			<arg value="-Dscenariosroot.default=&quot;\${project.dir}\src\test\testtool&quot;"/>
 		</exec>
 	</target>
+	<scriptdef language="javascript" name="split">
+		<attribute name="projectdir"/> 
+		var parts = attributes.get("projectdir").split('_');
+		project.setProperty("main.project.dir", parts[0]);
+		project.setProperty("config.name", parts[1]);
+	</scriptdef>
 </project>
 ```
 
