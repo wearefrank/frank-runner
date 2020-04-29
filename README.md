@@ -193,7 +193,7 @@ build.xml that should be added to the main project):
 </project>
 ```
 
-This way every (configuraion) project can be started and tested by it's own.
+This way every (configuration) project can be started and tested by it's own.
 
 
 # Frank!Framework version
