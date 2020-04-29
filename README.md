@@ -101,7 +101,8 @@ tests.dir=tests
 context.xml=context.xml
 ```
 
-Hence by default your folder structure will need to look like the following:
+Hence by default your folder structure will need to look like the following (for
+non-maven projects):
 
 ```
 |--projects
@@ -113,8 +114,10 @@ Hence by default your folder structure will need to look like the following:
          |--Config2
          |--Conf...
       |--tests
-      |--context.xml
+      |--build.xml
+      |--restart.bat
    |--Frank2YourOtherApplication
+      |--...
 ```
 
 You can overwrite default values by creating a frank-runner.properties in the
@@ -131,6 +134,56 @@ in the Frank!Framework console (or restart Tomcat).
 More information on Frank configuration files and Frank property files and how
 to use them can be found in the
 [Frank!Manual](https://frank-manual.readthedocs.io/).
+
+
+# Project per config
+
+In case your application comprises several Frank!Configurations and you would
+like to have a project per configuration (e.g. to give each configuration it's
+own CI/CD pipeline) the following setup would be possible and is automatically
+detected by the Frank!Runner based on the presence of the war/pom.xml:
+
+```
+|--projects
+   |--frank-runner
+   |--frank2application
+      |--ear
+      |  |--src
+      |     |--...
+      |--war
+      |  |--src
+      |  |  |--...
+      |  |--pom.xml
+      |--build.xml
+      |--pom.xml
+      |--restart.bat
+   |--frank2application_config1
+      |--src
+      |  |--...
+      |--build.xml
+      |--pom.xml
+      |--restart.bat
+   |--frank2application_config2
+      |--...
+   |--frank2application_config3
+      |--...
+```
+
+The build.xml in the frank2application_config1,2,3,... projects need to be
+customized to look like the following:
+
+<project default="restart">
+	<target name="restart">
+		<property name="use" value="exec"/>
+		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dproject.dir=frank2application"/>
+			<arg value="-Dconfigurations.names=&quot;frank2application,config1&quot;"/>
+			<arg value="-Dscenariosroot.default=&quot;\frank2application_config1\src\test\testtool&quot;"/>
+		</exec>
+	</target>
+</project>
+
+This way every (configuraion) project can be started and tested by it's own.
 
 
 # Frank!Framework version
@@ -247,7 +300,7 @@ files and dependencies.
 
 Choose one of the methods described in the sections below:
 
-# Ant
+## Ant
 
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
 button on the Toolbar. You can either run the build.xml in the Frank!Runner
