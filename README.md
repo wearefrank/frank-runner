@@ -172,6 +172,7 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
 The build.xml in the frank2application_config1,2,3,... projects need to be
 customized to look like the following:
 
+```
 <project default="restart">
 	<target name="restart">
 		<property name="use" value="exec"/>
@@ -182,6 +183,7 @@ customized to look like the following:
 		</exec>
 	</target>
 </project>
+```
 
 This way every (configuraion) project can be started and tested by it's own.
 
