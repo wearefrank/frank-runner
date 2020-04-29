@@ -6,24 +6,61 @@ Basically all you have to do is clone or download this project and run start.bat
 by double clicking it. When Tomcat has started you can browse to the following
 address:
 
-http://localhost/
+http://localhost
 
 
 # Switching projects
 
 By default the Frank2Example1 project in the examples folder of the Frank!Runner
-project will be used. To use your own project specify the project.dir. This can
-be done in several ways. One way is to create a build.properties in the
-frank-runner folder with the following content:
+project will be used. There are several ways to make the Frank!Runner use your
+own project. The preferred way is to clone the Frank!Runner project and your own
+projects to the same parent folder and add the following build.xml and
+restart.bat to the root folder all of your projects.
+
+build.xml:
+
+```
+<project default="restart">
+	<target name="restart">
+		<basename property="project.dir" file="${basedir}"/>
+		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dproject.dir=${project.dir}"/>
+		</exec>
+	</target>
+</project>
+```
+
+restart.bat:
+
+```
+call ../frank-runner/ant.bat
+set exiterrorlevel=%errorlevel%
+set arg0=%0
+if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
+exit /b %exiterrorlevel%
+```
+
+To start the Frank!Runner with a specific project use Eclipse, VSCode and/or
+Windows Explorer to run the build.xml and/or restart.bat in the root folder of
+that specific project. See the sections [Eclipse](#eclipse) and
+[VSCode](#vscode)) for how to use Eclipse and VSCode.
+
+For completeness we describe the other ways to swithch between projects
+(including Frank2Example2) but feel free to skip the rest of this section.
+
+Switching projects is all about changing the value of the project.dir property.
+This is done in the build.xml above but can be done in other ways too. One way
+is to create a build.properties in the frank-runner folder with the following
+content:
 
 ```
 project.dir=Frank2YourApplication
 ```
 
 The project.dir needs to be specified relative to the parent folder of the
-frank-runner folder. In this case it is assumed that the Frank2YourApplication and
-frank-runner folder share the same parent folder. Hence no other path elements
-like in the following example are necessary.
+frank-runner folder. In the previous example it is assumed that the
+Frank2YourApplication and frank-runner folder share the same parent folder. But
+you could also specify a path like in the following example:
 
 ```
 project.dir=../path/to/your/Frank2YourApplication
@@ -40,22 +77,6 @@ a -Dproject.dir argument like:
 
 ```
 projects\frank-runner> .\start.bat -Dproject.dir=Frank2YourApplication
-```
-
-Or to make it easy to switch between projects you can give every project it's
-own small build.xml and run it for example from Eclipse or VSCode (see the
-sections [Eclipse](#eclipse) and [VSCode](#vscode)). Create a build.xml in the
-root folder of your project with the following content:
-
-```
-<project default="restart">
-	<target name="restart">
-		<basename property="project.dir" file="${basedir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
-			<arg value="-Dproject.dir=${project.dir}"/>
-		</exec>
-	</target>
-</project>
 ```
 
 
@@ -315,7 +336,7 @@ projects\frank-runner> ./run.sh
 You can now browse to the following address to find the Frank!Framework
 console:
 
-http://localhost/
+http://localhost
 
 You can stop Tomcat using the following combination of keys: 
 
