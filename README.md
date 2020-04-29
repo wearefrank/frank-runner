@@ -43,7 +43,7 @@ exit /b %exiterrorlevel%
 To start the Frank!Runner with a specific project use Eclipse, VSCode and/or
 Windows Explorer to run the build.xml and/or restart.bat in the root folder of
 that specific project. See the sections [Eclipse](#eclipse) and
-[VSCode](#vscode)) for how to use Eclipse and VSCode.
+[VSCode](#vscode) for how to use Eclipse and VSCode.
 
 For completeness we describe the other ways to swithch between projects
 (including Frank2Example2) but feel free to skip the rest of this section.
@@ -245,17 +245,46 @@ files and dependencies.
 
 # Eclipse
 
+Choose one of the methods described in the sections below:
+
+# Ant
+
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
 button on the Toolbar. You can either run the build.xml in the Frank!Runner
 project or a small build.xml in your own project depending on how you want to
 switch between projects (see section [Switching projects](#switching-projects)
 above).
 
-Or open the Terminal view and execute the commands mentioned in the
-[Command line](#command-line) section below.
+## Terminal
+
+Open the terminal view, cd to your project and execute restart.bat.
 
 
 # VSCode
+
+Choose one of the methods described in the sections below:
+
+## Task Explorer
+
+Install plugin Task Explorer and configure it to use ant.bat or any other
+ant installation by filling Path To Ant in the Extension Settings of Task
+Explorer to:
+
+C:\\path\\to\\frank-runner\\ant.bat
+
+Disable the Enable Ansicon For Ant option. Now you can use Task Explorer to
+either run the build.xml or the restart.bat in your project.
+
+It is also possible to install Ansicon and fill Path To Ansicon in the Extension
+Settings of Task Explorer but your system might think Ansicon is malwar:
+
+https://github.com/adoxa/ansicon/issues/30
+
+You can download Ansion at:
+
+https://github.com/adoxa/ansicon/releases
+
+## Ant Target Runner
 
 Install plugin Ant Target Runner and configure it to use ant.bat or any other
 ant installation by adding the following to settings.json:
@@ -271,15 +300,21 @@ build.xml. Below the file explorer open the Ant Target Runner, select the
 restart target and push the Run Selected Ant Target button. Because the Ant
 Target Runner will only be able to use the build.xml in the currently opened
 folder/workspace it is recommended to create a small build.xml in the projects
-that need the Frank!Runner (see section
+that calls the Frank!Runner (see section
 [Switching projects](#switching-projects) above).
 
-Or use the terminal (e.g. right click on one of the Frank!Runner files and click
-Open in Terminal) and execute the commands mentioned in the
-[Command line](#command-line) section below.
+## Terminal
 
-It is also possible to define a task (Terminal, Run Task...) and for example
-add the following to .vscode/tasks.json:
+Right click restart.bat in your project, click Open in Terminal and execute:
+
+```
+projects\your-project> .\restart.bat
+```
+
+## Task
+
+In the root of the opened folder create a new folder called .vscode and within
+the new .vscode folder create a tasks.json with the following content:
 
 ```
 {
@@ -288,7 +323,7 @@ add the following to .vscode/tasks.json:
         {
             "label": "Restart",
             "type": "shell",
-            "command": "../frank-runner/restart.bat '-Dproject.dir=Frank2YourApplication'",
+            "command": "./restart.bat",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -298,7 +333,8 @@ add the following to .vscode/tasks.json:
 }
 ```
 
-This will make it possible to restart using ctrl-shift-B.
+This will make it possible to restart using ctrl-shift-B (or go to Terminal,
+Run Task...).
 
 
 # Command line
