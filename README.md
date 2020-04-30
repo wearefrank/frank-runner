@@ -43,7 +43,7 @@ exit /b %exiterrorlevel%
 To start the Frank!Runner with a specific project use Eclipse, VSCode and/or
 Windows Explorer to run the build.xml and/or restart.bat in the root folder of
 that specific project. See the sections [Eclipse](#eclipse) and
-[VSCode](#vscode) for how to use Eclipse and VSCode.
+[VSCode](#vscode) on how to use Eclipse and VSCode.
 
 For completeness we describe the other ways to swithch between projects
 (including Frank2Example2) but feel free to skip the rest of this section.
@@ -308,15 +308,16 @@ files and dependencies.
 
 # Eclipse
 
-Choose one of the methods described in the sections below:
+Choose one of the methods described in the sections below to run the build.xml
+and/or restart.bat in your project. See section
+[Switching projects](#switching-projects) for more information on the build.xml
+and restart.bat and how to add them to your project in case they don't exist
+yet.
 
 ## Ant
 
 Right click on build.xml, Run As, Ant Build. The second time you can use the run
-button on the Toolbar. You can either run the build.xml in the Frank!Runner
-project or a small build.xml in your own project depending on how you want to
-switch between projects (see section [Switching projects](#switching-projects)
-above).
+button on the Toolbar.
 
 ## Terminal
 
@@ -325,27 +326,40 @@ Open the terminal view, cd to your project and execute restart.bat.
 
 # VSCode
 
-Choose one of the methods described in the sections below:
+Choose one of the methods described in the sections below to run the build.xml
+and/or restart.bat in your project. See section
+[Switching projects](#switching-projects) for more information on the build.xml
+and restart.bat and how to add them to your project in case they don't exist
+yet.
 
 ## Task Explorer
 
 Install plugin Task Explorer and configure it to use ant.bat or any other
-ant installation by filling Path To Ant in the Extension Settings of Task
-Explorer to:
+Ant installation by filling "Path To Ant" in the Extension Settings of Task
+Explorer with:
 
 C:\\path\\to\\frank-runner\\ant.bat
 
-Disable the Enable Ansicon For Ant option. Now you can use Task Explorer to
+Disable the "Enable Ansicon For Ant" option. Now you can use Task Explorer to
 either run the build.xml or the restart.bat in your project.
 
-It is also possible to install Ansicon and fill Path To Ansicon in the Extension
-Settings of Task Explorer but your system might think Ansicon is malwar:
+Below the file explorer open the Task Explorer, select restart below ant or
+restart.bat below batch and click the Run button.
+
+## Task Explorer with Ansicon
+
+It is also possible to install Ansicon and keep Ansicon enabled in the Task
+Explorer plugin but your system might think it is malwar:
 
 https://github.com/adoxa/ansicon/issues/30
 
 You can download Ansion at:
 
 https://github.com/adoxa/ansicon/releases
+
+Fill "Path To Ansicon" in the Extension Settings of Task Explorer with the path
+to Ansicon (and keep the "Enable Ansicon For Ant" option enabled) in case you
+would like to use Ansicon.
 
 ## Ant Target Runner
 
@@ -357,14 +371,10 @@ ant installation by adding the following to settings.json:
 ```
 
 You might need to restart VSCode for the Ant Target Runner plugin to detect the
-build.xml in the project you have opened. In case you have opened frank-runner
-as a folder/workspace you can use the Ant Target Runner plugin to run it's
-build.xml. Below the file explorer open the Ant Target Runner, select the
-restart target and push the Run Selected Ant Target button. Because the Ant
-Target Runner will only be able to use the build.xml in the currently opened
-folder/workspace it is recommended to create a small build.xml in the projects
-that calls the Frank!Runner (see section
-[Switching projects](#switching-projects) above).
+build.xml in the project you have opened. Below the file explorer open the Ant
+Target Runner, select the restart target and push the Run Selected Ant Target
+button. Please note that the Ant Target Runner will only be able to use the
+build.xml in the root of the currently opened folder/workspace.
 
 ## Terminal
 
