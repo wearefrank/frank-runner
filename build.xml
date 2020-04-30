@@ -28,6 +28,7 @@
 		<property name="tests.dir" value="tests"/>
 		<property name="context.xml" value="context.xml"/>
 
+		<property name="classloader.type" value="DirectoryClassLoader"/>
 		<property name="lib.server.dir" value="lib/server"/>
 		<property name="lib.webapp.dir" value="lib/webapp"/>
 		<property name="database.type" value="h2"/>
@@ -141,11 +142,13 @@
 			<attribute name="configurationsnamesds"/>
 			<attribute name="configurationsdirs"/>
 			<attribute name="configurationsdirsflat"/>
+			<attribute name="classloadertype"/>
 			var configurationsDir = attributes.get("configurationsdir");
 			var configurationsNames = attributes.get("configurationsnames");
 			var configurationsNamesDs = attributes.get("configurationsnamesds");
 			var configurationsDirs = attributes.get("configurationsdirs").split('|');
 			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
+			var classLoaderType = attributes.get("classloadertype");
 			var value = '\nconfigurations.directory=' + configurationsDir.replace(/\\/g, "\\\\");
 			if (configurationsNames != '${configurations.names}') {
 				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
@@ -158,13 +161,13 @@
 			}
 			if (configurationsDirsFlat.toString().length() > 0) {
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
-					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType=DirectoryClassLoader';
+					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType='+ classLoaderType;
 					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<configurationsproperties name="configurations.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}"/>
+		<configurationsproperties name="configurations.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
 
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
