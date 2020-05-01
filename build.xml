@@ -264,8 +264,8 @@
 		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
 		<!-- with exec in windows a new window will be opened -->
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg line="start > ${tomcat.dir.windows}\logs\tomcat-start.txt"/>
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg value="start"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
@@ -273,7 +273,7 @@
 		<!-- with java in windows no new window will be opened -->
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true" maxmemory="${maxmemory}" if:set="use.java">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg line="start"/>
+			<arg value="start"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
@@ -290,7 +290,7 @@
 		<echo message=""/>
 		<!-- with exec in windows a ctrl-c will not kill tomcat -->
 		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg line="run"/>
+			<arg value="run"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
@@ -298,7 +298,7 @@
 		<!-- with java in windows a ctrl-c will kill tomcat -->
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" maxmemory="${maxmemory}" if:set="use.java">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg line="start"/>
+			<arg value="start"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
@@ -313,14 +313,14 @@
 		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir.windows}\bin\catalina.bat"/></resourceexists></not></condition>
 		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg line="stop > ${tomcat.dir.windows}\logs\tomcat-stop.txt"/>
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg value="stop"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
 		</exec>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" if:set="use.java">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg line="stop"/>
+			<arg value="stop"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
