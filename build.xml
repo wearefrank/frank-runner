@@ -69,7 +69,6 @@
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 		<property name="tomcat.connector.port" value="80"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="ff.version" value="7.6-20200501.172313"/>
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
