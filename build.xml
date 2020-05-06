@@ -3,6 +3,11 @@
 	<target name="init">
 		<basename property="basedir.basename" file="${basedir}"/>
 		<property file="build.properties"/>
+
+		<property name="project.dir" value="${main.project}" if:set="sub.project"/>
+		<property name="configurations.names" value="${main.project},${sub.project}" if:set="sub.project"/>
+		<property name="tests.dir" value="..\${main.project}_${sub.project}\src\test\testtool" if:set="sub.project"/>
+
 		<property name="projects.dir" value="${basedir}/.."/>
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
@@ -36,8 +41,10 @@
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 		<basename property="instance.name" file="${project.dir}"/>
+		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
+		<property name="scenariosroot1.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
+		<property name="scenariosroot1.description" value="Frank!Runner"/>
 		<property name="context.path" value="ROOT"/>
-
 		<property name="maxmemory" value="1024M"/>
 
 		<property name="update.strategy" value="latest"/>
@@ -104,6 +111,9 @@
 			<propertyref builtin="commandline"/>
 			<propertyref name="dtap.stage"/>
 			<propertyref name="instance.name"/>
+			<propertyref name="ibistesttool.directory"/>
+			<propertyref name="scenariosroot1.directory"/>
+			<propertyref name="scenariosroot1.description"/>
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
@@ -160,31 +170,6 @@
 		</scriptdef>
 		<configurationsproperties name="configurations.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
 
-		<property name="tests.dirset.dir" value="${projects.dir}"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir}"/>
-		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
-		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
-		<scriptdef language="javascript" name="testsproperties">
-			<attribute name="name"/>
-			<attribute name="testsdirs"/>
-			<attribute name="projectsdir"/>
-			var testsDirs = attributes.get("testsdirs").split('|');
-			var projectsdir = attributes.get("projectsdir");
-			var value = '';
-			for (var i = 0; i &lt; testsDirs.length; i++) {
-				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace(/\\/g, "\\\\");
-				var description = testsDirs[i];
-				if (description.startsWith(projectsdir)) {
-					description = description.substring(projectsdir.length());
-				}
-				value += '\nscenariosroot' + (i + 1) + '.description=' + description.replace(/\\/g, "\\\\");
-			}
-			project.setProperty(attributes.get("name"), value);
-		</scriptdef>
-		<property name="projects.dir.absolute" location="${projects.dir}"/>
-		<testsproperties name="tests.properties" testsdirs="${tests.dirs}" projectsdir="${projects.dir.absolute}"/>
-
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -215,7 +200,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
-		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
+		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
@@ -449,9 +434,9 @@ exit /b %exiterrorlevel%
 		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |       "/>
 		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       "/>
 		<echo message="    "/>
-		<condition property="context.path.is.root"><equals arg1="${context.path}" arg2="ROOT"/></condition>
-		<echo message="    ${instance.name} on http://localhost" if:set="context.path.is.root"/>
-		<echo message="    ${instance.name} on http://localhost/${context.path}" unless:set="context.path.is.root"/>
+		<condition property="splash.name" value="${instance.name}" else="${main.project}_${sub.project}"><not><isset property="sub.project"/></not></condition>
+		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
+		<echo message="    ${splash.name} on http://localhost/${splash.context}"/>
 		<echo message="    " unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !! Your Frank!Runner is out of date, please pull or download new version !!" unless:set="frank.runner.up.to.date"/>

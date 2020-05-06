@@ -171,7 +171,9 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
 
 The build.xml in the config projects need to have to following content (see
 section [Switching projects](#switching-projects) for the content of the
-build.xml that should be added to the main project):
+build.xml that should be added to the main project) (you can rename target
+restart to restart-&lt;projectname&gt; to have better overview on the Last Tasks
+list of the Task Explorer):
 
 ```
 <project default="restart">
@@ -179,16 +181,16 @@ build.xml that should be added to the main project):
 		<basename property="project.dir" file="${basedir}"/>
 		<split projectdir="${project.dir}"/>
 		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
-			<arg value="-Dproject.dir=${main.project.dir}"/>
-			<arg value="-Dconfigurations.names=&quot;${main.project.dir},${config.name}&quot;"/>
-			<arg value="-Dscenariosroot.default=&quot;\${project.dir}\src\test\testtool&quot;"/>
+			<arg value="-Dmain.project=${main.project}"/>
+			<arg value="-Dsub.project=${sub.project}"/>
 		</exec>
 	</target>
 	<scriptdef language="javascript" name="split">
 		<attribute name="projectdir"/> 
-		var parts = attributes.get("projectdir").split('_');
-		project.setProperty("main.project.dir", parts[0]);
-		project.setProperty("config.name", parts[1]);
+		var projectDir = attributes.get("projectdir");
+		var i = projectDir.indexOf('_');
+		project.setProperty("main.project", projectDir.substring(0, i));
+		project.setProperty("sub.project", projectDir.substring(i + 1));
 	</scriptdef>
 </project>
 ```
