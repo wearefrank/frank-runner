@@ -427,17 +427,47 @@ exit /b %exiterrorlevel%
 	</target>
 
 	<target name="splash">
+		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
+		<echo message="system.properties:${system.properties}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="configurations.properties:${configurations.properties}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="projects.dir: ${projects.dir}" if:set="debug.true"/>
+		<echo message="project.dir: ${project.dir}" if:set="debug.true"/>
+		<echo message="classes.dir: ${classes.dir}" if:set="debug.true"/>
+		<echo message="configurations.dir: ${configurations.dir}" if:set="debug.true"/>
+		<echo message="java.dir: ${java.dir}" if:set="debug.true"/>
+		<echo message="tests.dir: ${tests.dir}" if:set="debug.true"/>
+		<echo message="lib.server.dir: ${lib.server.dir}" if:set="debug.true"/>
+		<echo message="lib.webapp.dir: ${lib.webapp.dir}" if:set="debug.true"/>
+		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
+		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
+		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
+		<echo message="classloader.type: ${classloader.type}" if:set="debug.true"/>
+		<echo message="database.type: ${database.type}" if:set="debug.true"/>
+		<echo message="dtap.stage: ${dtap.stage}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="ds.properties.instance.name: ${ds.properties.instance.name}" if:set="debug.true"/>
+		<echo message="ds.properties.configurations.names: ${ds.properties.configurations.names}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="instance.name: ${instance.name}" if:set="debug.true"/>
+		<echo message="configurations.names: ${configurations.names}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="main.project: ${main.project}" if:set="debug.true"/>
+		<echo message="sub.project: ${sub.project}" if:set="debug.true"/>
+		<echo message="" if:set="debug.true"/>
+		<echo message="    https://github.com/ibissource/frank-runner#frankrunner" if:set="debug.true"/>
 		<!-- http://www.network-science.de/ascii/ font standard -->
-		<echo message="     _____                _    _ ____                                  "/>
-		<echo message="    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __     "/>
-		<echo message="    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|    "/>
-		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |       "/>
-		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|       "/>
-		<echo message="    "/>
+		<echo message="     _____                _    _ ____"/>
+		<echo message="    |  ___| __ __ _ _ __ | | _| |  _ \ _   _ _ __  _ __   ___ _ __"/>
+		<echo message="    | |_ | '__/ _` | '_ \| |/ / | |_) | | | | '_ \| '_ \ / _ \ '__|"/>
+		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |"/>
+		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|"/>
+		<echo message=""/>
 		<condition property="splash.name" value="${instance.name}" else="${main.project}_${sub.project}"><not><isset property="sub.project"/></not></condition>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
 		<echo message="    ${splash.name} on http://localhost/${splash.context}"/>
-		<echo message="    " unless:set="frank.runner.up.to.date"/>
+		<echo message="" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !! Your Frank!Runner is out of date, please pull or download new version !!" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>

@@ -8,6 +8,20 @@ address:
 
 http://localhost
 
+# Contents
+
+- [Switching projects](#switching-projects)
+- [Project structure and customisation](#project-structure-and-customisation)
+- [Project per config](#project-per-config)
+- [Debug property](#debug-property)
+- [Frank!Framework version](#frankframework-version)
+- [Other properties and software versions](#other-properties-and-software-versions)
+- [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
+- [Eclipse](#eclipse)
+- [VSCode](#vscode)
+- [Command line](#command-line)
+- [Scripting](#scripting)
+
 
 # Switching projects
 
@@ -196,6 +210,18 @@ list of the Task Explorer):
 ```
 
 This way every (configuration) project can be started and tested by it's own.
+
+
+# Debug property
+
+Add the following to either a build.properties in the frank-runner folder or a
+frank-runner.properties in the root folder of your project to make the
+Frank!Runner display the most important properties just above the Frank!Runner
+ASCII art:
+
+```
+debug=true
+```
 
 
 # Frank!Framework version
