@@ -26,27 +26,27 @@ if not exist "%~dp0build\openjdk-8u252-b09\" (
 	)
 	move "%~dp0build\tmp\build\openjdk-8u252-b09" "%~dp0build\openjdk-8u252-b09"
 )
-if not exist "%~dp0download\apache-ant-1.10.7-bin.zip" (
+if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
 	echo Download:
-	echo http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.7-bin.zip
+	echo http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.8-bin.zip
 	echo To:
-	echo %~dp0download\apache-ant-1.10.7-bin.zip
+	echo %~dp0download\apache-ant-1.10.8-bin.zip
 	echo In case of errors you might want to do this manually
-	curl -o "%~dp0download\apache-ant-1.10.7-bin.zip.tmp" -L http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.7-bin.zip
+	curl -o "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" -L http://apache.redkiwi.nl/ant/binaries/apache-ant-1.10.8-bin.zip
 	if errorlevel 1 (
 		goto error
 	)
-	move "%~dp0download\apache-ant-1.10.7-bin.zip.tmp" "%~dp0download\apache-ant-1.10.7-bin.zip"
+	move "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" "%~dp0download\apache-ant-1.10.8-bin.zip"
 )
-if not exist "%~dp0build\apache-ant-1.10.7\" (
-	tar xvf "%~dp0download\apache-ant-1.10.7-bin.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\apache-ant-1.10.8\" (
+	tar xvf "%~dp0download\apache-ant-1.10.8-bin.zip" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
 		goto error
 	)
-	move "%~dp0build\tmp\build\apache-ant-1.10.7" "%~dp0build\apache-ant-1.10.7"
+	move "%~dp0build\tmp\build\apache-ant-1.10.8" "%~dp0build\apache-ant-1.10.8"
 )
 set JAVA_HOME=%~dp0build\openjdk-8u252-b09
-call "%~dp0build\apache-ant-1.10.7\bin\ant" %*
+call "%~dp0build\apache-ant-1.10.8\bin\ant" %*
 if errorlevel 1 goto error
 goto end
 :error
