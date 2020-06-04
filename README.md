@@ -163,7 +163,8 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
    |--frank2application
       |--ear
       |  |--src
-      |     |--...
+      |  |  |--...
+      |  |--pom.xml
       |--war
       |  |--src
       |  |  |--...
@@ -173,7 +174,9 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |--restart.bat
    |--frank2application_config1
       |--src
-      |  |--...
+      |  |  |--main
+      |  |     |--configuration
+      |  |        |--Config1
       |--build.xml
       |--pom.xml
       |--restart.bat
