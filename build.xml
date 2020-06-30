@@ -20,18 +20,27 @@
 		<property name="java.dir" value="war/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="war/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="context.xml" value="war/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
+		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/war" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
 		<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
 		<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
 		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
+		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}" if:set="pom.xml.available"/>
 
 		<property name="classes.dir" value="classes"/>
 		<property name="configurations.dir" value="configurations"/>
 		<property name="java.dir" value="java"/>
 		<property name="tests.dir" value="tests"/>
 		<property name="context.xml" value="context.xml"/>
+
+		<property name="maven" value="false"/><!-- feature toggle for now -->
+		<property name="maven" value="true" if:set="war.pom.xml.available"/>
+		<property name="maven" value="true" if:set="pom.xml.available"/>
+		<property name="maven.clean" value="true" if:true="${maven}"/>
+		<property name="maven.skip.tests" value="false" if:true="${maven}"/>
+		<property name="maven.skip.javadoc" value="false" if:true="${maven}" />
 
 		<property name="classloader.type" value="DirectoryClassLoader"/>
 		<property name="lib.server.dir" value="lib/server"/>
@@ -68,8 +77,12 @@
 		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
 		<property name="ant.version." value="1.10.8"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
-		<property name="ant.url" value="http://apache.redkiwi.nl/ant/binaries/${ant.zip}"/>
+		<property name="ant.url" value="https://archive.apache.org/dist/ant/binaries/${ant.zip}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
+		<property name="maven.version" value="3.6.3"/>
+		<property name="maven.zip" value="apache-maven-${maven.version}-bin.zip"/>
+		<property name="maven.url" value="https://archive.apache.org/dist/maven/maven-3/${maven.version}/binaries/${maven.zip}"/>
+		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.version" value="7.0.100"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
@@ -98,6 +111,8 @@
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
+		<available property="maven.zip.available" file="download/${maven.zip}"/>
+		<available property="maven.dir.available" file="${maven.dir}"/>
 		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
 		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
@@ -172,6 +187,7 @@
 
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 
 		<tstamp><format property="get.build.tstamp" pattern="yyyyMMdd"/></tstamp>
@@ -184,56 +200,77 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
+	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
+		<!-- maven -->
+		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
+		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
+		<property name="webapp.dir" value="${maven.exec.dir}/src/main/webapp" if:true="${maven}"/>
+		<delete includeEmptyDirs="true" if:true="${maven.clean}"><fileset dir="${webapp.dir}" includes="iaf/**,images/**,js/**,jsp/**,larva/**,META-INF/**,WEB-INF/**,body.css,favicon.ico,ie4.css,ie55.css"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
+		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
+		<condition property="webapp.gitignore.add" if:true="${maven}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
+		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:set="webapp.gitignore.add"/>
+		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
+			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="compile"/>
+			<arg value="war:inplace"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- speed up startup time -->
+		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- unless:set="tomcat.dir.available" to speed up startup time -->
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- Speed up startup time -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- webapp -->
-		<property file="${tomcat.dir}/webapps/${context.path}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
+		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
 		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
 		<pathconvert property="contexts.dirs" refid="contexts.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
-		<condition property="ff.version.or.context.path.changed"><or><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
-		<delete dir="${tomcat.dir}/webapps" if:set="ff.version.or.context.path.changed"/>
-		<unzip src="download/${ff.war}" dest="${ff.dir}" if:set="ff.version.or.context.path.changed"/>
-		<delete><fileset dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
+		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
+		<delete dir="${tomcat.dir}/webapps" if:set="maven.or.ff.version.changed.or.context.path.changed"/>
+		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
+ 		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- context.xml -->
-		<delete file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml"/>
+		<delete file="${webapp.dir}/META-INF/context.xml"/>
 		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${tomcat.dir}/webapps/${context.path}/META-INF" if:set="context.xml.available"/>
-		<copy file="database/${database.type}/context.xml" todir="${tomcat.dir}/webapps/${context.path}/META-INF" unless:set="context.xml.available"/>
+		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${webapp.dir}/META-INF" if:set="context.xml.available"/>
+		<copy file="database/${database.type}/context.xml" todir="${webapp.dir}/META-INF" unless:set="context.xml.available"/>
 		<lower from="${instance.name}" to="instance.name.lc"/>
-		<replace file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${tomcat.dir}/webapps/${context.path}/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<replace file="${webapp.dir}/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${webapp.dir}/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/>
+		<copy file="${webapp.dir}/META-INF/context.xml" tofile="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" if:true="${maven}"/><!-- META-INF/context.xml seems to be ignored when context file present in conf/Catalina/localhost, hence copy it -->
+		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${projects.dir}/${project.dir}/war/src/main/webapp&quot;>" summary="true" if:true="${maven}"/>
 		<!-- classes -->
-		<delete dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes"/>
-		<mkdir dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes"/>
+		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
+		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
-		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available">
+		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${webapp.dir}/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available" unless:true="${maven}">
 			<classpath>
-				<fileset dir="${tomcat.dir}/webapps/${context.path}/WEB-INF/lib"><include name="*.jar"/></fileset>
+				<fileset dir="${webapp.dir}/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
-		<copy todir="${tomcat.dir}/webapps/${context.path}/WEB-INF/classes" if:set="classes.dir.available">
+		<copy todir="${webapp.dir}/WEB-INF/classes" if:set="classes.dir.available" unless:true="${maven}">
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- scripts -->
@@ -339,6 +376,10 @@
 
 	<target name="get.ant" unless="ant.zip.available">
 		<get src="${ant.url}" dest="download/${ant.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.maven" unless="maven.zip.available">
+		<get src="${maven.url}" dest="download/${maven.zip}" verbose="on"/>
 	</target>
 
 	<target name="get.tomcat" unless="tomcat.zip.available">
