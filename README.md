@@ -11,6 +11,7 @@ http://localhost
 # Contents
 
 - [Switching projects](#switching-projects)
+- [Examples](#examples)
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
 - [Debug property](#debug-property)
@@ -92,6 +93,35 @@ a -Dproject.dir argument like:
 ```
 projects\frank-runner> .\start.bat -Dproject.dir=Frank2YourApplication
 ```
+
+
+# Examples
+
+The Frank!Runner is shipped with the following examples
+
+
+## Frank2Example1
+
+Most basic Hello World example showing two configurations and a unit test. It
+is referenced by the manual at the following location:
+
+https://frank-manual.readthedocs.io/en/latest/gettingStarted/examineExample.html#general-structure-of-the-example-frank
+
+
+## Frank2Example2
+
+Some more Hello Wold adapters using both the DirectoryClassLoader and the
+normal classpath. It is referenced by the manual at the following location:
+
+https://frank-manual.readthedocs.io/en/latest/gettingStarted/helloIbis.html
+
+
+## Frank2Example3
+
+Example usage of message log, error store, message store sender and message
+store listener. Description attributes have been added to the adapters which
+can be read from the console. This will explain how to test and use the
+adapters to be able to understand how the to e.g. resend messages.
 
 
 # Project structure and customisation
