@@ -4,7 +4,7 @@
 		<jmsRealm datasourceName="jdbc/${instance.name.lc}" realmName="jdbc"/>
 	</jmsRealms>
 
-	<adapter name="01 TestMessageLog" description="Stop adapter 03 and 04, select this adapter (01) at Test a PipeLine and send a random message to start the test. Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter on the message log page">
+	<adapter name="01 TestMessageLog" description="Stop adapter 03 and 04, select this adapter (01) at Test a PipeLine and send one or more random messages to start the test. Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter on the message log page">
 		<receiver
 			name="TestMessageLogReceiver"
 			className="nl.nn.adapterframework.receivers.GenericReceiver"
@@ -33,7 +33,7 @@
 		</pipeline>
 	</adapter>
 
-	<adapter name="02 TestMessageStoreSender" description="Click the small blue envelope at the sender information of this adapter to browse the message store for message that have not yet been processed. Start adapter 03 to have them processed">
+	<adapter name="02 TestMessageStoreSender" description="Click the small blue envelope at the sender information of this adapter to browse the message store for messages that have not yet been processed. Start adapter 03 to have them processed">
 		<receiver
 			name="TestMessageStoreSender"
 			className="nl.nn.adapterframework.receivers.GenericReceiver"
@@ -65,7 +65,7 @@
 		</pipeline>
 	</adapter>
 
-	<adapter name="03 TestMessageStoreListenerAndErrorStorage" description="Click the small white in red cross the listener information of this adapter to see that messages that are not processed because of failures on the error storage page. Start adapter 04 and resend them from the error storage page">
+	<adapter name="03 TestMessageStoreListenerAndErrorStorage" description="Click the small white in red cross at the listener information of this adapter to go to the error storage page and see that messages are not processed because of failures. Start adapter 04 and resend them from the error storage page">
 		<receiver
 			name="TestMessageStoreListenerAndErrorStorage"
 			className="nl.nn.adapterframework.receivers.GenericReceiver"
