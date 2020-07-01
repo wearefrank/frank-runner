@@ -258,7 +258,7 @@
 		<replace file="${webapp.dir}/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/>
 		<copy file="${webapp.dir}/META-INF/context.xml" tofile="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" if:true="${maven}"/><!-- META-INF/context.xml seems to be ignored when context file present in conf/Catalina/localhost, hence copy it -->
-		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${projects.dir}/${project.dir}/war/src/main/webapp&quot;>" summary="true" if:true="${maven}"/>
+		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir}&quot;>" summary="true" if:true="${maven}"/>
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
