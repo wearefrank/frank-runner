@@ -79,6 +79,11 @@
 				jmsRealm="jdbc"
 				slotId="${instance.name}/TestMessageStore"
 			/>
+			<messageLog
+				className="nl.nn.adapterframework.jdbc.DummyTransactionalStorage"
+				jmsRealm="jdbc"
+				slotId="${instance.name}/TestMessageStore"
+			/>
 			<errorStorage
 				className="nl.nn.adapterframework.jdbc.JdbcTransactionalStorage"
 				jmsRealm="jdbc"
