@@ -103,18 +103,15 @@ The Frank!Runner is shipped with the following examples
 ## Frank2Example1
 
 Most basic Hello World example showing two configurations and a unit test. It
-is referenced by the manual at the following location:
+is referenced by the manual, for example at the following locations:
 
-https://frank-manual.readthedocs.io/en/latest/gettingStarted/examineExample.html#general-structure-of-the-example-frank
-
+* https://frank-manual.readthedocs.io/en/latest/gettingStarted/examineExample.html#general-structure-of-the-example-frank
+* https://frank-manual.readthedocs.io/en/latest/gettingStarted/helloIbis.html
 
 ## Frank2Example2
 
 Some more Hello Wold adapters using both the DirectoryClassLoader and the
-normal classpath. It is referenced by the manual at the following location:
-
-https://frank-manual.readthedocs.io/en/latest/gettingStarted/helloIbis.html
-
+normal classpath. It is not referenced by the Frank!Manual.
 
 ## Frank2Example3
 
@@ -123,6 +120,9 @@ store listener. Description attributes have been added to the adapters which
 can be read from the console. This will explain how to test and use the
 adapters to be able to understand how the to e.g. resend messages.
 
+This example is referenced by the Frank!Manual at the following location:
+
+https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages.html#
 
 # Project structure and customisation
 
