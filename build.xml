@@ -209,10 +209,13 @@
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${maven.exec.dir}/src/main/webapp" if:true="${maven}"/>
-		<delete includeEmptyDirs="true" if:true="${maven.clean}"><fileset dir="${webapp.dir}" includes="iaf/**,images/**,js/**,jsp/**,larva/**,META-INF/**,WEB-INF/**,body.css,favicon.ico,ie4.css,ie55.css"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
-		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
-		<condition property="webapp.gitignore.add" if:true="${maven}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
-		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:set="webapp.gitignore.add"/>
+		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven.clean}"/>
+		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" if:true="${maven.clean}"/>
+		<condition property="webapp.gitignore.add" unless:blank="${webapp.gitignore}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
+		<condition property="webapp.gitignore.add.newline" if:true="${webapp.gitignore.add}"><length file="${webapp.dir}/.gitignore" when="greater" length="0"/></condition>
+		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
+		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:true="${webapp.gitignore.add}"/>
+		<delete includeEmptyDirs="true" unless:blank="${webapp.clean}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
@@ -249,15 +252,16 @@
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<!-- context.xml -->
-		<delete file="${webapp.dir}/META-INF/context.xml"/>
-		<available property="context.xml.available" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<copy file="${projects.dir}/${project.dir}/${context.xml}" todir="${webapp.dir}/META-INF" if:set="context.xml.available"/>
-		<copy file="database/${database.type}/context.xml" todir="${webapp.dir}/META-INF" unless:set="context.xml.available"/>
+		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
+		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
+		<property name="context.xml.target" value="${webapp.dir}/META-INF/context.xml" unless:true="${maven}"/>
+		<property name="context.xml.target" value="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" if:true="${maven}"/>
+		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/><!-- xml file could have a different name in previous run or in previous run maven could be true and in current run false -->
+		<delete file="${context.xml.target}"/><!-- in case ${context.xml.source} doesn't point to a file next copy will not clean ${context.xml.target} -->
+		<copy file="${context.xml.source}" tofile="${context.xml.target}"/>
 		<lower from="${instance.name}" to="instance.name.lc"/>
-		<replace file="${webapp.dir}/META-INF/context.xml" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${webapp.dir}/META-INF/context.xml" token="@h2.dir@" value="${h2.dir}" summary="true"/>
-		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/>
-		<copy file="${webapp.dir}/META-INF/context.xml" tofile="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" if:true="${maven}"/><!-- META-INF/context.xml seems to be ignored when context file present in conf/Catalina/localhost, hence copy it -->
+		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" summary="true"/>
 		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir}&quot;>" summary="true" if:true="${maven}"/>
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
