@@ -30,7 +30,7 @@ By default the Frank2Example1 project in the examples folder of the Frank!Runner
 project will be used. There are several ways to make the Frank!Runner use your
 own project. The preferred way is to clone the Frank!Runner project and your own
 projects to the same parent folder and add the following build.xml and
-restart.bat to the root folder all of your projects.
+restart.bat to the root folder of all of your projects.
 
 build.xml:
 
@@ -58,7 +58,11 @@ exit /b %exiterrorlevel%
 To start the Frank!Runner with a specific project use Eclipse, VSCode and/or
 Windows Explorer to run the build.xml and/or restart.bat in the root folder of
 that specific project. See the sections [Eclipse](#eclipse) and
-[VSCode](#vscode) on how to use Eclipse and VSCode.
+[VSCode](#vscode) on how to use Eclipse and VSCode. To make the items in the
+Last Tasks list of the Task Explorer unique you can rename the target name
+restart in build.xml to something unique for your project (e.g.
+restart-frank2yourproject) (make the value of the default attribute of the
+project element the same).
 
 For completeness we describe the other ways to swithch between projects
 (including Frank2Example2) but feel free to skip the rest of this section.
@@ -123,6 +127,7 @@ adapters to be able to understand how the to e.g. resend messages.
 This example is referenced by the Frank!Manual at the following location:
 
 https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages.html#
+
 
 # Project structure and customisation
 
