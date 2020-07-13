@@ -56,7 +56,7 @@
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
 
-		<property name="update.strategy" value="latest"/>
+		<property name="update.strategy" value="latest" unless:true="${maven}"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
 		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
