@@ -246,7 +246,7 @@
 		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
 		<pathconvert property="contexts.dirs" refid="contexts.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
-		<delete dir="${tomcat.dir}/webapps" if:set="maven.or.ff.version.changed.or.context.path.changed"/>
+		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
