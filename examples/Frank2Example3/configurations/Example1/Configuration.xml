@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration [
-  <!ENTITY ConfigurationExample1 SYSTEM "ConfigurationExample1.xml">
+	<!ENTITY ConfigurationExample1 SYSTEM "ConfigurationExample1.xml">
 ]>
 <Configuration name="Example1">
+	<jmsRealms>
+		<jmsRealm datasourceName="jdbc/${instance.name.lc}" realmName="jdbc"/>
+	</jmsRealms>
 	&ConfigurationExample1;
 </Configuration>
