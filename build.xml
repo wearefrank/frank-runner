@@ -39,8 +39,10 @@
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
 		<property name="maven.clean" value="true" if:true="${maven}"/>
+		<property name="maven.phase" value="compile" if:true="${maven}"/>
 		<property name="maven.skip.tests" value="false" if:true="${maven}"/>
-		<property name="maven.skip.javadoc" value="false" if:true="${maven}" />
+		<property name="maven.skip.javadoc" value="false" if:true="${maven}"/>
+		<property name="maven.verbose" value="false" if:true="${maven}"/>
 
 		<property name="classloader.type" value="DirectoryClassLoader"/>
 		<property name="lib.server.dir" value="lib/server"/>
@@ -146,36 +148,45 @@
 		<systemproperties name="system.properties" commaseparated="${system.properties.comma.separated}"/>
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
+		<property name="configurations.dir.abs" location="${projects.dir}/${project.dir}/${configurations.dir}"/>
+		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/>
 		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
-		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*"/>
+		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
 		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><mapper type="flatten"/></pathconvert>
 		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
-			<attribute name="configurationsdir"/>
+			<attribute name="configurationsdirabs"/>
 			<attribute name="configurationsnames"/>
 			<attribute name="configurationsnamesds"/>
 			<attribute name="configurationsdirs"/>
 			<attribute name="configurationsdirsflat"/>
 			<attribute name="classloadertype"/>
-			var configurationsDir = attributes.get("configurationsdir");
+			var configurationsDirAbs = attributes.get("configurationsdirabs");
 			var configurationsNames = attributes.get("configurationsnames");
 			var configurationsNamesDs = attributes.get("configurationsnamesds");
 			var configurationsDirs = attributes.get("configurationsdirs").split('|');
 			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
 			var classLoaderType = attributes.get("classloadertype");
-			var value = '\nconfigurations.directory=' + configurationsDir.replace(/\\/g, "\\\\");
+			var value = '';
+			value += '\n# Set configurations.directory based on Frank!Runner properties';
+			value += '\nconfigurations.directory=' + configurationsDirAbs.replace(/\\/g, "\\\\");
 			if (configurationsNames != '${configurations.names}') {
+				value += '\n# Set configurations.names to Frank!Runner property with the same name';
 				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
+					value += '\n# Set configurations.names to the list of folders in configurations.directory';
 					if (configurationsDirsFlat.toString().length() > 0) {
 						value += '\nconfigurations.names=' + configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
 					}
+				} else {
+					value += '\n# Don\'t set configurations.names as it is spedified in DeploymentSpecifics.properties';
 				}
 			}
 			if (configurationsDirsFlat.toString().length() > 0) {
+				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
 					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType='+ classLoaderType;
 					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
@@ -183,7 +194,7 @@
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<configurationsproperties name="configurations.properties" configurationsdir="${projects.dir}/${project.dir}/${configurations.dir}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
+		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
 
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -208,23 +219,24 @@
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
-		<property name="webapp.dir" value="${maven.exec.dir}/src/main/webapp" if:true="${maven}"/>
+		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
 		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" if:true="${maven.clean}"/>
-		<condition property="webapp.gitignore.add" if:set="webapp.gitignore"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
+		<condition property="webapp.gitignore.add" unless:true="${webapp.gitignore.skip}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
 		<condition property="webapp.gitignore.add.newline" if:true="${webapp.gitignore.add}"><length file="${webapp.dir}/.gitignore" when="greater" length="0"/></condition>
 		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
 		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:true="${webapp.gitignore.add}"/>
-		<delete includeEmptyDirs="true" if:set="webapp.clean"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
+		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="clean" if:true="${maven.clean}"/>
-			<arg value="compile"/>
+			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
 			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
 		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
@@ -279,6 +291,7 @@
 		</copy>
 		<!-- scripts -->
 		<antcall target="generate.bat"><param name="param1" value="ant"/></antcall>
+		<antcall target="generate.bat"><param name="param1" value="mvn"/></antcall>
 		<antcall target="generate.bat"><param name="param1" value="start"/></antcall>
 		<antcall target="generate.bat"><param name="param1" value="stop"/></antcall>
 		<antcall target="generate.bat"><param name="param1" value="run"/></antcall>
@@ -412,6 +425,8 @@
 
 	<target name="generate.bat">
 		<condition property="ant"><equals arg1="${param1}" arg2="ant"/></condition>
+		<condition property="mvn"><equals arg1="${param1}" arg2="mvn"/></condition>
+		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
 		<echo file="${param1}.bat">@echo off
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
@@ -460,7 +475,13 @@ if not exist "%~dp0${ant.dir.windows}\" (
 	move "%~dp0build\tmp\${ant.dir.windows}" "%~dp0${ant.dir.windows}"
 )
 set JAVA_HOME=%~dp0${jdk.dir.windows}
-call "%~dp0${ant.dir.windows}\bin\ant"</echo><echo file="${param1}.bat" append="true" unless:set="ant"> -buildfile "%~dp0build.xml"</echo><echo file="${param1}.bat" append="true"> %*</echo><echo file="${param1}.bat" append="true" unless:set="ant"> ${param1}</echo><echo file="${param1}.bat" append="true">
+call "%~dp0</echo>
+<echo file="${param1}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
+<echo file="${param1}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
+<echo file="${param1}.bat" append="true" unless:set="ant.or.mvn"> -buildfile "%~dp0build.xml"</echo>
+<echo file="${param1}.bat" append="true"> %*</echo>
+<echo file="${param1}.bat" append="true" unless:set="ant.or.mvn"> ${param1}</echo>
+<echo file="${param1}.bat" append="true">
 if errorlevel 1 goto error
 goto end
 :error
@@ -473,33 +494,56 @@ exit /b %exiterrorlevel%
 
 	<target name="splash">
 		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
-		<echo message="system.properties:${system.properties}" if:set="debug.true"/>
+		<echo message="main.project: ${main.project}" if:set="debug.true"/>
+		<echo message="sub.project: ${sub.project}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/><!-- space instead of empty for eclipse -->
-		<echo message="configurations.properties:${configurations.properties}" if:set="debug.true"/>
-		<echo message=" " if:set="debug.true"/>
 		<echo message="projects.dir: ${projects.dir}" if:set="debug.true"/>
 		<echo message="project.dir: ${project.dir}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
+		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
 		<echo message="classes.dir: ${classes.dir}" if:set="debug.true"/>
 		<echo message="configurations.dir: ${configurations.dir}" if:set="debug.true"/>
 		<echo message="java.dir: ${java.dir}" if:set="debug.true"/>
 		<echo message="tests.dir: ${tests.dir}" if:set="debug.true"/>
+		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
+		<echo message="maven.exec.dir: ${maven.exec.dir}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="maven: ${maven}" if:set="debug.true"/>
+		<echo message="maven.clean: ${maven.clean}" if:set="debug.true"/>
+		<echo message="maven.phase: ${maven.phase}" if:set="debug.true"/>
+		<echo message="maven.skip.tests: ${maven.skip.tests}" if:set="debug.true"/>
+		<echo message="maven.skip.javadoc: ${maven.skip.javadoc}" if:set="debug.true"/>
+		<echo message="maven.verbose: ${maven.verbose}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="classloader.type: ${classloader.type}" if:set="debug.true"/>
 		<echo message="lib.server.dir: ${lib.server.dir}" if:set="debug.true"/>
 		<echo message="lib.webapp.dir: ${lib.webapp.dir}" if:set="debug.true"/>
-		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
-		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
-		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
-		<echo message="classloader.type: ${classloader.type}" if:set="debug.true"/>
 		<echo message="database.type: ${database.type}" if:set="debug.true"/>
 		<echo message="dtap.stage: ${dtap.stage}" if:set="debug.true"/>
-		<echo message=" " if:set="debug.true"/>
 		<echo message="ds.properties.instance.name: ${ds.properties.instance.name}" if:set="debug.true"/>
 		<echo message="ds.properties.configurations.names: ${ds.properties.configurations.names}" if:set="debug.true"/>
-		<echo message=" " if:set="debug.true"/>
 		<echo message="instance.name: ${instance.name}" if:set="debug.true"/>
-		<echo message="configurations.names: ${configurations.names}" if:set="debug.true"/>
+		<echo message="ibistesttool.directory: ${ibistesttool.directory}" if:set="debug.true"/>
+		<echo message="scenariosroot1.directory: ${scenariosroot1.directory}" if:set="debug.true"/>
+		<echo message="scenariosroot1.description: ${scenariosroot1.description}" if:set="debug.true"/>
+		<echo message="context.path: ${context.path}" if:set="debug.true"/>
+		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
-		<echo message="main.project: ${main.project}" if:set="debug.true"/>
-		<echo message="sub.project: ${sub.project}" if:set="debug.true"/>
+		<echo message="update.strategy: ${update.strategy}" if:set="debug.true"/>
+		<echo message="ff.version: ${ff.version}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="webapp.dir: ${webapp.dir}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="system.properties:${system.properties}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="configurations.dirset.dir=${configurations.dirset.dir}" if:set="debug.true"/>
+		<echo message="configurations.dir.abs=${configurations.dir.abs}" if:set="debug.true"/>
+		<echo message="configurations.dir.rel=${configurations.dir.rel}" if:set="debug.true"/>
+		<echo message="configurations.dirset.includes=${configurations.dirset.includes}" if:set="debug.true"/>
+		<echo message="configurations.dirs.flat=${configurations.dirs.flat}" if:set="debug.true"/>
+		<echo message="configurations.properties:${configurations.properties}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="    https://github.com/ibissource/frank-runner#frankrunner" if:set="debug.true"/>
 		<!-- http://www.network-science.de/ascii/ font standard -->
