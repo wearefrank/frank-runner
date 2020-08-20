@@ -1,2 +1,32 @@
-# Ignore all differences in line endings
-*        -lf
+# Have files identified as text files converted to lf on checkin and keep lf on
+# checkout
+* text=auto eol=lf
+
+# Documentation:
+
+# Checkin:
+# https://www.git-scm.com/docs/gitattributes
+# When text is set to "auto" ... its line endings are normalized to LF on checkin.
+# ...
+# If you want to ensure that text files that any contributor introduces to the
+# repository have their line endings normalized, you can set the text attribute
+# to "auto" for all files.
+# * text=auto
+
+# Checkout:
+# https://www.git-scm.com/docs/gitattributes
+# To control what line ending style is used in the working directory, use the eol attribute
+# ...
+# Set to string value "lf"
+#   This setting forces Git to normalize line endings to LF on checkin and prevents conversion to CRLF when the file is checked out.
+
+# Legacy:
+# Older Git versions didn't auto detect which files are text for checkhout so
+# you needed to specify the file types for checkhout but this has been fixed.
+# See:
+# https://stackoverflow.com/questions/29435156/what-will-text-auto-eol-lf-in-gitattributes-do
+# https://github.com/git/git/blob/master/Documentation/RelNotes/2.10.0.txt#L248
+
+# See also:
+# https://stackoverflow.com/questions/11824428/is-there-a-way-to-determine-the-line-endings-in-a-existing-git-repo
+# https://stackoverflow.com/questions/7156694/git-how-to-renormalize-line-endings-in-all-files-in-all-revisions
