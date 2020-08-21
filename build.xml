@@ -474,7 +474,10 @@ if not exist "%~dp0${ant.dir.windows}\" (
 	)
 	move "%~dp0build\tmp\${ant.dir.windows}" "%~dp0${ant.dir.windows}"
 )
-set JAVA_HOME=%~dp0${jdk.dir.windows}
+set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
+<echo file="${param1}.bat" append="true" unless:set="mvn">
+set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
+<echo file="${param1}.bat" append="true">
 call "%~dp0</echo>
 <echo file="${param1}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
 <echo file="${param1}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
