@@ -11,7 +11,7 @@ if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" (
 	echo To:
 	echo %~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip
 	echo !!
-	echo !! In case of errors you might want to do this manually and/or restart this script
+	echo !! In case of errors you might want to do this manually and restart this script
 	echo !!
 	curl -o "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip.tmp" -L https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_windows_8u252b09.zip
 	if errorlevel 1 (
@@ -32,7 +32,7 @@ if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
 	echo To:
 	echo %~dp0download\apache-ant-1.10.8-bin.zip
 	echo !!
-	echo !! In case of errors you might want to do this manually and/or restart this script
+	echo !! In case of errors you might want to do this manually and restart this script
 	echo !!
 	curl -o "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
 	if errorlevel 1 (
