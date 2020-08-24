@@ -31,7 +31,9 @@ if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
 	echo https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
 	echo To:
 	echo %~dp0download\apache-ant-1.10.8-bin.zip
-	echo In case of errors you might want to do this manually
+	echo !!
+	echo !! In case of errors you might want to do this manually and/or restart this script
+	echo !!
 	curl -o "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
 	if errorlevel 1 (
 		goto error

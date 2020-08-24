@@ -290,13 +290,13 @@
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- scripts -->
-		<antcall target="generate.bat"><param name="param1" value="ant"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="mvn"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="start"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="stop"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="run"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="restart"/></antcall>
-		<antcall target="generate.bat"><param name="param1" value="rerun"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="ant"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="mvn"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="start"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="stop"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="run"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="restart"/></antcall>
+		<antcall target="generate.bat"><param name="filename" value="rerun"/></antcall>
 	</target>
 
 	<target name="start" depends="build">
@@ -424,67 +424,30 @@
 	</target>
 
 	<target name="generate.bat">
-		<condition property="ant"><equals arg1="${param1}" arg2="ant"/></condition>
-		<condition property="mvn"><equals arg1="${param1}" arg2="mvn"/></condition>
+		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
+		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
 		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
-		<echo file="${param1}.bat">@echo off
+		<echo file="${filename}.bat">@echo off
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
 )
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
-)
-if not exist "%~dp0download\${jdk.zip}" (
-	echo Download:
-	echo ${jdk.url}
-	echo To:
-	echo %~dp0download\${jdk.zip}
-	echo !!
-	echo !! In case of errors you might want to do this manually and/or restart this script
-	echo !!
-	curl -o "%~dp0download\${jdk.zip}.tmp" -L ${jdk.url}
-	if errorlevel 1 (
-		goto error
-	)
-	move "%~dp0download\${jdk.zip}.tmp" "%~dp0download\${jdk.zip}"
-)
-if not exist "%~dp0${jdk.dir.windows}\" (
-	tar xvf "%~dp0download\${jdk.zip}" -C "%~dp0build\tmp\build"
-	if errorlevel 1 (
-		goto error
-	)
-	move "%~dp0build\tmp\${jdk.dir.windows}" "%~dp0${jdk.dir.windows}"
-)
-if not exist "%~dp0download\${ant.zip}" (
-	echo Download:
-	echo ${ant.url}
-	echo To:
-	echo %~dp0download\${ant.zip}
-	echo In case of errors you might want to do this manually
-	curl -o "%~dp0download\${ant.zip}.tmp" -L ${ant.url}
-	if errorlevel 1 (
-		goto error
-	)
-	move "%~dp0download\${ant.zip}.tmp" "%~dp0download\${ant.zip}"
-)
-if not exist "%~dp0${ant.dir.windows}\" (
-	tar xvf "%~dp0download\${ant.zip}" -C "%~dp0build\tmp\build"
-	if errorlevel 1 (
-		goto error
-	)
-	move "%~dp0build\tmp\${ant.dir.windows}" "%~dp0${ant.dir.windows}"
-)
+)</echo>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<echo file="${filename}.bat" append="true">
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
-<echo file="${param1}.bat" append="true" unless:set="mvn">
+<echo file="${filename}.bat" append="true" unless:set="mvn">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
-<echo file="${param1}.bat" append="true">
+<echo file="${filename}.bat" append="true">
 call "%~dp0</echo>
-<echo file="${param1}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
-<echo file="${param1}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
-<echo file="${param1}.bat" append="true" unless:set="ant.or.mvn"> -buildfile "%~dp0build.xml"</echo>
-<echo file="${param1}.bat" append="true"> %*</echo>
-<echo file="${param1}.bat" append="true" unless:set="ant.or.mvn"> ${param1}</echo>
-<echo file="${param1}.bat" append="true">
+<echo file="${filename}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
+<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
+<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn"> -buildfile "%~dp0build.xml"</echo>
+<echo file="${filename}.bat" append="true"> %*</echo>
+<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn"> ${filename}</echo>
+<echo file="${filename}.bat" append="true">
 if errorlevel 1 goto error
 goto end
 :error
@@ -493,6 +456,31 @@ set arg0=%0<!-- https://superuser.com/questions/527898/how-to-pause-only-if-exec
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 exit /b %exiterrorlevel%
 :end</echo>
+	</target>
+
+	<target name="generate.bat.download.unzip">
+		<echo file="${filename}.bat" append="true">
+if not exist "%~dp0download\${zip}" (
+	echo Download:
+	echo ${url}
+	echo To:
+	echo %~dp0download\${zip}
+	echo !!
+	echo !! In case of errors you might want to do this manually and/or restart this script
+	echo !!
+	curl -o "%~dp0download\${zip}.tmp" -L ${url}
+	if errorlevel 1 (
+		goto error
+	)
+	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
+)
+if not exist "%~dp0${dir.windows}\" (
+	tar xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
+	if errorlevel 1 (
+		goto error
+	)
+	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
+)</echo>
 	</target>
 
 	<target name="splash">
