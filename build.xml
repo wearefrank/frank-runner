@@ -460,16 +460,12 @@ exit /b %exiterrorlevel%
 
 	<target name="generate.bat.download.unzip">
 		<echo file="${filename}.bat" append="true">
+set download.help=download ${url} manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\${zip}" (
-	echo Download:
-	echo ${url}
-	echo To:
-	echo %~dp0download\${zip}
-	echo !!
-	echo !! In case of errors you might want to do this manually and restart this script
-	echo !!
+	echo In case of errors %download.help%
 	curl -o "%~dp0download\${zip}.tmp" -L ${url}
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
@@ -477,10 +473,11 @@ if not exist "%~dp0download\${zip}" (
 if not exist "%~dp0${dir.windows}\" (
 	tar xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
-)</echo>
+)</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
 	</target>
 
 	<target name="splash">

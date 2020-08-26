@@ -5,16 +5,12 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
+set download.help=download https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_windows_8u252b09.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" (
-	echo Download:
-	echo https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_windows_8u252b09.zip
-	echo To:
-	echo %~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip
-	echo !!
-	echo !! In case of errors you might want to do this manually and restart this script
-	echo !!
+	echo In case of errors %download.help%
 	curl -o "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip.tmp" -L https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_windows_8u252b09.zip
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip.tmp" "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip"
@@ -22,20 +18,17 @@ if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" (
 if not exist "%~dp0build\openjdk-8u252-b09\" (
 	tar xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0build\tmp\build\openjdk-8u252-b09" "%~dp0build\openjdk-8u252-b09"
 )
+set download.help=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
-	echo Download:
-	echo https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
-	echo To:
-	echo %~dp0download\apache-ant-1.10.8-bin.zip
-	echo !!
-	echo !! In case of errors you might want to do this manually and restart this script
-	echo !!
+	echo In case of errors %download.help%
 	curl -o "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" "%~dp0download\apache-ant-1.10.8-bin.zip"
@@ -43,6 +36,7 @@ if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
 if not exist "%~dp0build\apache-ant-1.10.8\" (
 	tar xvf "%~dp0download\apache-ant-1.10.8-bin.zip" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
+		echo Please %download.help%
 		goto error
 	)
 	move "%~dp0build\tmp\build\apache-ant-1.10.8" "%~dp0build\apache-ant-1.10.8"
