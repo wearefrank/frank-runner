@@ -1,0 +1,25 @@
+<project default="restart-ladybug" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<target name="restart-ladybug">
+		<property file="../../build.properties"/>
+		<property file="build.properties"/>
+		<!-- Optionally Build ibis-echo2 -->
+		<!-- TODO -->
+		<!-- Build Ladybug -->
+		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="install"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+		</exec>
+		<!-- Test with iaf-webapp -->
+		<ant dir="../iaf-webapp" antfile="build.xml"/>
+		<xmlproperty file="../../../ibis-ladybug/pom.xml"/>
+		<property name="pom.xml" location="${basedir}/../../../iaf/webapp/pom.xml"/>
+		<property name="build.properties" location="${basedir}/../iaf-webapp/build.properties"/>
+		<echo message="PLEASE NOTE: Set version of artifact ibis-ladybug to ${project.version} in ${pom.xml} to make iaf-webapp use changes in ibis-ladybug"/>
+		<echo message="PLEASE NOTE: Make sure maven.projects in ${build.properties} is empty or contains ladybug in case you also change iaf-ladybug"/>
+	</target>
+</project>

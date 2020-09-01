@@ -1,4 +1,3 @@
-build
-download
-build.properties
-ibisdoc.xsd
+/build
+/download
+/build.properties

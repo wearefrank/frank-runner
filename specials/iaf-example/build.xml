@@ -1,0 +1,24 @@
+<project default="restart-iaf-example" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<target name="restart-iaf-example">
+		<property file="../../build.properties"/>
+		<property file="build.properties"/>
+		<property name="maven.clean" value="true"/>
+		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
+			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="install"/>
+			<arg value="--projects" unless:blank="${maven.projects}"/>
+			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+		</exec>
+		<!-- Update iaf-example with artifacts from local repo and restart Tomcat -->
+		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dproject.dir=iaf/example"/>
+			<arg value="-Dmaven=true"/>
+			<arg value="-Dtests.dir=src/test/resources/TestTool"/>
+		</exec>
+	</target>
+</project>

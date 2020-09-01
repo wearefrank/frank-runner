@@ -1,0 +1,29 @@
+<project default="restart-iaf-webapp" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<target name="restart-iaf-webapp">
+		<property file="../../build.properties"/>
+		<property file="build.properties"/>
+		<property name="maven.clean" value="true"/>
+		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
+			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="install"/>
+			<arg value="--projects" unless:blank="${maven.projects}"/>
+			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+		</exec>
+		<!-- Update iaf-webapp with artifacts from local repo and restart Tomcat -->
+		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dproject.dir=iaf/webapp"/>
+			<arg value="-Dmaven=true"/>
+			<!-- Don't clean webapp except lib folder because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->
+			<arg value="-Dwebapp.gitignore.skip=true"/>
+			<arg value="-Dwebapp.clean=WEB-INF/lib/**"/>
+			<!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
+			<arg value="-Dconfigurations.dir=${configurations.dir}"/>
+			<arg value="-Dtests.dir=${tests.dir}"/>
+		</exec>
+	</target>
+</project>
