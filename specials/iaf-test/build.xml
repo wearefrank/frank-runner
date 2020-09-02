@@ -2,7 +2,26 @@
 	<target name="restart-iaf-test">
 		<property file="../../build.properties"/>
 		<property file="build.properties"/>
+		<!--
+		Change the following properties to speed up the build process (either
+		here to have git report your changes or in build.properties which is
+		ignored by git). E.g. when you are working on core and you are not
+		(re)moving any classes you could do the following (it would still be a
+		good idea to do a full build with tests before you commit) (webapp needs
+		to be added to the list because example gets most of it's artfacts from
+		the webapp overlay):
+		<property name="maven.projects" value="core,webapp"/>
+		<property name="maven.clean" value="false"/>
+		<property name="maven.skip.tests" value="true"/>
+		<property name="maven.skip.javadoc" value="true"/>
+		-->
+		<!-- Default values, foolproof but time consuming -->
+		<property name="maven.projects" value=""/>
 		<property name="maven.clean" value="true"/>
+		<property name="maven.skip.tests" value="false"/>
+		<property name="maven.skip.javadoc" value="false"/>
+		<property name="maven.verbose" value="false"/>
+		<!-- Build iaf -->
 		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
