@@ -91,6 +91,10 @@
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 		<property name="tomcat.connector.port" value="80"/>
 		<property name="tomcat.server.port" value="8005"/>
+		<property name="winmerge.version" value="2.16.6"/>
+		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
+		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
+		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
 		<property name="ff.version" value="7.6-20200501.172313"/>
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.ibissource.org/content/groups/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
@@ -117,6 +121,8 @@
 		<available property="maven.dir.available" file="${maven.dir}"/>
 		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
 		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="winmerge.zip.available" file="download/${winmerge.zip}"/>
+		<available property="winmerge.dir.available" file="${winmerge.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
 		<available property="ff.dir.available" file="${ff.dir}"/>
 		<available property="jms.jar.available" file="download/${jms.jar}"/>
@@ -124,6 +130,7 @@
 		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
 
+		<property name="larva.windiff.command" value="${basedir}/${winmerge.dir}/WinMerge/WinMergeU.exe"/><!-- defined here and not at the same place as the scenariosroot1.* properties as it depends on ${winmerge.dir} which is not yet defined at that point -->
 		<propertyset id="system.properties.set">
 			<propertyref builtin="commandline"/>
 			<propertyref name="dtap.stage"/>
@@ -131,6 +138,7 @@
 			<propertyref name="ibistesttool.directory"/>
 			<propertyref name="scenariosroot1.directory"/>
 			<propertyref name="scenariosroot1.description"/>
+			<propertyref name="larva.windiff.command"/>
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
@@ -211,7 +219,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
+	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
 		<!-- ant -->
@@ -253,6 +261,8 @@
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<!-- winmerge -->
+		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
 		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
@@ -403,6 +413,10 @@
 		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
 	</target>
 
+	<target name="get.winmerge" unless="winmerge.zip.available">
+		<get src="${winmerge.url}" dest="download/${winmerge.zip}" verbose="on"/>
+	</target>
+
 	<target name="get.ff" unless="ff.war.available">
 		<get src="${ff.url}" dest="download/${ff.war}" verbose="on"/>
 	</target>
@@ -517,6 +531,7 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message="ibistesttool.directory: ${ibistesttool.directory}" if:set="debug.true"/>
 		<echo message="scenariosroot1.directory: ${scenariosroot1.directory}" if:set="debug.true"/>
 		<echo message="scenariosroot1.description: ${scenariosroot1.description}" if:set="debug.true"/>
+		<echo message="larva.windiff.command: ${larva.windiff.command}" if:set="debug.true"/>
 		<echo message="context.path: ${context.path}" if:set="debug.true"/>
 		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
