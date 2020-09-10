@@ -23,23 +23,23 @@ if not exist "%~dp0build\openjdk-8u252-b09\" (
 	)
 	move "%~dp0build\tmp\build\openjdk-8u252-b09" "%~dp0build\openjdk-8u252-b09"
 )
-set download.help=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\apache-ant-1.10.8-bin.zip" (
+set download.help=download https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\apache-maven-3.6.3-bin.zip" (
 	echo In case of errors %download.help%
-	curl -o "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.zip
+	curl -o "%~dp0download\apache-maven-3.6.3-bin.zip.tmp" -L https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
 	if errorlevel 1 (
 		echo Please %download.help%
 		goto error
 	)
-	move "%~dp0download\apache-ant-1.10.8-bin.zip.tmp" "%~dp0download\apache-ant-1.10.8-bin.zip"
+	move "%~dp0download\apache-maven-3.6.3-bin.zip.tmp" "%~dp0download\apache-maven-3.6.3-bin.zip"
 )
-if not exist "%~dp0build\apache-ant-1.10.8\" (
-	tar xvf "%~dp0download\apache-ant-1.10.8-bin.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\apache-maven-3.6.3\" (
+	tar xvf "%~dp0download\apache-maven-3.6.3-bin.zip" -C "%~dp0build\tmp\build"
 	if errorlevel 1 (
 		echo Please %download.help%
 		goto error
 	)
-	move "%~dp0build\tmp\build\apache-ant-1.10.8" "%~dp0build\apache-ant-1.10.8"
+	move "%~dp0build\tmp\build\apache-maven-3.6.3" "%~dp0build\apache-maven-3.6.3"
 )
 set JAVA_HOME=%~dp0build\openjdk-8u252-b09
 call "%~dp0build\apache-maven-3.6.3\bin\mvn.cmd" %*

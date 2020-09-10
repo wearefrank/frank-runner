@@ -435,7 +435,8 @@ if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
 <echo file="${filename}.bat" append="true" unless:set="mvn">
