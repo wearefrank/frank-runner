@@ -9,6 +9,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 
 - [Installation](#installation)
 - [Examples](#examples)
+- [Specials](#specials)
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
 - [Debug property](#debug-property)
@@ -100,6 +101,14 @@ adapters to be able to understand how the to e.g. resend messages.
 This example is referenced by the Frank!Manual at the following location:
 
 https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages.html#
+
+
+# Specials
+
+To run the webapp, example and test modules of 
+https://github.com/ibissource/iaf you can use the build.xml files in the
+specials folder. As with other projects the iaf folder needs to be a sibling
+folder of the frank-runner folder.
 
 
 # Project structure and customisation
