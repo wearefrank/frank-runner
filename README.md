@@ -2,15 +2,12 @@
 
 This project will help you run your Frank configurations with Tomcat.
 
-Basically all you have to do is clone or download this project and run start.bat
-by double clicking it. When Tomcat has started you can browse to the following
-address:
+Add a small build.xml to your project and run it to (re)start your Frank.
 
-http://localhost
 
 # Contents
 
-- [Switching projects](#switching-projects)
+- [Installation](#installation)
 - [Examples](#examples)
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
@@ -24,15 +21,20 @@ http://localhost
 - [Scripting](#scripting)
 
 
-# Switching projects
+# Installation
 
-By default the Frank2Example1 project in the examples folder of the Frank!Runner
-project will be used. There are several ways to make the Frank!Runner use your
-own project. The preferred way is to clone the Frank!Runner project and your own
-projects to the same parent folder and add the following build.xml and
-restart.bat to the root folder of all of your projects.
+Clone or download this Frank!Runner project into the projects folder that
+contains your Frank project(s) (make the frank-runner folder a sibling of your
+project folder). You can now run build.xml files in projects that already have
+them (like the example projects in frank-runner/examples). See the sections
+[Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and VSCode to
+run a build.xml. When Tomcat has started you can browse to the following
+address:
 
-build.xml:
+http://localhost
+
+In case your project doesn't contain a build.xml yet you can add it to the root
+folder of your project with the following content:
 
 ```
 <project default="restart">
@@ -45,58 +47,29 @@ build.xml:
 </project>
 ```
 
-restart.bat:
+To make the items in the Last Tasks list of the Task Explorer unique you can
+rename the target name restart in build.xml to something unique for your project
+(e.g. restart-frank2yourproject) (make the value of the default attribute of the
+project element the same).
+
+You can also create a restart.bat with the following content which you can also
+run from Windows Explorer:
 
 ```
 call ..\frank-runner\ant.bat
-set exiterrorlevel=%errorlevel%
+if %errorlevel% equ 0 goto end
+rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
 set arg0=%0
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
-exit /b %exiterrorlevel%
+:end
 ```
 
-To start the Frank!Runner with a specific project use Eclipse, VSCode and/or
-Windows Explorer to run the build.xml and/or restart.bat in the root folder of
-that specific project. See the sections [Eclipse](#eclipse) and
-[VSCode](#vscode) on how to use Eclipse and VSCode. To make the items in the
-Last Tasks list of the Task Explorer unique you can rename the target name
-restart in build.xml to something unique for your project (e.g.
-restart-frank2yourproject) (make the value of the default attribute of the
-project element the same).
-
-For completeness we describe the other ways to swithch between projects
-(including Frank2Example2) but feel free to skip the rest of this section.
-
-Switching projects is all about changing the value of the project.dir property.
-This is done in the build.xml above but can be done in other ways too. One way
-is to create a build.properties in the frank-runner folder with the following
-content:
-
-```
-project.dir=Frank2YourApplication
-```
-
-The project.dir needs to be specified relative to the parent folder of the
-frank-runner folder. In the previous example it is assumed that the
-Frank2YourApplication and frank-runner folder share the same parent folder. But
-you could also specify a path like in the following example:
-
-```
-project.dir=../path/to/your/Frank2YourApplication
-```
-
-To use Frank2Example2 use:
-
-```
-project.dir=${basedir.basename}/examples/Frank2Example2
-```
-
-Another way to specify the project.dir (when using the command line) is to add
-a -Dproject.dir argument like:
-
-```
-projects\frank-runner> .\start.bat -Dproject.dir=Frank2YourApplication
-```
+There are other ways possible to run the Frank!Runner scripts but to make it
+easy for all project members and to have good integration with
+[Eclipse](#eclipse) and [VSCode](#vscode) the preferred way is to use a
+build.xml and optionally a restart.bat. Because the build.xml can be customized
+and to keep all customasations in one place restart.bat calls ant.bat to run
+the build.xml (instead of calling restart.bat).
 
 
 # Examples
@@ -222,10 +195,10 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
 ```
 
 The build.xml in the config projects need to have to following content (see
-section [Switching projects](#switching-projects) for the content of the
-build.xml that should be added to the main project) (you can rename target
-restart to restart-&lt;projectname&gt; to have better overview on the Last Tasks
-list of the Task Explorer):
+section [Installation](#installation) for the content of the build.xml that
+should be added to the main project) (you can rename target restart to
+restart-&lt;projectname&gt; to have better overview on the Last Tasks list of
+the Task Explorer):
 
 ```
 <project default="restart">
@@ -375,10 +348,9 @@ files and dependencies.
 # Eclipse
 
 Choose one of the methods described in the sections below to run the build.xml
-and/or restart.bat in your project. See section
-[Switching projects](#switching-projects) for more information on the build.xml
-and restart.bat and how to add them to your project in case they don't exist
-yet.
+and/or restart.bat in your project. See section [Installation](#installation)
+for more information on the build.xml and restart.bat and how to add them to
+your project in case they don't exist yet.
 
 ## Ant
 
@@ -393,10 +365,9 @@ Open the terminal view, cd to your project and execute restart.bat.
 # VSCode
 
 Choose one of the methods described in the sections below to run the build.xml
-and/or restart.bat in your project. See section
-[Switching projects](#switching-projects) for more information on the build.xml
-and restart.bat and how to add them to your project in case they don't exist
-yet.
+and/or restart.bat in your project. See section [Installation](#installation)
+for more information on the build.xml and restart.bat and how to add them to
+your project in case they don't exist yet.
 
 ## Task Explorer
 
