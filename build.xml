@@ -6,7 +6,6 @@
 
 		<property name="project.dir" value="${main.project}" if:set="sub.project"/>
 		<property name="configurations.names" value="${main.project},${sub.project}" if:set="sub.project"/>
-		<property name="tests.dir" value="..\${main.project}_${sub.project}\src\test\testtool" if:set="sub.project"/>
 
 		<property name="projects.dir" value="${basedir}/.."/>
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
@@ -53,8 +52,6 @@
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 		<basename property="instance.name" file="${project.dir}"/>
 		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
-		<property name="scenariosroot1.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
-		<property name="scenariosroot1.description" value="Frank!Runner"/>
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
 
@@ -130,14 +127,12 @@
 		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
 
-		<property name="larva.windiff.command" value="${basedir}/${winmerge.dir}/WinMerge/WinMergeU.exe"/><!-- defined here and not at the same place as the scenariosroot1.* properties as it depends on ${winmerge.dir} which is not yet defined at that point -->
+		<property name="larva.windiff.command" value="${basedir}/${winmerge.dir}/WinMerge/WinMergeU.exe"/><!-- defined here and not at the beginning of this file where most properties are defined as it depends on ${winmerge.dir} -->
 		<propertyset id="system.properties.set">
 			<propertyref builtin="commandline"/>
 			<propertyref name="dtap.stage"/>
 			<propertyref name="instance.name"/>
 			<propertyref name="ibistesttool.directory"/>
-			<propertyref name="scenariosroot1.directory"/>
-			<propertyref name="scenariosroot1.description"/>
 			<propertyref name="larva.windiff.command"/>
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
@@ -156,7 +151,7 @@
 		<systemproperties name="system.properties" commaseparated="${system.properties.comma.separated}"/>
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
-		<property name="configurations.dir.abs" location="${projects.dir}/${project.dir}/${configurations.dir}"/>
+		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
 		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/>
 		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
@@ -203,6 +198,35 @@
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
 		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
+
+		<property name="projects.dir.abs" location="${projects.dir}"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}_${sub.project}/${tests.dir}" relative="true" if:set="sub.project"/>
+		<property name="tests.dirset.dir" value="${projects.dir}"/>
+		<property name="tests.dir.abs" location="${tests.dirset.dir}/${project.dir}/${tests.dir}"/>
+		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/${tests.dir}" if:set="war.pom.xml.available"/>
+		<property name="tests.dirset.includes" value="${tests.dir.rel}"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
+		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
+		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
+		<scriptdef language="javascript" name="testsproperties">
+			<attribute name="name"/>
+			<attribute name="projectsdirabs"/>
+			<attribute name="scenariosrootdefault"/>
+			<attribute name="testsdirs"/>
+			var projectsDirAbs = attributes.get("projectsdirabs");
+			var scenariosrootDefault = attributes.get("scenariosrootdefault");
+			var testsDirs = attributes.get("testsdirs").split('|');
+			var value = '';
+			if (scenariosrootDefault != '${scenariosroot.default}') {
+				value += '\nscenariosroot.default=' + scenariosrootDefault.replace(/\\/g, "\\\\");
+			}
+			for (var i = 0; i &lt; testsDirs.length; i++) {
+				value += '\nscenariosroot' + (i + 1) + '.description='+ testsDirs[i].substring(projectsDirAbs.length() + 1).replace(/\\/g, "\\\\");
+				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace(/\\/g, "\\\\");
+			}
+			project.setProperty(attributes.get("name"), value);
+		</scriptdef>
+		<testsproperties name="tests.properties" projectsdirabs="${projects.dir.abs}" scenariosrootdefault="${scenariosroot.default}" testsdirs="${tests.dirs}"/>
 
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -257,7 +281,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
-		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
+		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
@@ -549,6 +573,14 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message="configurations.dirset.includes=${configurations.dirset.includes}" if:set="debug.true"/>
 		<echo message="configurations.dirs.flat=${configurations.dirs.flat}" if:set="debug.true"/>
 		<echo message="configurations.properties:${configurations.properties}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="projects.dir.abs=${projects.dir.abs}" if:set="debug.true"/>
+		<echo message="scenariosroot.default=${scenariosroot.default}" if:set="debug.true"/>
+		<echo message="tests.dirset.dir=${tests.dirset.dir}" if:set="debug.true"/>
+		<echo message="tests.dir.abs=${tests.dir.abs}" if:set="debug.true"/>
+		<echo message="tests.dir.rel=${tests.dir.rel}" if:set="debug.true"/>
+		<echo message="tests.dirset.includes=${tests.dirset.includes}" if:set="debug.true"/>
+		<echo message="tests.properties:${tests.properties}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="    https://github.com/ibissource/frank-runner#frankrunner" if:set="debug.true"/>
 		<!-- http://www.network-science.de/ascii/ font standard -->
