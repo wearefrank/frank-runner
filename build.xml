@@ -204,7 +204,7 @@
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dir.abs" location="${tests.dirset.dir}/${project.dir}/${tests.dir}"/>
 		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/${tests.dir}" if:set="war.pom.xml.available"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="tests.dirset.includes" value="${tests.dir.rel}"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
 		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
