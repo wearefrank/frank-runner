@@ -51,6 +51,7 @@
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 		<basename property="instance.name" file="${project.dir}"/>
+		<available property="configuration.name.default" value="${instance.name}" file="${projects.dir}/${project.dir}/${classes.dir}/Configuration.xml"/>
 		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
@@ -161,12 +162,14 @@
 		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
 			<attribute name="configurationsdirabs"/>
+			<attribute name="configurationnamedefault"/>
 			<attribute name="configurationsnames"/>
 			<attribute name="configurationsnamesds"/>
 			<attribute name="configurationsdirs"/>
 			<attribute name="configurationsdirsflat"/>
 			<attribute name="classloadertype"/>
 			var configurationsDirAbs = attributes.get("configurationsdirabs");
+			var configurationNameDefault = attributes.get("configurationnamedefault");
 			var configurationsNames = attributes.get("configurationsnames");
 			var configurationsNamesDs = attributes.get("configurationsnamesds");
 			var configurationsDirs = attributes.get("configurationsdirs").split('|');
@@ -181,8 +184,14 @@
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
 					value += '\n# Set configurations.names to the list of folders in configurations.directory';
+					if (configurationNameDefault != '${configuration.name.default}') {
+						value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
+						value += '\nconfigurations.names=' + configurationNameDefault.replace(/\\/g, "\\\\") + ',';
+					} else {
+						value += '\nconfigurations.names=';
+					}
 					if (configurationsDirsFlat.toString().length() > 0) {
-						value += '\nconfigurations.names=' + configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
+						value += configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
 					}
 				} else {
 					value += '\n# Don\'t set configurations.names as it is spedified in DeploymentSpecifics.properties';
@@ -197,7 +206,7 @@
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
+		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationnamedefault="${configuration.name.default}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
 
 		<property name="projects.dir.abs" location="${projects.dir}"/>
 		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}_${sub.project}/${tests.dir}" relative="true" if:set="sub.project"/>
