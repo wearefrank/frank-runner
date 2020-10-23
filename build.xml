@@ -272,7 +272,7 @@
 		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${projects.dir}/${project.dir}/.gitignore" when="greater" length="0"/></condition>
 		<echo file="${projects.dir}/${project.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
 		<echo file="${projects.dir}/${project.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
-		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
+		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
