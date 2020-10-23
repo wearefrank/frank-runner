@@ -1,0 +1,9 @@
+<project default="restart-frank2example4">
+	<target name="restart-frank2example4">
+		<basename property="project.dir" file="${basedir}"/>
+		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dprojects.dir=${basedir}/.."/>
+			<arg value="-Dproject.dir=${project.dir}"/>
+		</exec>
+	</target>
+</project>

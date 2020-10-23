@@ -1,0 +1,29 @@
+<Configuration>
+	<Adapter name="TestFrankFlow">
+		<Receiver name="TestFrankFlow">
+			<JavaListener name="TestFrankFlow"/>
+		</Receiver>
+		<Pipeline firstPipe="FirstPipe">
+			<FixedResultPipe
+				name="FirstPipe"
+				returnString="&lt;FirstPipe/&gt;"
+				>
+				<Forward name="success" path="ThirdPipe"/>
+			</FixedResultPipe>
+			<FixedResultPipe
+				name="SecondPipe"
+				returnString="&lt;SecondPipe/&gt;"
+				>
+				<Forward name="success" path="ThirdPipe"/>
+			</FixedResultPipe>
+			<XmlSwitchPipe 
+				name="ThirdPipe"
+				xpathExpression="local-name(/*)"
+				>
+				<Forward name="FirstPipe" path="SecondPipe"/>
+				<Forward name="SecondPipe" path="EXIT"/>
+			</XmlSwitchPipe>
+			<Exit path="EXIT" state="success" />
+		</Pipeline>
+	</Adapter>
+</Configuration>

@@ -83,9 +83,9 @@
 		<property name="maven.zip" value="apache-maven-${maven.version}-bin.zip"/>
 		<property name="maven.url" value="https://archive.apache.org/dist/maven/maven-3/${maven.version}/binaries/${maven.zip}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.version" value="7.0.100"/>
+		<property name="tomcat.version" value="9.0.39"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
-		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/${tomcat.zip}"/>
+		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/${tomcat.zip}"/>
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 		<property name="tomcat.connector.port" value="80"/>
 		<property name="tomcat.server.port" value="8005"/>
@@ -267,6 +267,11 @@
 		<condition property="webapp.gitignore.add.newline" if:true="${webapp.gitignore.add}"><length file="${webapp.dir}/.gitignore" when="greater" length="0"/></condition>
 		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
 		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:true="${webapp.gitignore.add}"/>
+		<property name="project.gitignore" value="/target/" if:true="${maven}"/>
+		<condition property="project.gitignore.add" unless:true="${project.gitignore.skip}"><not><resourcecontains resource="${projects.dir}/${project.dir}/.gitignore" substring="${project.gitignore}"/></not></condition>
+		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${projects.dir}/${project.dir}/.gitignore" when="greater" length="0"/></condition>
+		<echo file="${projects.dir}/${project.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
+		<echo file="${projects.dir}/${project.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
@@ -289,6 +294,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
