@@ -48,6 +48,7 @@
 		<property name="lib.webapp.dir" value="lib/webapp"/>
 		<property name="database.type" value="h2"/>
 		<property name="dtap.stage" value="LOC"/>
+		<property name="otap.stage" value="LOC"/>
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 		<basename property="instance.name" file="${project.dir}"/>
@@ -132,6 +133,7 @@
 		<propertyset id="system.properties.set">
 			<propertyref builtin="commandline"/>
 			<propertyref name="dtap.stage"/>
+			<propertyref name="otap.stage"/>
 			<propertyref name="instance.name"/>
 			<propertyref name="ibistesttool.directory"/>
 			<propertyref name="larva.windiff.command"/>
@@ -565,6 +567,7 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message="lib.webapp.dir: ${lib.webapp.dir}" if:set="debug.true"/>
 		<echo message="database.type: ${database.type}" if:set="debug.true"/>
 		<echo message="dtap.stage: ${dtap.stage}" if:set="debug.true"/>
+		<echo message="otap.stage: ${otap.stage}" if:set="debug.true"/>
 		<echo message="ds.properties.instance.name: ${ds.properties.instance.name}" if:set="debug.true"/>
 		<echo message="ds.properties.configurations.names: ${ds.properties.configurations.names}" if:set="debug.true"/>
 		<echo message="instance.name: ${instance.name}" if:set="debug.true"/>
