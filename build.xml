@@ -260,7 +260,8 @@
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
-		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:true="${maven}"/>
+		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
+		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
 		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" if:true="${maven.clean}"/>
 		<condition property="webapp.gitignore.add" unless:true="${webapp.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
