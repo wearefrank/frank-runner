@@ -21,6 +21,10 @@
 		<property name="maven.skip.tests" value="false"/>
 		<property name="maven.skip.javadoc" value="false"/>
 		<property name="maven.verbose" value="false"/>
+		<!-- Stop Tomcat to prevent files used by maven being locked -->
+		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
+			<arg value="-Dproject.dir=iaf/test"/>
+		</exec>
 		<!-- Build iaf -->
 		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
@@ -33,8 +37,8 @@
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
-		<!-- Update iaf-webapp with artifacts from local repo and restart Tomcat -->
-		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true">
+		<!-- Update iaf-test with artifacts from local repo and start Tomcat -->
+		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 			<arg value="-Dmaven=true"/>
 			<!-- In DeploymentSpecifics.properties the configurations part of the path is added to configurations.*.* properties, hence remove it here from configurations.dir that has default value src/main/configurations -->
