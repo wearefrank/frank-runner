@@ -25,6 +25,8 @@
 		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 		</exec>
+		<!-- Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test -->
+		<delete dir="../../../iaf/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" if:true="${maven.clean}"/>
 		<!-- Build iaf -->
 		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
