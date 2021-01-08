@@ -20,6 +20,10 @@
 		<!-- Optionally Build ibis-echo2 -->
 		<!-- TODO -->
 		<!-- Build Ladybug -->
+		<!-- Set test.with.iaf to true to test with IAF -->
+		<property name="test.with.iaf" value="false"/>
+		<!-- Change iaf.module to example or test to test with one of those modules instead of module webapp -->
+		<property name="iaf.module" value="webapp"/>
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
