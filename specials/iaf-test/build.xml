@@ -22,13 +22,16 @@
 		<property name="maven.skip.tests" value="false"/>
 		<property name="maven.skip.javadoc" value="false"/>
 		<property name="maven.verbose" value="false"/>
-		<!-- Stop Tomcat to prevent files used by maven being locked -->
+
+		<echo message="iaf-test: Stop Tomcat to prevent files used by maven being locked"/>
 		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 		</exec>
-		<!-- Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test -->
+
+		<echo message="iaf-test: Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test" if:true="${maven.clean}"/>
 		<delete dir="../../../iaf/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" if:true="${maven.clean}"/>
-		<!-- Build iaf -->
+
+		<echo message="iaf-test: Build iaf"/>
 		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
@@ -40,7 +43,8 @@
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
-		<!-- Update iaf-test with artifacts from local repo and start Tomcat -->
+
+		<echo message="iaf-test: Update iaf-test with artifacts from local repo and start Tomcat"/>
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 			<arg value="-Dmaven=true"/>

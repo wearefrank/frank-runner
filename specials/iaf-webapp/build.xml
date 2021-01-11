@@ -23,11 +23,13 @@
 		<!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
 		<property name="configurations.dir" value="../../frank-runner/examples/Frank2Example1/configurations"/>
 		<property name="tests.dir" value="../../frank-runner/examples/Frank2Example1/tests"/>
-		<!-- Stop Tomcat to prevent files used by maven being locked -->
+
+		<echo message="iaf-webapp: Stop Tomcat to prevent files used by maven being locked"/>
 		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/webapp"/>
 		</exec>
-		<!-- Build iaf -->
+
+		<echo message="iaf-webapp: Build iaf"/>
 		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
@@ -39,7 +41,8 @@
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
-		<!-- Update iaf-webapp with artifacts from local repo and start Tomcat -->
+
+		<echo message="iaf-webapp: Update iaf-webapp with artifacts from local repo and start Tomcat"/>
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dmaven=true"/>
