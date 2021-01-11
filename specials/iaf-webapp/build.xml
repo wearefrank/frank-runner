@@ -46,6 +46,7 @@
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.clean=${maven.clean}"/>
 			<!-- Don't clean webapp except lib folder because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/lib/**"/>

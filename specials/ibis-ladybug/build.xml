@@ -22,6 +22,33 @@
 		<!-- Change iaf.module to example or test to test with one of those modules instead of module webapp -->
 		<property name="iaf.module" value="webapp"/>
 
+		<echo message="ibis-ladybug: Check ibis-ladybug version in iaf-ladybug pom.xml" if:true="${test.with.iaf}"/>
+		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ibis.ladybug.pom.xml" if:true="${test.with.iaf}"/>
+		<property name="iaf.ladybug.pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
+		<condition property="ladybug.version.ok">
+			<resourcecontains resource="${iaf.ladybug.pom.xml}" substring="&lt;version&gt;${ibis.ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+		</condition>
+		<fail message="Set version of artifact ibis-ladybug to ${ibis.ladybug.pom.xml.project.version} in ${iaf.ladybug.pom.xml} " unless:true="${ladybug.version.ok}" if:true="${test.with.iaf}"/>
+
+		<echo message="ibis-ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
+		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
+		<property file="${iaf.module.build.properties}" prefix="iaf.module.build.properties"/>
+		<condition property="maven.projects.ok">
+			<or>
+				<not><resourceexists><file file="${iaf.module.build.properties}"/></resourceexists></not>
+				<not><isset property="iaf.module.build.properties.maven.projects"/></not>
+				<equals arg1="${iaf.module.build.properties.maven.projects}" arg2=""/>
+				<and>
+					<contains string="${iaf.module.build.properties.maven.projects}" substring="ladybug"/>
+					<or>
+						<contains string="${iaf.module.build.properties.maven.projects}" substring="webapp"/>
+						<equals arg1="${iaf.module}" arg2="webapp"/>
+					</or>
+				</and>
+			</or>
+		</condition>
+		<fail message="Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
+
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
@@ -55,10 +82,5 @@
 
 		<echo message="ibis-ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>
 		<ant dir="../iaf-${iaf.module}" antfile="build.xml" inheritAll="false" if:true="${test.with.iaf}"/>
-		<xmlproperty file="../../../ibis-ladybug/pom.xml" if:true="${test.with.iaf}"/>
-		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
-		<property name="build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
-		<echo message="ibis-ladybug: PLEASE NOTE: Set version of artifact ibis-ladybug to ${project.version} in ${pom.xml} and make sure ../iaf-${iaf.module}/build.xml is run with maven.clean=true at least once to remove the old ibis-ladybug version" if:true="${test.with.iaf}"/>
-		<echo message="ibis-ladybug: PLEASE NOTE: Make sure maven.projects in ${build.properties} is empty or contains ladybug (and webapp when iaf.module=example or iaf.module=test, currently iaf.module=${iaf.module})" if:true="${test.with.iaf}"/>
 	</target>
 </project>

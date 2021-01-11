@@ -48,6 +48,7 @@
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/example"/>
 			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.clean=${maven.clean}"/>
 			<arg value="-Dtests.dir=src/test/resources/TestTool"/>
 		</exec>
 	</target>

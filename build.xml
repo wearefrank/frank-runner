@@ -314,6 +314,11 @@
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<fileset id="webapp.lib.jars.id" dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/>
+		<pathconvert property="webapp.lib.jars" refid="webapp.lib.jars.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<doublejars jars="${webapp.lib.jars}"/>
+		<property name="ignore.double.jars" value="true"/><!-- feature toggle while iaf 7.6 SNAPSHOT has double asm jar -->
+		<fail message="The following double jars are found in ${webapp.dir}/WEB-INF/lib: ${double.jars}. When maven=true use maven.clean=true at least once. As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
 		<!-- context.xml -->
 		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
 		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
@@ -620,6 +625,36 @@ if not exist "%~dp0${dir.windows}\" (
 		<attribute name="from"/> 
 		<attribute name="to"/>
 		project.setProperty(attributes.get("to"), attributes.get("from").toLowerCase());
+	</scriptdef>
+
+	<scriptdef language="javascript" name="doublejars">
+		<attribute name="jars"/>
+		var jars = attributes.get("jars").split('|');
+		var doubleJars = '';
+		var names = [];
+		for (var i = 0; i &lt; jars.length; i++) {
+			var name = '';
+			var j = jars[i].indexOf('-');
+			while (j != -1) {
+				name = jars[i].substring(0, j);
+				if (jars[i].charAt(j + 1) &gt;= '0' &amp;&amp; jars[i].charAt(j + 1) &lt;= '9') {
+					j = -1;
+				} else {
+					j = jars[i].indexOf('-', j + 1);
+				}
+			}
+			if (names.indexOf(name) != -1) {
+				if (doubleJars.length() == 0) {
+					doubleJars = name;
+				} else {
+					doubleJars += ', ' + name;
+				}
+			}
+			names.push(name);
+		}
+		if (doubleJars.length() > 0) {
+			project.setProperty('double.jars', doubleJars);
+		}
 	</scriptdef>
 
 </project>

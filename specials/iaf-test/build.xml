@@ -48,6 +48,7 @@
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.clean=${maven.clean}"/>
 			<!-- In DeploymentSpecifics.properties the configurations part of the path is added to configurations.*.* properties, hence remove it here from configurations.dir that has default value src/main/configurations -->
 			<arg value="-Dconfigurations.dir=src/main"/>
 			<arg value="-Dweb.contextpath=/"/>
