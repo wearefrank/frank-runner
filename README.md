@@ -109,6 +109,10 @@ the top of the Frank!Console menu. For information about the Frank!Flow go to:
 
 https://github.com/ibissource/frank-flow#frankflow
 
+Better example Frank! configuration files for Frank2Example4 to demonstrate
+and / or test Frank!Flow are appreciated. Please create a pull request, an
+issue or send an email with your improvements.
+
 
 # Specials
 
