@@ -102,6 +102,13 @@ This example is referenced by the Frank!Manual at the following location:
 
 https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages.html#
 
+## Frank2Example4
+
+Example usage of Frank!Flow. In Frank2Example4 the Frank!Flow can be found at
+the top of the Frank!Console menu. For information about the Frank!Flow go to:
+
+https://github.com/ibissource/frank-flow#frankflow
+
 
 # Specials
 
