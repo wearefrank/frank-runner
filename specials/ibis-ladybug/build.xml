@@ -28,7 +28,7 @@
 		<condition property="ladybug.version.ok">
 			<resourcecontains resource="${iaf.ladybug.pom.xml}" substring="&lt;version&gt;${ibis.ladybug.pom.xml.project.version}&lt;/version&gt;"/>
 		</condition>
-		<fail message="Set version of artifact ibis-ladybug to ${ibis.ladybug.pom.xml.project.version} in ${iaf.ladybug.pom.xml} " unless:true="${ladybug.version.ok}" if:true="${test.with.iaf}"/>
+		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ibis.ladybug.pom.xml.project.version} in ${iaf.ladybug.pom.xml} " unless:true="${ladybug.version.ok}" if:true="${test.with.iaf}"/>
 
 		<echo message="ibis-ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
 		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
@@ -47,7 +47,7 @@
 				</and>
 			</or>
 		</condition>
-		<fail message="Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
+		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
 
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
