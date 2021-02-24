@@ -30,7 +30,7 @@
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
-		<exec executable="../frank-runner/mvn.bat" dir="../../../iaf" vmlauncher="false" failonerror="true">
+		<exec dir="../../../iaf" executable="../frank-runner/mvn.bat" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
@@ -47,6 +47,7 @@
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.clean=${maven.clean}"/>
+			<arg value="-Dmaven.verbose=${maven.verbose}"/>
 			<!-- Don't clean webapp except lib folder because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/lib/**"/>
