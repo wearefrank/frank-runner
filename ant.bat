@@ -1,3 +1,4 @@
+:: This file is generated as part of build.xml
 @echo off
 setlocal enabledelayedexpansion
 if not exist "%~dp0download\" (

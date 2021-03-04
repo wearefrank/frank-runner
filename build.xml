@@ -496,7 +496,8 @@
 		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
 		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
 		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
-		<echo file="${filename}.bat">@echo off
+		<echo file="${filename}.bat">:: This file is generated as part of build.xml
+@echo off
 setlocal enabledelayedexpansion
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
