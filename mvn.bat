@@ -17,7 +17,7 @@ if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" (
 	move "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip.tmp" "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip"
 )
 if not exist "%~dp0build\openjdk-8u252-b09\" (
-	tar xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_8u252b09.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo Please %download.help%
 		goto error
@@ -35,7 +35,7 @@ if not exist "%~dp0download\apache-maven-3.6.3-bin.zip" (
 	move "%~dp0download\apache-maven-3.6.3-bin.zip.tmp" "%~dp0download\apache-maven-3.6.3-bin.zip"
 )
 if not exist "%~dp0build\apache-maven-3.6.3\" (
-	tar xvf "%~dp0download\apache-maven-3.6.3-bin.zip" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-maven-3.6.3-bin.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo Please %download.help%
 		goto error
