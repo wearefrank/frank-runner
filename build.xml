@@ -254,9 +254,19 @@
 
 	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available"/>
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available">
+			<patternset>
+				<exclude name="**/demo"/>
+				<exclude name="**/sample"/>
+				<exclude name="**/src.zip"/>
+			</patternset>
+		</unzip>
 		<!-- ant -->
-		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available"/>
+		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available">
+			<patternset>
+				<exclude name="**/manual"/>
+			</patternset>
+		</unzip>
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
@@ -486,7 +496,8 @@
 		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
 		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
 		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
-		<echo file="${filename}.bat">@echo off
+		<echo file="${filename}.bat">:: This file is generated as part of build.xml
+@echo off
 setlocal enabledelayedexpansion
 if not exist "%~dp0download\" (
 	mkdir "%~dp0download"
@@ -532,7 +543,7 @@ if not exist "%~dp0download\${zip}" (
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
 )
 if not exist "%~dp0${dir.windows}\" (
-	tar xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
 		echo Please %download.help%
 		goto error
