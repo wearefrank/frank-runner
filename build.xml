@@ -37,8 +37,8 @@
 		<property name="maven" value="false"/><!-- feature toggle for now -->
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
-		<property name="maven.clean" value="true" if:true="${maven}"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
+		<property name="maven.skip.clean" value="false" if:true="${maven}"/>
 		<property name="maven.skip.tests" value="false" if:true="${maven}"/>
 		<property name="maven.skip.javadoc" value="false" if:true="${maven}"/>
 		<property name="maven.verbose" value="false" if:true="${maven}"/>
@@ -275,7 +275,7 @@
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
-		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" if:true="${maven.clean}"/>
+		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" unless:true="${maven.skip.clean}"/>
 		<condition property="webapp.gitignore.add" unless:true="${webapp.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
 		<condition property="webapp.gitignore.add.newline" if:true="${webapp.gitignore.add}"><length file="${webapp.dir}/.gitignore" when="greater" length="0"/></condition>
 		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
@@ -290,7 +290,7 @@
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
-			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
@@ -573,8 +573,8 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message="maven.exec.dir: ${maven.exec.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="maven: ${maven}" if:set="debug.true"/>
-		<echo message="maven.clean: ${maven.clean}" if:set="debug.true"/>
 		<echo message="maven.phase: ${maven.phase}" if:set="debug.true"/>
+		<echo message="maven.skip.clean: ${maven.skip.clean}" if:set="debug.true"/>
 		<echo message="maven.skip.tests: ${maven.skip.tests}" if:set="debug.true"/>
 		<echo message="maven.skip.javadoc: ${maven.skip.javadoc}" if:set="debug.true"/>
 		<echo message="maven.verbose: ${maven.verbose}" if:set="debug.true"/>

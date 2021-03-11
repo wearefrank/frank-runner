@@ -12,7 +12,7 @@
 		added to the list because the (updated) iaf-core jar is added to
 		iaf-test with the webapp overlay):
 		<property name="maven.projects" value="core,webapp"/>
-		<property name="maven.clean" value="false"/>
+		<property name="maven.skip.clean" value="true"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
 		<property name="maven.skip.recompile.all" value="true"/>
@@ -20,7 +20,7 @@
 		-->
 		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.projects" value=""/>
-		<property name="maven.clean" value="true"/>
+		<property name="maven.skip.clean" value="false"/>
 		<property name="maven.skip.tests" value="false"/>
 		<property name="maven.skip.javadoc" value="false"/>
 		<property name="maven.verbose" value="false"/>
@@ -30,12 +30,12 @@
 			<arg value="-Dproject.dir=iaf/test"/>
 		</exec>
 
-		<echo message="iaf-test: Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test" if:true="${maven.clean}"/>
-		<delete dir="../../../iaf/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" if:true="${maven.clean}"/>
+		<echo message="iaf-test: Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test" unless:true="${maven.skip.clean}"/>
+		<delete dir="../../../iaf/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" unless:true="${maven.skip.clean}"/>
 
 		<echo message="iaf-test: Build iaf"/>
 		<exec dir="../../../iaf" executable="../frank-runner/mvn.bat" vmlauncher="false" failonerror="true">
-			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
 			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
@@ -53,7 +53,7 @@
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/test"/>
 			<arg value="-Dmaven=true"/>
-			<arg value="-Dmaven.clean=${maven.clean}"/>
+			<arg value="-Dmaven.skip.clean=${maven.skip.clean}"/>
 			<arg value="-Dmaven.verbose=${maven.verbose}"/>
 			<!-- Folder target already present in iaf/.gitginore -->
 			<arg value="-Dproject.gitignore.skip=true"/>

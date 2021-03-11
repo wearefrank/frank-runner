@@ -8,14 +8,14 @@
 		ignored by git). E.g. when you are not (re)moving any classes you could
 		do the following (it would still be a good idea to do a full build with
 		tests before you commit):
-		<property name="maven.clean" value="false"/>
+		<property name="maven.skip.clean" value="true"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
 		<property name="maven.skip.recompile.all" value="true"/>
 		<property name="maven.skip.source.jar" value="true"/>
 		-->
 		<!-- Default values, foolproof but time consuming -->
-		<property name="maven.clean" value="true"/>
+		<property name="maven.skip.clean" value="false"/>
 		<property name="maven.skip.tests" value="false"/>
 		<property name="maven.skip.javadoc" value="false"/>
 		<property name="maven.verbose" value="false"/>
@@ -54,7 +54,7 @@
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
-			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
@@ -67,7 +67,7 @@
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
-			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>

@@ -10,7 +10,7 @@
 		a good idea to do a full build with tests before you commit or after a
 		pull (which might have changed other modules)):
 		<property name="maven.projects" value="core,ladybug"/>
-		<property name="maven.clean" value="false"/>
+		<property name="maven.skip.clean" value="true"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
 		<property name="maven.skip.recompile.all" value="true"/>
@@ -18,7 +18,7 @@
 		-->
 		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.projects" value=""/>
-		<property name="maven.clean" value="true"/>
+		<property name="maven.skip.clean" value="false"/>
 		<property name="maven.skip.tests" value="false"/>
 		<property name="maven.skip.javadoc" value="false"/>
 		<property name="maven.verbose" value="false"/>
@@ -33,7 +33,7 @@
 
 		<echo message="iaf-webapp: Build iaf"/>
 		<exec dir="../../../iaf" executable="../frank-runner/mvn.bat" vmlauncher="false" failonerror="true">
-			<arg value="clean" if:true="${maven.clean}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
 			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
@@ -51,7 +51,7 @@
 		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dmaven=true"/>
-			<arg value="-Dmaven.clean=${maven.clean}"/>
+			<arg value="-Dmaven.skip.clean=${maven.skip.clean}"/>
 			<arg value="-Dmaven.verbose=${maven.verbose}"/>
 			<!-- Folder target already present in iaf/.gitginore -->
 			<arg value="-Dproject.gitignore.skip=true"/>
