@@ -9,18 +9,22 @@
 		not (re)moving any classes you could do the following (it would still be
 		a good idea to do a full build with tests before you commit or after a
 		pull (which might have changed other modules)):
-		<property name="maven.projects" value="core,ladybug"/>
+		<property name="maven.skip.all" value="true"/>
 		<property name="maven.skip.clean" value="true"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
 		<property name="maven.skip.recompile.all" value="true"/>
 		<property name="maven.skip.source.jar" value="true"/>
+		<property name="maven.projects" value="core,ladybug"/>
 		-->
 		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.projects" value=""/>
-		<property name="maven.skip.clean" value="false"/>
-		<property name="maven.skip.tests" value="false"/>
-		<property name="maven.skip.javadoc" value="false"/>
+		<property name="maven.skip.all" value="false"/>
+		<property name="maven.skip.clean" value="${maven.skip.all}"/>
+		<property name="maven.skip.tests" value="${maven.skip.all}"/>
+		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
+		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
+		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
 		<!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
 		<property name="configurations.dir" value="../../frank-runner/examples/Frank2Example1/configurations"/>
