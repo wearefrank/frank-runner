@@ -54,7 +54,7 @@
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
-			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.test.skip" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
@@ -65,7 +65,7 @@
 		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="install"/>
-			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.test.skip" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
