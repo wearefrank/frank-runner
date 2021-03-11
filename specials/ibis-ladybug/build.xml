@@ -11,6 +11,8 @@
 		<property name="maven.clean" value="false"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
+		<property name="maven.skip.recompile.all" value="true"/>
+		<property name="maven.skip.source.jar" value="true"/>
 		-->
 		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.clean" value="true"/>
@@ -56,6 +58,8 @@
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
+			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
@@ -67,6 +71,8 @@
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
+			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
+			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
