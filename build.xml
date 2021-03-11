@@ -293,7 +293,7 @@
 			<arg value="clean" if:true="${maven.clean}"/>
 			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
-			<arg value="-Dmaven.test.skip" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 		</exec>
