@@ -49,6 +49,8 @@
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.clean=${maven.clean}"/>
 			<arg value="-Dmaven.verbose=${maven.verbose}"/>
+			<!-- Folder target already present in iaf/.gitginore -->
+			<arg value="-Dproject.gitignore.skip=true"/>
 			<!-- Don't gitignore resources in webapp except javax.xml.stream.XMLInputFactory because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) (javax.xml.stream.XMLInputFactory is copied from src/main/resources) -->
 			<arg value="-Dwebapp.gitignore=WEB-INF/classes/META-INF/services/javax.xml.stream.XMLInputFactory"/>
 			<!-- Don't clean resources in webapp except lib folder                           because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->

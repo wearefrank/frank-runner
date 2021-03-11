@@ -51,6 +51,8 @@
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.clean=${maven.clean}"/>
 			<arg value="-Dmaven.verbose=${maven.verbose}"/>
+			<!-- Folder target already present in iaf/.gitginore -->
+			<arg value="-Dproject.gitignore.skip=true"/>
 			<arg value="-Dtests.dir=src/test/resources/TestTool"/>
 		</exec>
 	</target>
