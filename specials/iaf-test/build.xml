@@ -63,7 +63,10 @@
 			<arg value="-Dproject.gitignore.skip=true"/>
 			<!-- In DeploymentSpecifics.properties the configurations part of the path is added to configurations.*.* properties, hence remove it here from configurations.dir that has default value src/main/configurations -->
 			<arg value="-Dconfigurations.dir=src/main"/>
+			<!-- A number of test scenario's of iaf-test depend on ${web.contextpath} -->
 			<arg value="-Dweb.contextpath=/"/>
+			<!-- Prevent META-INF/context.xml from being copied to itself and becoming empty -->
+			<arg value="-Dmaven.args=&quot;-DfilteringMetaInf=false&quot;"/>
 			<!--
 			Optionally change application.server.type.custom as described in StageSpecifics_LOC.properties
 			Please note that ACTIVEMQ requires extra jar files that the Frank!Runner doesn't download yet, see:

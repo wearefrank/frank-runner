@@ -290,6 +290,7 @@
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+			<arg value="${maven.args}" if:set="maven.args"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
