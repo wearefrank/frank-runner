@@ -289,7 +289,7 @@ ff.version=7.6-20200306.163142
 
 Check the following url to see all available Frank!Framework versions:
 
-https://nexus.ibissource.org/service/local/repo_groups/public/content/org/ibissource/ibis-adapterframework-core/maven-metadata.xml
+https://nexus.ibissource.org/content/repositories/releases/org/ibissource/ibis-adapterframework-core/maven-metadata.xml
 
 Please note that very old versions might not run correctly with the
 Frank!Runner.
