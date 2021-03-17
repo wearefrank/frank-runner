@@ -64,7 +64,7 @@
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
 		<mkdir dir="download/metadata"/>
-		<get src="https://nexus.ibissource.org/repository/public/org/ibissource/ibis-adapterframework-core/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<get src="https://nexus.ibissource.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
 		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
