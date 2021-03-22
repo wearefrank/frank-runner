@@ -132,6 +132,7 @@ classes.dir=src/main/resources
 configurations.dir=src/main/configurations
 tests.dir=src/test/testtool
 context.xml=src/main/webapp/META-INF/context.xml
+maven=true
 ```
 
 Otherwise:
@@ -141,6 +142,7 @@ classes.dir=classes
 configurations.dir=configurations
 tests.dir=tests
 context.xml=context.xml
+maven=false
 ```
 
 Hence by default your folder structure will need to look like the following (for
@@ -166,6 +168,13 @@ You can overwrite default values by creating a frank-runner.properties in the
 project to run. In case you need to change the default value for projects.dir
 (which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
+
+Property `maven` is a feature toggle (can be `false` or `true`). If `true`,
+the Frank!Runner uses Maven to build and package the project. Otherwise,
+ANT is used. As indicated, this property is set to `true` automatically
+for projects with a Maven directory structure. You can set this property
+to `false` for a Maven project if you wish the Frank!Runner to build
+it using ANT.
 
 Your project doesn't need to contain a context.xml in case you want to use H2.
 
