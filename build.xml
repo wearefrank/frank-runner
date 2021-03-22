@@ -41,7 +41,7 @@
 		<property name="tests.dir" value="tests"/>
 		<property name="context.xml" value="context.xml"/>
 
-		<property name="maven" value="false"/><!-- feature toggle for now -->
+		<property name="maven" value="false"/><!-- feature toggle -->
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
