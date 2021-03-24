@@ -436,13 +436,14 @@
 		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
 		<property name="stop.maxwait" value="300"/>
 		<property name="stop.maxwaitunit" value="second"/>
-		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
-		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="catalina.bat.not.present">
+		<condition property="waitfor.unless"><or><isset property="catalina.bat.not.present"/><equals arg1="${tomcat.skip.waitfor}" arg2="true"/></or></condition>
+		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="waitfor.unless"/>
+		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="waitfor.unless">
 			<not><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></not>
 		</waitfor>
 		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again" if:set="stop.failed"/>
 		<tstamp><format property="stop.end" pattern="HH:mm:ss"/></tstamp>
-		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
+		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="waitfor.unless"/>
 	</target>
 
 	<target name="restart">

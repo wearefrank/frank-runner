@@ -11,13 +11,14 @@
 		pull (which might have changed other modules)) (webapp needs to be
 		added to maven.projects because the (updated) iaf-core jar is added to
 		iaf-example with the webapp overlay):
+		<property name="maven.projects" value="core,webapp"/>
 		<property name="maven.skip.all" value="true"/>
 		<property name="maven.skip.clean" value="true"/>
 		<property name="maven.skip.tests" value="true"/>
 		<property name="maven.skip.javadoc" value="true"/>
 		<property name="maven.skip.recompile.all" value="true"/>
 		<property name="maven.skip.source.jar" value="true"/>
-		<property name="maven.projects" value="core,webapp"/>
+		<property name="tomcat.skip.waitfor" value="true"/>
 		-->
 		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.projects" value=""/>
@@ -27,11 +28,14 @@
 		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
+		<property name="tomcat.skip.waitfor" value="false"/>
+		<!-- Set true to debug build problems -->
 		<property name="maven.verbose" value="false"/>
 
 		<echo message="iaf-example: Stop Tomcat to prevent files used by maven being locked"/>
 		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=iaf/example"/>
+			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
 		<echo message="iaf-example: Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module example" unless:true="${maven.skip.clean}"/>
