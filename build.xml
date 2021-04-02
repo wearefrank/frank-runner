@@ -518,7 +518,7 @@ set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
 <echo file="${filename}.bat" append="true">
 call "%~dp0</echo>
-<echo file="${filename}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
+<echo file="${filename}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 <echo file="${filename}.bat" append="true" unless:set="ant.or.mvn"> -buildfile "%~dp0build.xml"</echo>
 <echo file="${filename}.bat" append="true"> %*</echo>

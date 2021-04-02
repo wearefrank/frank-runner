@@ -45,7 +45,7 @@ if not exist "%~dp0build\apache-ant-1.10.8\" (
 )
 set JAVA_HOME=%~dp0build\openjdk-8u252-b09
 set ANT_HOME=%~dp0build\apache-ant-1.10.8
-call "%~dp0build\apache-ant-1.10.8\bin\ant" -buildfile "%~dp0build.xml" %* restart
+call "%~dp0build\apache-ant-1.10.8\bin\ant" -emacs -buildfile "%~dp0build.xml" %* restart
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
