@@ -294,9 +294,10 @@
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
+			<arg value="--update-snapshots"/>
+			<arg value="--debug" if:true="${maven.verbose}"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
-			<arg value="-X" if:true="${maven.verbose}"/>
 		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
