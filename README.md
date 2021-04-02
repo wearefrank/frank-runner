@@ -395,7 +395,10 @@ Install plugin Task Explorer and configure it to use ant.bat or any other
 Ant installation by filling "Path To Ant" in the Extension Settings of Task
 Explorer with:
 
-C:\\path\\to\\frank-runner\\ant.bat
+C:/path/to/frank-runner/ant.bat
+
+Backslashes will also work except when your VSCode is configured to use a bash
+shell.
 
 Disable the "Enable Ansicon For Ant" option. Now you can use Task Explorer to
 either run the build.xml or the restart.bat in your project.
