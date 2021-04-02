@@ -83,6 +83,8 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" unless:true="${test.with.iaf}"/>
+		<condition property="ibis-ladybug-test-webapp.not.present"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
+		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
 		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
 			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
