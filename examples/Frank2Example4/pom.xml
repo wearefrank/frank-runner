@@ -28,7 +28,7 @@
 		<repository>
 			<id>ibissource</id>
 			<name>Ibissource</name>
-			<url>https://nexus.ibissource.org/content/repositories/public</url>
+			<url>https://nexus.frankframework.org/content/repositories/public</url>
 		</repository>
 	</repositories>
 
