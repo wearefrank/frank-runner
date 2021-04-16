@@ -28,13 +28,14 @@
 		<!-- Change iaf.module to example or test to test with one of those modules instead of module webapp -->
 		<property name="iaf.module" value="webapp"/>
 
-		<echo message="ibis-ladybug: Check ibis-ladybug version in iaf-ladybug pom.xml" if:true="${test.with.iaf}"/>
-		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ibis.ladybug.pom.xml" if:true="${test.with.iaf}"/>
-		<property name="iaf.ladybug.pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
+		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
+		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ladybug.pom.xml"/>
+		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" unless:true="${test.with.iaf}"/>
+		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
-			<resourcecontains resource="${iaf.ladybug.pom.xml}" substring="&lt;version&gt;${ibis.ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+			<resourcecontains resource="${pom.xml}" substring="&lt;version&gt;${ladybug.pom.xml.project.version}&lt;/version&gt;"/>
 		</condition>
-		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ibis.ladybug.pom.xml.project.version} in ${iaf.ladybug.pom.xml} " unless:true="${ladybug.version.ok}" if:true="${test.with.iaf}"/>
+		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ladybug.pom.xml.project.version} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
 
 		<echo message="ibis-ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
 		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
