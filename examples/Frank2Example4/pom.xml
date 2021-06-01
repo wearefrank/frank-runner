@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>frank-flow</artifactId>
-			<version>[1.0,)</version>
+			<version>[1.0,)</version><!-- Please note: When you have a local clone of Frank!Flow that has built a SNAPSHOT version to your local repo this local SNAPSHOT will be used instead of the latest version from Nexus -->
 		</dependency>
 	</dependencies>
 
