@@ -71,13 +71,24 @@
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 
 		<condition property="os.windows"><os family="windows"/></condition>
+		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
+		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 		<property name="jdk.version" value="8"/>
 		<property name="jdk.version.u" value="252"/>
 		<property name="jdk.version.b" value="09"/>
-		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip" if:true="os.windows"/>
-		<property name="jdk.tar" value="OpenJDK${jdk.version}U-jdk_x64_linux_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="os.windows"/>
-		<property name="jdk.zip" value="${jdk.tar}.gz" unless:true="os.windows"/>
-		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip}"/>
+		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
+		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar"/>
+		<property name="jdk.zip.lin" value="${jdk.tar.lin}.gz"/>
+		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar"/>
+		<property name="jdk.zip.mac" value="${jdk.tar.mac}.gz"/>
+		<property name="jdk.zip" value="${jdk.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.tar" value="${jdk.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.zip" value="${jdk.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.tar" value="${jdk.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.zip" value="${jdk.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.win}"/>
+		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.lin}"/>
+		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}"/>
 		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip" if:true="os.windows"/>
@@ -555,7 +566,7 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip.win}"/><param name="url" value="${jdk.url.win}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
@@ -593,7 +604,7 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir" value="${jdk.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip.lin}"/><param name="url" value="${jdk.url.lin}"/><param name="dir" value="${jdk.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
