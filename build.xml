@@ -70,14 +70,19 @@
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 
+		<condition property="os.windows"><os family="windows"/></condition>
 		<property name="jdk.version" value="8"/>
 		<property name="jdk.version.u" value="252"/>
 		<property name="jdk.version.b" value="09"/>
-		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
+		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip" if:true="os.windows"/>
+		<property name="jdk.tar" value="OpenJDK${jdk.version}U-jdk_x64_linux_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="os.windows"/>
+		<property name="jdk.zip" value="${jdk.tar}.gz" unless:true="os.windows"/>
 		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip}"/>
 		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
-		<property name="ant.version." value="1.10.8"/><!-- extra . because ant.version is a build-in property -->
-		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
+		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip" if:true="os.windows"/>
+		<property name="ant.tar" value="apache-ant-${ant.version.}-bin.tar" unless:true="os.windows"/>
+		<property name="ant.zip" value="${ant.tar}.gz" unless:true="os.windows"/>
 		<property name="ant.url" value="https://archive.apache.org/dist/ant/binaries/${ant.zip}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="maven.version" value="3.6.3"/>
@@ -256,19 +261,38 @@
 
 	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available">
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="os.windows">
 			<patternset>
 				<exclude name="**/demo"/>
 				<exclude name="**/sample"/>
 				<exclude name="**/src.zip"/>
 			</patternset>
 		</unzip>
+		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="os.windows"/>
+		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="os.windows">
+			<patternset>
+				<exclude name="**/demo"/>
+				<exclude name="**/sample"/>
+				<exclude name="**/src.zip"/>
+			</patternset>
+		</untar>
+		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="os.windows"/>
+		<chmod file="${jdk.dir}/bin/java" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
 		<!-- ant -->
-		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available">
+		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="os.windows">
 			<patternset>
 				<exclude name="**/manual"/>
 			</patternset>
 		</unzip>
+		<gunzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" unless:true="os.windows"/>
+		<untar src="build/${ant.tar}" dest="build" unless:set="ant.dir.available" unless:true="os.windows">
+			<patternset>
+				<exclude name="**/manual"/>
+			</patternset>
+		</untar>
+		<delete file="build/${ant.tar}" unless:set="ant.dir.available" unless:true="os.windows"/>
+		<chmod file="${ant.dir}/bin/ant" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
+		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
@@ -301,7 +325,8 @@
 		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- unless:set="tomcat.dir.available" to speed up startup time -->
+		<chmod dir="${tomcat.dir}/bin" perm="+x" includes="*.sh" unless:set="tomcat.dir.available"/>
+		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
@@ -366,16 +391,30 @@
 		<antcall target="generate.bat"><param name="filename" value="run"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="restart"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="rerun"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="ant"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="mvn"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="start"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="stop"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="run"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="restart"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="rerun"/></antcall>
 	</target>
 
 	<target name="start" depends="build">
-		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<condition property="use.exec.windows"><and><not><equals arg1="${use}" arg2="java"/></not><os family="windows"/></and></condition>
+		<condition property="use.exec"><and><not><equals arg1="${use}" arg2="java"/></not><not><os family="windows"/></not></and></condition>
 		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
 		<!-- with exec in windows a new window will be opened -->
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec.windows">
 			<arg value="start"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
+		</exec>
+		<exec executable="${tomcat.dir}/bin/catalina.sh" output="${tomcat.dir}/logs/tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg value="start"/>
+			<env key="JAVA_HOME" value="${jdk.dir}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
 		</exec>
 		<!-- with java in windows no new window will be opened -->
@@ -419,12 +458,18 @@
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
 		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir.windows}\bin\catalina.bat"/></resourceexists></not></condition>
-		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<condition property="use.exec.windows" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><os family="windows"/></and></condition>
+		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><not><os family="windows"/></not></and></condition>
 		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec.windows">
 			<arg value="stop"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+		</exec>
+		<exec executable="${tomcat.dir.windows}/bin/catalina.sh" output="${tomcat.dir.windows}/logs/tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+			<arg value="stop"/>
+			<env key="JAVA_HOME" value="${jdk.dir}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
 		</exec>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" if:set="use.java">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
@@ -535,14 +580,44 @@ exit /b %errorlevel%<!-- this will make failonerror="true" work when the bat fil
 </echo>
 	</target>
 
+	<target name="generate.sh">
+		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
+		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
+		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
+		<echo file="${filename}.sh">#!/bin/bash
+# This file is generated as part of build.xml
+FR_DIR="`pwd`/`dirname $0`/"
+if [[ ! -d "${FR_DIR}download/" ]]; then
+	mkdir "${FR_DIR}download/"
+fi
+if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
+	mkdir -p "${FR_DIR}build/tmp/build"
+fi</echo>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir" value="${jdk.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir" value="${ant.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir" value="${maven.dir}"/></antcall>
+		<echo file="${filename}.sh" append="true">
+JAVA_HOME="${FR_DIR}${jdk.dir}"</echo>
+<echo file="${filename}.sh" append="true" unless:set="mvn">
+ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
+<echo file="${filename}.sh" append="true">
+"${FR_DIR}</echo>
+<echo file="${filename}.sh" append="true" unless:set="mvn">${ant.dir}/bin/ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
+<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> -buildfile "${FR_DIR}build.xml"</echo>
+<echo file="${filename}.sh" append="true"> "$@"</echo>
+<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> ${filename}</echo>
+		<chmod file="${filename}.sh" perm="+x"/>
+	</target>
+
 	<target name="generate.bat.download.unzip">
 		<echo file="${filename}.bat" append="true">
-set download.help=download ${url} manually, move it to %~dp0download and restart this script
+set DOWNLOAD_HELP=download ${url} manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\${zip}" (
-	echo In case of errors %download.help%
+	echo In case of errors %DOWNLOAD_HELP%
 	curl -f -o "%~dp0download\${zip}.tmp" -L ${url}<!-- -f will set errorlevel and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %download.help%
+		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
@@ -550,11 +625,36 @@ if not exist "%~dp0download\${zip}" (
 if not exist "%~dp0${dir.windows}\" (
 	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %download.help%
+		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
 	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
 )</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
+	</target>
+
+	<target name="generate.sh.download.unzip">
+		<echo file="${filename}.sh" append="true">
+FR_DIR="`pwd`/`dirname $0`/"
+DOWNLOAD_HELP="download ${url} manually, move it to ${FR_DIR}download and restart this script"
+if [[ ! -f "${FR_DIR}download/${zip}" ]]; then
+	echo In case of errors ${DOWNLOAD_HELP}
+	curl -f -o "${FR_DIR}download/${zip}.tmp" -L ${url}<!-- -f will return error 22 and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}download/${zip}.tmp" "${FR_DIR}/download/${zip}"
+fi
+if [[ ! -d "${FR_DIR}${dir}/" ]]; then
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${zip}" -C "${FR_DIR}build/tmp/build"
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}build/tmp/${dir}" "${FR_DIR}${dir}"
+fi</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
 	</target>
 
 	<target name="splash">
