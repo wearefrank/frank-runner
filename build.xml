@@ -306,6 +306,7 @@
 		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
+		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="os.windows"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
@@ -321,8 +322,10 @@
 		<echo file="${projects.dir}/${project.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
 		<echo file="${projects.dir}/${project.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
-		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
-			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
+		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
+		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
+			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="os.windows"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" unless:true="os.windows"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
@@ -608,9 +611,9 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
-JAVA_HOME="${FR_DIR}${jdk.dir}"</echo>
+export JAVA_HOME="${FR_DIR}${jdk.dir}"</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
-ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
+export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
 <echo file="${filename}.sh" append="true">
 "${FR_DIR}</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">${ant.dir}/bin/ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->

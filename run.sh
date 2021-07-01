@@ -63,6 +63,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-JAVA_HOME="${FR_DIR}build/jdk8u252-b09"
-ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
+export JAVA_HOME="${FR_DIR}build/jdk8u252-b09"
+export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" "$@" run
