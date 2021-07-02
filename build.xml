@@ -631,11 +631,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
 export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
+<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn">
+cd "${FR_DIR}"</echo><!-- Using -buildfile "${FR_DIR}build.xml" instead of cd "${FR_DIR}" doesn't work on Mac (double path in path to build.xml) -->
 <echo file="${filename}.sh" append="true">
 "${FR_DIR}</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">${ant.dir}/bin/ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
-<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> -buildfile "${FR_DIR}build.xml"</echo>
 <echo file="${filename}.sh" append="true"> "$@"</echo>
 <echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> ${filename}</echo>
 		<chmod file="${filename}.sh" perm="+x"/>
