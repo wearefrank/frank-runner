@@ -611,7 +611,10 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
-export JAVA_HOME="${FR_DIR}${jdk.dir}"</echo>
+export JAVA_HOME="${FR_DIR}${jdk.dir}"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	export JAVA_HOME="${FR_DIR}${jdk.dir}/Contents/Home"
+fi</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
 export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
 <echo file="${filename}.sh" append="true">
