@@ -41,7 +41,8 @@ folder of your project with the following content:
 <project default="restart">
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+		<condition property="ext" value="bat" else="sh"><os family="windows"/></condition>
+		<exec executable="../frank-runner/restart.${ext}" vmlauncher="false" failonerror="true">
 			<arg value="-Dproject.dir=${project.dir}"/>
 		</exec>
 	</target>
@@ -63,6 +64,13 @@ rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-n
 set arg0=%0
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 :end
+```
+
+And create a restart.sh with the following content to run on Linux or Mac:
+
+```
+#!/bin/bash
+../../ant.sh
 ```
 
 There are other ways possible to run the Frank!Runner scripts but to make it
@@ -490,13 +498,13 @@ Change directory to frank-runner:
 projects> cd frank-runner
 ```
 
-And on Windows run the following command:
+On Windows run the following command:
 
 ```
 projects\frank-runner> .\run.bat
 ```
 
-When not using Windows run (not available yet):
+And on Linux or Mac run:
 
 ```
 projects\frank-runner> ./run.sh
