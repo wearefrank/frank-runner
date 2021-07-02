@@ -325,7 +325,8 @@
 		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
 			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="os.windows"/>
-			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" unless:true="os.windows"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" if:true="os.linux"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}/Contents/Home" if:true="os.mac"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
@@ -415,8 +416,9 @@
 	</target>
 
 	<target name="start" depends="build">
-		<condition property="use.exec.windows"><and><not><equals arg1="${use}" arg2="java"/></not><os family="windows"/></and></condition>
-		<condition property="use.exec"><and><not><equals arg1="${use}" arg2="java"/></not><not><os family="windows"/></not></and></condition>
+		<condition property="use.exec.windows"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.windows"/></and></condition>
+		<condition property="use.exec.linux"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.linux"/></and></condition>
+		<condition property="use.exec.mac"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.mac"/></and></condition>
 		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
 		<!-- with exec in windows a new window will be opened -->
 		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec.windows">
@@ -425,9 +427,15 @@
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
 		</exec>
-		<exec executable="${tomcat.dir}/bin/catalina.sh" output="${tomcat.dir}/logs/tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+		<exec executable="${tomcat.dir}/bin/catalina.sh" output="${tomcat.dir}/logs/tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec.linux">
 			<arg value="start"/>
 			<env key="JAVA_HOME" value="${jdk.dir}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
+			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
+		</exec>
+		<exec executable="${tomcat.dir}/bin/catalina.sh" output="${tomcat.dir}/logs/tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec.mac">
+			<arg value="start"/>
+			<env key="JAVA_HOME" value="${jdk.dir}/Contents/Home"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
 		</exec>
@@ -472,17 +480,23 @@
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
 		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir.windows}\bin\catalina.bat"/></resourceexists></not></condition>
-		<condition property="use.exec.windows" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><os family="windows"/></and></condition>
-		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><not><os family="windows"/></not></and></condition>
+		<condition property="use.exec.windows" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.windows"/></and></condition>
+		<condition property="use.exec.linux" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.linux"/></and></condition>
+		<condition property="use.exec.mac" if:set="tomcat.running" unless:set="catalina.bat.not.present"><and><not><equals arg1="${use}" arg2="java"/></not><isset property="os.mac"/></and></condition>
 		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
 		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec.windows">
 			<arg value="stop"/>
 			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
 		</exec>
-		<exec executable="${tomcat.dir.windows}/bin/catalina.sh" output="${tomcat.dir.windows}/logs/tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
+		<exec executable="${tomcat.dir.windows}/bin/catalina.sh" output="${tomcat.dir.windows}/logs/tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec.linux">
 			<arg value="stop"/>
 			<env key="JAVA_HOME" value="${jdk.dir}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
+		</exec>
+		<exec executable="${tomcat.dir.windows}/bin/catalina.sh" output="${tomcat.dir.windows}/logs/tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec.mac">
+			<arg value="stop"/>
+			<env key="JAVA_HOME" value="${jdk.dir}/Contents/Home"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir}"/>
 		</exec>
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" if:set="use.java">
