@@ -28,8 +28,6 @@
 		<!-- Change iaf.module to example or test to test with one of those modules instead of module webapp -->
 		<property name="iaf.module" value="webapp"/>
 
-		<condition property="ext" value="bat" else="sh"><os family="windows"/></condition>
-
 		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
 		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ladybug.pom.xml"/>
 		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" unless:true="${test.with.iaf}"/>
@@ -58,9 +56,15 @@
 		</condition>
 		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
 
+		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
+		<condition property="restart.exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="restart.arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
-		<exec executable="../frank-runner/mvn.${ext}" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
+		<exec executable="${mvn.exe}" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
+			<arg value="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
@@ -73,7 +77,8 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
-		<exec executable="../frank-runner/mvn.${ext}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+		<exec executable="${mvn.exe}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+			<arg value="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
@@ -88,7 +93,8 @@
 		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" unless:true="${test.with.iaf}"/>
 		<condition property="ibis-ladybug-test-webapp.not.present"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
 		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
-		<exec executable="../../restart.${ext}" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
+		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
+			<arg value="${restart.arg}"/>
 			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>

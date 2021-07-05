@@ -41,13 +41,18 @@ folder of your project with the following content:
 <project default="restart">
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
-		<condition property="ext" value="bat" else="sh"><os family="windows"/></condition>
-		<exec executable="../frank-runner/restart.${ext}" vmlauncher="false" failonerror="true">
+		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../frank-runner/restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
 			<arg value="-Dproject.dir=${project.dir}"/>
 		</exec>
 	</target>
 </project>
 ```
+
+For Mac we need to use /bin/bash with restart.sh as an argument to work around:
+Cannot run program "restart.sh" (in directory ".../FrankRunner/frank-runner"): error=2, No such file or directory
 
 To make the items in the Last Tasks list of the Task Explorer unique you can
 rename the target name restart in build.xml to something unique for your project
@@ -233,7 +238,10 @@ the Task Explorer):
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
 		<split projectdir="${project.dir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../frank-runner/restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
 			<arg value="-Dmain.project=${main.project}"/>
 			<arg value="-Dsub.project=${sub.project}"/>
 		</exec>

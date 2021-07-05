@@ -33,16 +33,23 @@
 		<property name="configurations.dir" value="../../frank-runner/examples/Frank2Example1/configurations"/>
 		<property name="tests.dir" value="../../frank-runner/examples/Frank2Example1/tests"/>
 
-		<condition property="ext" value="bat" else="sh"><os family="windows"/></condition>
+		<condition property="stop.exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="stop.arg" value="../../stop.sh" else=""><os family="unix"/></condition>
+		<condition property="start.exe" value="../../start.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="start.arg" value="../../start.sh" else=""><os family="unix"/></condition>
+		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
 
 		<echo message="iaf-webapp: Stop Tomcat to prevent files used by maven being locked"/>
-		<exec executable="../../stop.${ext}" vmlauncher="false" failonerror="true">
+		<exec executable="${stop.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${stop.arg}"/>
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
-		<exec dir="../../../iaf" executable="../frank-runner/mvn.${ext}" vmlauncher="false" failonerror="true">
+		<exec dir="../../../iaf" executable="${mvn.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
@@ -58,7 +65,8 @@
 		</exec>
 
 		<echo message="iaf-webapp: Update iaf-webapp with artifacts from local repo and start Tomcat"/>
-		<exec executable="../../start.${ext}" vmlauncher="false" failonerror="true">
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=iaf/webapp"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.skip.clean=${maven.skip.clean}"/>
