@@ -68,5 +68,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	export JAVA_HOME="${FR_DIR}build/jdk8u252-b09/Contents/Home"
 fi
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
-cd "${FR_DIR}"
-"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs "$@" stop
+"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" "$@" stop
