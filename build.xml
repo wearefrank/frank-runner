@@ -91,9 +91,9 @@
 		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}"/>
 		<property name="jdk.dir" value="build/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
-		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip" if:true="os.windows"/>
-		<property name="ant.tar" value="apache-ant-${ant.version.}-bin.tar" unless:true="os.windows"/>
-		<property name="ant.zip" value="${ant.tar}.gz" unless:true="os.windows"/>
+		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip" if:true="${os.windows}"/>
+		<property name="ant.tar" value="apache-ant-${ant.version.}-bin.tar" unless:true="${os.windows}"/>
+		<property name="ant.zip" value="${ant.tar}.gz" unless:true="${os.windows}"/>
 		<property name="ant.url" value="https://archive.apache.org/dist/ant/binaries/${ant.zip}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="maven.version" value="3.6.3"/>
@@ -272,41 +272,41 @@
 
 	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="os.windows">
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
 			<patternset>
 				<exclude name="**/demo"/>
 				<exclude name="**/sample"/>
 				<exclude name="**/src.zip"/>
 			</patternset>
 		</unzip>
-		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="os.windows"/>
-		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="os.windows">
+		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}">
 			<patternset>
 				<exclude name="**/demo"/>
 				<exclude name="**/sample"/>
 				<exclude name="**/src.zip"/>
 			</patternset>
 		</untar>
-		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="os.windows"/>
-		<chmod file="${jdk.dir}/bin/java" perm="+x" unless:set="jdk.dir.available" unless:true="os.windows"/>
+		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${jdk.dir}/bin/java" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<!-- ant -->
-		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="os.windows">
+		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
 				<exclude name="**/manual"/>
 			</patternset>
 		</unzip>
-		<gunzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" unless:true="os.windows"/>
-		<untar src="build/${ant.tar}" dest="build" unless:set="ant.dir.available" unless:true="os.windows">
+		<gunzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<untar src="build/${ant.tar}" dest="build" unless:set="ant.dir.available" unless:true="${os.windows}">
 			<patternset>
 				<exclude name="**/manual"/>
 			</patternset>
 		</untar>
-		<delete file="build/${ant.tar}" unless:set="ant.dir.available" unless:true="os.windows"/>
-		<chmod file="${ant.dir}/bin/ant" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
-		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="os.windows"/>
+		<delete file="build/${ant.tar}" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/ant" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
-		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="os.windows"/>
+		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
@@ -324,9 +324,9 @@
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
-			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="os.windows"/>
-			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" if:true="os.linux"/>
-			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}/Contents/Home" if:true="os.mac"/>
+			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" if:true="${os.linux}"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}/Contents/Home" if:true="${os.mac}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
