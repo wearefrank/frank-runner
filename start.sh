@@ -39,10 +39,6 @@ FR_DIR="`pwd`/`dirname $0`/"
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
 DIR=build/apache-ant-1.10.10
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=${ZIP/linux/mac}
-	URL=${URL/linux/mac}
-fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	echo In case of errors ${DOWNLOAD_HELP}
