@@ -312,10 +312,13 @@
 			</patternset>
 		</untar>
 		<delete file="build/${ant.tar}" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/ant" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
 		<!-- maven -->
 		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available" if:true="${os.windows}"/>
 		<gunzip src="download/${maven.gz}" dest="build" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<untar src="build/${maven.tar}" dest="build" unless:set="maven.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<delete file="build/${maven.tar}" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
