@@ -343,22 +343,23 @@ Last Tasks list of the Task Explorer):
 			<arg value="-Dprojects.dir=${basedir}/.."/>
 			<arg value="-Dproject.dir=${project.dir}"/>
 			<arg value="-Dmodule.dir=&quot;${module.dir}&quot;"/>
-			<arg value="-Dconfigurations.names=&quot;Example1,${module.name}&quot;"/>
 		</exec>
 	</target>
 </project>
 ```
 
-This way every module can be started and tested by it's own running only the
-configuration of the module and the configuration of the war module (in case
-the war module has a configuration). It is also possible to specify a specific
-list of modules configurations that have to be started by adding (a
-configuration with the name of the project is automatically added to the list
-when a Configuration.xml is detected in war/src/main/resources):
+This way every module can be started and tested on it's own running only the
+configuration of this specific module. It is also possible to start other
+configurations by adding the following:
 
 ```
-	<arg value="-Dconfigurations.names=&quot;${module.name},OtherModuleName1,OtherModuleName2&quot;"/>
+	<arg value="-Dconfigurations.names=&quot;${module.name},OtherModuleName,OtherConfigurationName&quot;"/>
 ```
+
+When a Configuration.xml is detected in war/src/main/resources it is
+automatically added to the list (this is also the case when
+configurations.names is not specified and defaults to only the configuration of
+one module).
 
 See Frank2Example5 for example pom.xml files the modules and the parent.
 
