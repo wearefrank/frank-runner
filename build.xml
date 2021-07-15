@@ -5,20 +5,24 @@
 		<property file="build.properties"/>
 
 		<property name="project.dir" value="${main.project}" if:set="sub.project"/>
-		<property name="configurations.names" value="${main.project},${sub.project}" if:set="sub.project"/>
+		<property name="configurations.names" value="${sub.project}" if:set="sub.project"/>
+
+		<property name="modules.dir" value="configurations" if:set="module.dir"/>
+		<property name="configurations.names" value="${module.dir}" if:set="module.dir"/>
 
 		<property name="projects.dir" value="${basedir}/.."/>
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
-		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/war/pom.xml"/>
+		<property name="war.dir" value="war"/>
+		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
-		<property name="classes.dir" value="war/src/main/resources" if:set="war.pom.xml.available"/>
-		<property name="configurations.dir" value="war/src/main/configurations" if:set="war.pom.xml.available"/>
-		<property name="java.dir" value="war/src/main/java" if:set="war.pom.xml.available"/>
-		<property name="tests.dir" value="war/src/test/testtool" if:set="war.pom.xml.available"/>
-		<property name="context.xml" value="war/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
+		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
+		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
+		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
+		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/war" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
@@ -182,7 +186,7 @@
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
 		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/>
-		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
+		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*" if:set="war.pom.xml.available"/>
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
@@ -208,7 +212,13 @@
 			value += '\nconfigurations.directory=' + configurationsDirAbs.replace(/\\/g, "\\\\");
 			if (configurationsNames != '${configurations.names}') {
 				value += '\n# Set configurations.names to Frank!Runner property with the same name';
-				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
+				if (configurationNameDefault != '${configuration.name.default}') {
+					value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
+					value += '\nconfigurations.names=' + configurationNameDefault.replace(/\\/g, "\\\\") + ',';
+				} else {
+					value += '\nconfigurations.names=';
+				}
+				value += configurationsNames.replace(/\\/g, "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
 					value += '\n# Set configurations.names to the list of folders in configurations.directory';
@@ -238,10 +248,12 @@
 
 		<property name="projects.dir.abs" location="${projects.dir}"/>
 		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}_${sub.project}/${tests.dir}" relative="true" if:set="sub.project"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${modules.dir}/${module.dir}/src/test/testtool" relative="true" if:set="module.dir"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${tests.dir}" relative="true"/>
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dir.abs" location="${tests.dirset.dir}/${project.dir}/${tests.dir}"/>
 		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool,${project.dir}/configurations/*/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="tests.dirset.includes" value="${tests.dir.rel}"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
 		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
@@ -321,7 +333,7 @@
 		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<delete file="build/${maven.tar}" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
-		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
+		<property name="webapp.dir" value="${projects.dir}/${project.dir}/${war.dir}/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
 		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" unless:true="${maven.skip.clean}"/>
@@ -330,10 +342,10 @@
 		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
 		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:true="${webapp.gitignore.add}"/>
 		<property name="project.gitignore" value="/target/" if:true="${maven}"/>
-		<condition property="project.gitignore.add" unless:true="${project.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${projects.dir}/${project.dir}/.gitignore" substring="${project.gitignore}"/></not></condition>
-		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${projects.dir}/${project.dir}/.gitignore" when="greater" length="0"/></condition>
-		<echo file="${projects.dir}/${project.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
-		<echo file="${projects.dir}/${project.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
+		<condition property="project.gitignore.add" unless:true="${project.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${maven.exec.dir}/.gitignore" substring="${project.gitignore}"/></not></condition>
+		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${maven.exec.dir}/.gitignore" when="greater" length="0"/></condition>
+		<echo file="${maven.exec.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
+		<echo file="${maven.exec.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
 		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
@@ -683,6 +695,9 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		<echo message="projects.dir: ${projects.dir}" if:set="debug.true"/>
 		<echo message="project.dir: ${project.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
+		<echo message="modules.dir: ${modules.dir}" if:set="debug.true"/>
+		<echo message="module.dir: ${module.dir}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
 		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
@@ -746,7 +761,9 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |"/>
 		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|"/>
 		<echo message=" "/>
-		<condition property="splash.name" value="${instance.name}" else="${main.project}_${sub.project}"><not><isset property="sub.project"/></not></condition>
+		<property name="splash.name" value="${main.project}_${sub.project}" if:set="sub.project"/>
+		<property name="splash.name" value="${instance.name} ${module.dir}" if:set="module.dir"/>
+		<property name="splash.name" value="${instance.name}"/>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
 		<echo message="    ${splash.name} on http://localhost/${splash.context}"/>
 		<echo message=" " unless:set="frank.runner.up.to.date"/>

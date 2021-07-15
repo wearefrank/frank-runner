@@ -1,0 +1,13 @@
+<Configuration name="Example0">
+	<Adapter name="Example0Adapter">
+		<Receiver name="Example0Receiver">
+			<JavaListener name="Example0" serviceName="Example0"/>
+		</Receiver>
+		<Pipeline firstPipe="Example">
+			<FixedResultPipe name="Example" returnString="Hello World0">
+				<Forward name="success" path="EXIT"/>
+			</FixedResultPipe>
+			<Exit path="EXIT" state="success"/>
+		</Pipeline>
+	</Adapter>
+</Configuration>

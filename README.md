@@ -12,6 +12,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Specials](#specials)
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
+- [Module per config](#module-per-config)
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
@@ -117,14 +118,19 @@ https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages
 
 ## Frank2Example4
 
-Example usage of Frank!Flow. In Frank2Example4 the Frank!Flow can be found at
-the top of the Frank!Console menu. For information about the Frank!Flow go to:
+Example usage of Frank!Flow and Maven. In Frank2Example4 the Frank!Flow can be
+found at the top of the Frank!Console menu. For information about the
+Frank!Flow go to:
 
 https://github.com/ibissource/frank-flow#frankflow
 
 Better example Frank! configuration files for Frank2Example4 to demonstrate
 and / or test Frank!Flow are appreciated. Please create a pull request, an
 issue or send an email with your improvements.
+
+## Frank2Example5
+
+Demonstrates [module per config](#module-per-config).
 
 
 # Specials
@@ -195,7 +201,7 @@ to use them can be found in the
 
 In case your application comprises several Frank!Configurations and you would
 like to have a project per configuration (e.g. to give each configuration it's
-own CI/CD pipeline) the following setup would be possible and is automatically
+own CI/CD pipeline) the following setup is possible and is automatically
 detected by the Frank!Runner based on the presence of the war/pom.xml:
 
 ```
@@ -208,7 +214,12 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |  |--pom.xml
       |--war
       |  |--src
-      |  |  |--...
+      |  |  |--main
+      |  |  |  |--configurations
+      |  |  |  |--webapp
+      |  |  |  |--...
+      |  |  |--test
+      |  |     |--testtool
       |  |--pom.xml
       |--build.xml
       |--pom.xml
@@ -216,8 +227,10 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
    |--frank2application_config1
       |--src
       |  |  |--main
-      |  |     |--configuration
-      |  |        |--Config1
+      |  |  |  |--configuration
+      |  |  |     |--Config1
+      |  |  |--test
+      |  |     |--testtool
       |--build.xml
       |--pom.xml
       |--restart.bat
@@ -227,9 +240,9 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |--...
 ```
 
-The build.xml in the config projects need to have to following content (see
-section [Installation](#installation) for the content of the build.xml that
-should be added to the main project) (you can rename target restart to
+The build.xml files in the config projects need to have to following content
+(see section [Installation](#installation) for the content of the build.xml
+that should be added to the main project) (you can rename target restart to
 restart-&lt;projectname&gt; to have better overview on the Last Tasks list of
 the Task Explorer):
 
@@ -257,6 +270,98 @@ the Task Explorer):
 ```
 
 This way every (configuration) project can be started and tested by it's own.
+
+
+# Module per config
+
+In case your application comprises several Frank!Configurations and you would
+like to have a Maven module per configuration the following setup is possible
+and is automatically detected by the Frank!Runner based on the presence of the
+war/pom.xml (see Frank2Example5 also):
+
+```
+|--projects
+   |--frank-runner
+   |--frank2application
+      |--configurations
+      |  |--Example1
+      |  |  |--src
+      |  |  |  |--main
+      |  |  |  |--resources
+      |  |  |  |  |--Example1
+      |  |  |  |     |--Configuration.xml
+      |  |  |  |     |--...
+      |  |  |  |--test
+      |  |  |     |--testtool
+      |  |  |        |-...
+      |  |  |--build.xml
+      |  |  |--restsrt.bat
+      |  |  |--restart.sh
+      |  |  |--...
+      |  |--Example2
+      |  |  |--...
+      |  |--...
+      |--ear
+      |  |--src
+      |  |  |--...
+      |  |--pom.xml
+      |--war
+      |  |--src
+      |  |  |--main
+      |  |  |  |--configurations
+      |  |  |  |  |--...
+      |  |  |  |--resources
+      |  |  |  |  |--Configuration.xml
+      |  |  |  |  |--...
+      |  |  |  |--webapp
+      |  |  |  |--...
+      |  |  |--test
+      |  |     |--testtool
+      |  |        |-...
+      |  |--pom.xml
+      |--build.xml
+      |--pom.xml
+      |--restart.bat
+      |--restart.sh
+```
+
+The build.xml files in the modules foldders need to have to following content (see
+section [Installation](#installation) for the content of the build.xml that
+should be added to the root of the project) (you can rename target restart to
+restart-&lt;projectname&gt;-&lt;modulename&gt; to have better overview on the
+Last Tasks list of the Task Explorer):
+
+```
+<project default="restart">
+	<target name="restart">
+		<basename property="project.dir" file="${basedir}"/>
+		<basename property="module.dir" file="${basedir}"/>
+		<condition property="exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
+			<arg value="-Dprojects.dir=${basedir}/.."/>
+			<arg value="-Dproject.dir=${project.dir}"/>
+			<arg value="-Dmodule.dir=&quot;${module.dir}&quot;"/>
+			<arg value="-Dconfigurations.names=&quot;Example1,${module.name}&quot;"/>
+		</exec>
+	</target>
+</project>
+```
+
+This way every module can be started and tested by it's own running only the
+configuration of the module and the configuration of the war module (in case
+the war module has a configuration). It is also possible to specify a specific
+list of modules configurations that have to be started by adding (a
+configuration with the name of the project is automatically added to the list
+when a Configuration.xml is detected in war/src/main/resources):
+
+```
+	<arg value="-Dconfigurations.names=&quot;${module.name},OtherModuleName1,OtherModuleName2&quot;"/>
+```
+
+See Frank2Example5 for example pom.xml files the modules and the parent.
+
 
 
 # Debug property
