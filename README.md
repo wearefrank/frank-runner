@@ -325,7 +325,7 @@ war/pom.xml (see Frank2Example5 also):
       |--restart.sh
 ```
 
-The build.xml files in the modules foldders need to have to following content (see
+The build.xml files for the modules need to have to following content (see
 section [Installation](#installation) for the content of the build.xml that
 should be added to the root of the project) (you can rename target restart to
 restart-&lt;projectname&gt;-&lt;modulename&gt; to have better overview on the
@@ -361,7 +361,7 @@ automatically added to the list (this is also the case when
 configurations.names is not specified and defaults to only the configuration of
 one module).
 
-See Frank2Example5 for example pom.xml files the modules and the parent.
+See Frank2Example5 for example pom.xml files for the modules and the parent.
 
 
 
