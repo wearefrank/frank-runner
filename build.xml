@@ -112,7 +112,7 @@
 		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.version" value="9.0.39"/>
+		<property name="tomcat.version" value="9.0.50"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/${tomcat.zip}"/>
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
@@ -374,7 +374,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,frank-ladybug-*.jar,ibis-ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
