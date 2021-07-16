@@ -20,7 +20,13 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>frank-flow</artifactId>
-			<version>[1.0,)</version><!-- Please note: When you have a local clone of Frank!Flow that has built a SNAPSHOT version to your local repo this local SNAPSHOT will be used instead of the latest version from Nexus -->
+			<version>[1.0,)</version>
+			<!--
+			Please note: When you have a local clone of Frank!Flow that has built a SNAPSHOT of the latest Frank!Flow
+			version to your local repo this local SNAPSHOT will be used instead of the latest version from Nexus.
+			This is probably what you are doing when you are a Frank!Flow (backend) developer. As a Frank!Flow
+			(frontend) you probably also want to set frank-flow.frontend.path in build.xml (see build.xml for more info)
+			 -->
 		</dependency>
 	</dependencies>
 
