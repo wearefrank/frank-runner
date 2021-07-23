@@ -17,6 +17,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
+- [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
 - [VSCode](#vscode)
 - [Command line](#command-line)
@@ -27,11 +28,15 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 
 Clone or download this Frank!Runner project into the projects folder that
 contains your Frank project(s) (make the frank-runner folder a sibling of your
-project folder). You can now run build.xml files in projects that already have
-them (like the example projects in frank-runner/examples). See the sections
-[Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and VSCode to
-run a build.xml. When Tomcat has started you can browse to the following
-address:
+project folder). You can now run Frank!Runner build.xml files in projects that
+already have them (like the example projects in frank-runner/examples). See the
+sections [Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and
+VSCode to run a build.xml. When you're behind a Secure Web Gateway like Zscaler
+and/or need to download files from your organization's internal repository
+(e.g. Artifactory), see section [Root CA certificates](#root-ca-certificates).
+
+When Tomcat has started by running a Frank!Runner build.xml file you can browse
+to the following address:
 
 http://localhost
 
@@ -485,6 +490,19 @@ lib.webapp.dir=lib/webapp
 All jars added to lib/server are copied to the Tomcat lib folder. All jars added
 to lib/webapp are copied to the WEB-INF/lib containing the Frank!Framework jar
 files and dependencies.
+
+
+# Root CA certificates
+
+You may need to add your organistion's Root CA for Ant and Maven to be able to
+download files from behind a Secure Web Gateway like Zscaler and/or to download
+files from your organization's internal repository (e.g. Artifactory). To do so
+simply create a folder cacerts in the frank-runner folder and (re)start a
+Frank!Runner build.xml. Frank!Runner will detect added and removed files from
+the cacerts folder and reinstall all files in cacerts in the downloaded and
+unzipped JDK used by the Frank!Runner. Also when the Frank!Runner's JDK version
+is changed and a new JDK is downloaded Frank!Runner will install the Root CA's
+in the cacerts folder in the newly downloaded and unzipped JDK.
 
 
 # Eclipse

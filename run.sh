@@ -8,9 +8,9 @@ if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
 FR_DIR="`pwd`/`dirname $0`/"
-ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u252b09.tar.gz
-URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u252b09.tar.gz
-DIR=build/jdk8u252-b09
+ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
+URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
+DIR=build/jdk8u292-b10
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	ZIP=${ZIP/linux/mac}
 	URL=${URL/linux/mac}
@@ -59,9 +59,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-export JAVA_HOME="${FR_DIR}build/jdk8u252-b09"
+export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	export JAVA_HOME="${FR_DIR}build/jdk8u252-b09/Contents/Home"
+	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10/Contents/Home"
 fi
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" "$@" run

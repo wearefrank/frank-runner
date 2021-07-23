@@ -61,25 +61,12 @@
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
 
-		<property name="update.strategy" value="latest" unless:true="${maven}"/>
-		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
-		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
-		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
-		<property name="get.metadata.maxtime" value="10"/>
-		<property name="get.metadata.ignoreerrors" value="true"/>
-		<mkdir dir="download/metadata"/>
-		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
-		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
-		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
-		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
-		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
-
 		<condition property="os.windows"><os family="windows"/></condition>
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 		<property name="jdk.version" value="8"/>
-		<property name="jdk.version.u" value="252"/>
-		<property name="jdk.version.b" value="09"/>
+		<property name="jdk.version.u" value="292"/>
+		<property name="jdk.version.b" value="10"/>
 		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
 		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar"/>
 		<property name="jdk.zip.lin" value="${jdk.tar.lin}.gz"/>
@@ -122,10 +109,6 @@
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
-		<property name="ff.version" value="7.6-20200501.172313"/>
-		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
-		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
-		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 		<property name="jms.version" value="1.1_spec-1.1"/>
 		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
@@ -139,6 +122,26 @@
 		<property name="mssql.version" value="7.4.1.jre8"/>
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
+
+		<antcall target="cacerts"/><!-- install cacerts here when jdk is unzipped by bat or sh -->
+
+		<property name="update.strategy" value="latest" unless:true="${maven}"/>
+		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
+		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
+		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
+		<property name="get.metadata.maxtime" value="10"/>
+		<property name="get.metadata.ignoreerrors" value="true"/>
+		<mkdir dir="download/metadata"/>
+		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
+		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
+		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
+
+		<property name="ff.version" value="7.6-20200501.172313"/>
+		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
+		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
@@ -190,7 +193,7 @@
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
-		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><flattenmapper/></pathconvert>
 		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
 			<attribute name="configurationsdirabs"/>
@@ -310,7 +313,8 @@
 			</patternset>
 		</untar>
 		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<chmod file="${jdk.dir}/bin/java" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<antcall target="cacerts"/>
 		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -385,16 +389,14 @@
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
-		<pathconvert property="contexts.dirs" refid="contexts.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
+		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*"/><flattenmapper/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
 		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
-		<fileset id="webapp.lib.jars.id" dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/>
-		<pathconvert property="webapp.lib.jars" refid="webapp.lib.jars.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
 		<fail message="The following double jars are found: ${double.jars}&#10;${webapp.dir}/WEB-INF/lib&#10;- When maven=true use maven.clean=true at least once&#10;- Check your pom.xml for dependencies that are being added that are already in the framework war (Maven doesn't check for duplicates against jar files in a war (add framework core jar to your pom.xml to make Maven check for duplicates))&#10;- The framework war might contain a duplicate jar which should be reported as a bug (when an artifact changes it's groupid between versions Maven will not detect it to be a duplicat jar when one transitive dependency has the old one and another has the new one so one of them has to be excluded in the framework pom.xml)&#10;- As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
 		<!-- context.xml -->
@@ -521,7 +523,9 @@
 	</target>
 
 	<target name="get.java" unless="jdk.zip.available">
-		<get src="${jdk.url}" dest="download/${jdk.zip}" verbose="on"/>
+		<get src="${jdk.url.win}" dest="download/${jdk.zip}" verbose="on" if:true="${os.windows}"/>
+		<get src="${jdk.url.lin}" dest="download/${jdk.zip}" verbose="on" if:true="${os.linux}"/>
+		<get src="${jdk.url.mac}" dest="download/${jdk.zip}" verbose="on" if:true="${os.mac}"/>
 	</target>
 
 	<target name="get.ant" unless="ant.zip.available">
@@ -560,6 +564,44 @@
 	
 	<target name="get.mssql" unless="mssql.jar.available">
 		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
+	</target>
+
+	<target name="cacerts">
+		<condition property="copy.cacerts">
+			<and>
+				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+				<not><resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists></not><!-- the copy from cacerts-orig to cacerts later on will make the timestamp of cacerts newer and copied again on next run, hence this condition to prevent that -->
+			</and>
+		</condition>
+		<copy file="${jdk.dir}/jre/lib/security/cacerts" tofile="${jdk.dir}/jre/lib/security/cacerts-orig" if:set="copy.cacerts"/>
+		<pathconvert property="cacerts"><fileset dir="." includes="cacerts/*"/><flattenmapper/></pathconvert>
+		<pathconvert property="cacerts.jdk"><fileset dir="." includes="${jdk.dir}/jre/lib/security/cacerts-custom/*"/><flattenmapper/></pathconvert><!-- whole path in includes prevents error when jdk dir not present -->
+		<condition property="cacerts.changed">
+			<and>
+				<not><equals arg1="${cacerts}" arg2="${cacerts.jdk}"/></not>
+				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+			</and>
+		</condition>
+		<copy file="${jdk.dir}/jre/lib/security/cacerts-orig" tofile="${jdk.dir}/jre/lib/security/cacerts" overwrite="true" if:set="cacerts.changed"/>
+		<delete dir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"/>
+		<apply executable="${jdk.dir}/bin/keytool" relative="true" vmlauncher="false" failonerror="true" if:set="cacerts.changed">
+			<arg value="-noprompt"/>
+			<arg value="-storepass"/>
+			<arg value="changeit"/>
+			<arg value="-importcert"/>
+			<arg value="-alias"/>
+			<targetfile/>
+			<arg value="-keystore"/>
+			<arg value="${jdk.dir}/jre/lib/security/cacerts"/>
+			<arg value="-file"/>
+			<srcfile/>
+			<fileset dir="." includes="cacerts/*"/>
+			<chainedmapper>
+				<flattenmapper/>
+				<regexpmapper  from="(.*)\.(.*)" to="\1"/>
+			</chainedmapper>
+		</apply>
+		<copy todir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
 	</target>
 
 	<target name="generate.bat">
