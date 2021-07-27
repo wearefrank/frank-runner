@@ -14,7 +14,12 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>ibis-adapterframework-webapp</artifactId>
-			<version>[7.6,)</version>
+			<version>[7.7-20210726.162851,)</version>
+			<!--
+			Keep this version and the frank-flow version as high as possible to prevent a lot of pom version's being
+			downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as it
+			starts with an empty local repository on every new run
+			-->
 			<type>war</type>
 		</dependency>
 		<!--
@@ -30,12 +35,12 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>frank-flow</artifactId>
-			<version>[1.0,)</version>
+			<version>[2.0.2-SNAPSHOT,)</version>
 			<!--
-			Please note: When you have a local clone of Frank!Flow that has built a SNAPSHOT of the latest Frank!Flow
-			version to your local repo this local SNAPSHOT will be used instead of the latest version from Nexus.
-			This is probably what you are doing when you are a Frank!Flow (backend) developer. As a Frank!Flow
-			(frontend) you probably also want to set frank-flow.frontend.path in build.xml (see build.xml for more info)
+			When you have a local clone of Frank!Flow that has built a SNAPSHOT of the latest Frank!Flow version to
+			your local repo this local SNAPSHOT will be used instead of the latest version from Nexus. This is probably
+			what you are doing when you are a Frank!Flow (backend) developer. As a Frank!Flow (frontend) you probably
+			also want to set frank-flow.frontend.path in build.xml (see build.xml for more info)
 			 -->
 		</dependency>
 	</dependencies>
