@@ -9,7 +9,7 @@
 			<arg value="-Dproject.dir=${project.dir}"/>
 			<!--
 			As a Frank!Flow developer you might want to use the following to have the Frank!Flow frontend servlet serve
-			the frontend from your development folder instead of the Frank!Flow jar:
+			the frontend from your development folder instead of the reading the frontend from the Frank!Flow jar:
 			-->
 			<!-- <arg value="-Dfrank-flow.frontend.path=C:\path\to\frank-flow\target\frontend"/> -->
 		</exec>
