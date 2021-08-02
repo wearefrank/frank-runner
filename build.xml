@@ -64,23 +64,43 @@
 		<condition property="os.windows"><os family="windows"/></condition>
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
-		<property name="jdk.version" value="8"/>
-		<property name="jdk.version.u" value="292"/>
-		<property name="jdk.version.b" value="10"/>
-		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
-		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar"/>
+		<!--
+		Work in progress on JDK 11, to do:
+		- Wait for F!F to support Java 11
+		- Different location of cacerts
+		- Test on Linux en Mac
+		- Fall back to JDK 8 to be able to run older F!F versions?
+		- Remove or change property jdk11
+		- Change jdk.version(.u/b) to major minor patch
+		-->
+		<property name="jdk11" value="false"/>
+		<property name="jdk.version" value="8" unless:true="${jdk11}"/>
+		<property name="jdk.version.u" value="292" unless:true="${jdk11}"/>
+		<property name="jdk.version.b" value="10" unless:true="${jdk11}"/>
+		<property name="jdk.version" value="11"/>
+		<property name="jdk.version.u" value="0"/>
+		<property name="jdk.version.b" value="11"/>
+		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip" unless:true="${jdk11}"/>
+		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
+		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
+		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.zip"/>
+		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
 		<property name="jdk.zip.lin" value="${jdk.tar.lin}.gz"/>
-		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar"/>
 		<property name="jdk.zip.mac" value="${jdk.tar.mac}.gz"/>
 		<property name="jdk.zip" value="${jdk.zip.win}" if:true="${os.windows}"/>
 		<property name="jdk.tar" value="${jdk.tar.lin}" if:true="${os.linux}"/>
 		<property name="jdk.zip" value="${jdk.zip.lin}" if:true="${os.linux}"/>
 		<property name="jdk.tar" value="${jdk.tar.mac}" if:true="${os.mac}"/>
 		<property name="jdk.zip" value="${jdk.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.win}"/>
-		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.lin}"/>
-		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}"/>
-		<property name="jdk.dir" value="build/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
+		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.win}" unless:true="${jdk11}"/>
+		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.lin}" unless:true="${jdk11}"/>
+		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}" unless:true="${jdk11}"/>
+		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.win}"/>
+		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.lin}"/>
+		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.mac}"/>
+		<property name="jdk.dir" value="build/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}" unless:true="${jdk11}"/>
+		<property name="jdk.dir" value="build/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}+9"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
