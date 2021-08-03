@@ -51,7 +51,7 @@
 
 		<echo message="iaf-test: Build iaf"/>
 		<exec dir="../../../iaf" executable="${mvn.exe}" vmlauncher="false" failonerror="true">
-			<arg value="${mvn.arg}"/>
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>

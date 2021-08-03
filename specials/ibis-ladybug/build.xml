@@ -64,7 +64,7 @@
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
 		<exec executable="${mvn.exe}" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
-			<arg value="${mvn.arg}"/>
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
@@ -78,7 +78,7 @@
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
 		<exec executable="${mvn.exe}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
-			<arg value="${mvn.arg}"/>
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
