@@ -431,8 +431,9 @@
 		<chmod dir="${eclipse.dir}/plugins/" includes="**/jre/bin/*" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<copy todir="${eclipse.dir}" file="download/${lombok.jar}" unless:set="eclipse.dir.available" if:true="${eclipse}"/>
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">-javaagent:${lombok.jar}&#13;&#10;</concat>
+		<!-- with newer lombok version the following 2 lines can probably be removed (tested with pre-built version from https://github.com/projectlombok/lombok/issues/2810 on linux) -->
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">--illegal-access=warn&#13;&#10;</concat><!-- see https://stackoverflow.com/questions/69218106/eclipse-not-able-to-open-java-files-unable-to-make-protected-final-java-lang -->
-		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">--add-opens java.base/java.lang=ALL-UNNAMED&#13;&#10;</concat>
+		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}" if:true="${os.windows}">--add-opens java.base/java.lang=ALL-UNNAMED&#13;&#10;</concat><!-- prevents eclipse from starting up properly on linux and doesn't seem to be necessary on linux -->
 		<antcall target="cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149"/></antcall>
 		<!-- winmerge -->
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
