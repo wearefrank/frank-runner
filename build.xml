@@ -425,9 +425,10 @@
 		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
 		<unzip src="download/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
 		<gunzip src="download/${eclipse.zip}" dest="build" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
-		<untar src="build/${eclipse.tar}" dest="build" unless:set="maven.dir.available" if:true="${eclipse}" unless:true="${os.windows}"><cutdirsmapper dirs="1"/></untar>
-		<chmod file="${eclipse.dir}/eclipse" perm="+x" unless:set="maven.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<untar src="build/${eclipse.tar}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"><cutdirsmapper dirs="1"/></untar>
 		<delete file="build/${eclipse.tar}" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<chmod file="${eclipse.dir}/eclipse" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<chmod dir="${eclipse.dir}/plugins/" includes="**/jre/bin/*" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<copy todir="${eclipse.dir}" file="download/${lombok.jar}" unless:set="eclipse.dir.available" if:true="${eclipse}"/>
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">-javaagent:${lombok.jar}&#13;&#10;</concat>
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">--illegal-access=warn&#13;&#10;</concat><!-- see https://stackoverflow.com/questions/69218106/eclipse-not-able-to-open-java-files-unable-to-make-protected-final-java-lang -->
