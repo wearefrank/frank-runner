@@ -129,12 +129,10 @@
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
-		<property name="eclipse.zip" value="${eclipse.file}.zip"/>
+		<property name="eclipse.zip" value="${eclipse.file}.zip" if:true="${os.windows}"/>
+		<property name="eclipse.zip" value="${eclipse.file}.tar.gz" unless:true="${os.windows}"/>
 		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
-		<property name="eclipse.gz" value="${eclipse.tar}.gz"/>
-		<property name="eclipse.base.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/"/>
-		<property name="eclipse.url" value="${eclipse.base.url}${eclipse.zip}" if:true="${os.windows}"/>
-		<property name="eclipse.url" value="${eclipse.base.url}${eclipse.gz}" unless:true="${os.windows}"/>
+		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
 		<property name="lombok.version" value="1.18.20"/>
 		<property name="lombok.jar" value="lombok-1.18.20.jar"/>
@@ -187,8 +185,7 @@
 		<available property="maven.dir.available" file="${maven.dir}"/>
 		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
 		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
-		<available property="eclipse.zip.available" file="download/${eclipse.zip}" if:true="${os.windows}"/>
-		<available property="eclipse.zip.available" file="download/${eclipse.gz}" unless:true="${os.windows}"/>
+		<available property="eclipse.zip.available" file="download/${eclipse.zip}"/>
 		<available property="eclipse.dir.available" file="${eclipse.dir}"/>
 		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
 		<available property="lombok.dir.available" file="${lombok.dir}"/>
@@ -427,7 +424,7 @@
 		<!-- eclipse -->
 		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
 		<unzip src="download/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
-		<gunzip src="download/${eclipse.gz}" dest="build" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<gunzip src="download/${eclipse.zip}" dest="build" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<untar src="build/${eclipse.tar}" dest="build" unless:set="maven.dir.available" if:true="${eclipse}" unless:true="${os.windows}"><cutdirsmapper dirs="1"/></untar>
 		<chmod file="${eclipse.dir}/eclipse" perm="+x" unless:set="maven.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<delete file="build/${eclipse.tar}" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
