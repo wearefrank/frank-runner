@@ -539,8 +539,9 @@ https://github.com/ibissource/iaf/blob/master/CONTRIBUTING.md#developing-with-ec
 to install Eclipse with Lombok can be skipped. You can also skip setting up a
 Tomcat server in Eclipse when you use [Specials](#specials) to start and stop
 Tomcat. For the mentioned Java 8 requirement you have to manually go to Window,
-Preferences, Java, Installed JREs and add the OpenJDK 8 folder which can be
-found in the build folder of the Frank!Runner.
+Preferences, Java, Installed JREs and add the JDK 8 folder which can be found
+in the build folder of the Frank!Runner. Check the checkbox for this JDK in the
+overview of installed JREs.
 
 
 # VSCode
