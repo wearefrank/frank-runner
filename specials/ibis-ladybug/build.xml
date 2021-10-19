@@ -97,8 +97,9 @@
 			<arg value="${restart.arg}"/>
 			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
-			<arg value="-Dwebapp.clean=&quot;WEB-INF/classes/**,WEB-INF/lib/**&quot;"/>
+			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 		</exec>
 
 		<echo message="ibis-ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>
