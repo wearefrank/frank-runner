@@ -400,7 +400,7 @@
 			<arg value="war:inplace"/>
 			<arg value="--update-snapshots"/>
 			<arg value="--debug" if:true="${maven.verbose}"/>
-			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 		</exec>
 		<!-- tomcat -->
@@ -886,11 +886,14 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		for (var i = 0; i &lt; jars.length; i++) {
 			var name = '';
 			var j = jars[i].indexOf('-');
+			var k = 0;
 			while (j != -1) {
-				name = jars[i].substring(0, j);
+				name += jars[i].substring(k, j);
 				if (jars[i].charAt(j + 1) &gt;= '0' &amp;&amp; jars[i].charAt(j + 1) &lt;= '9') {
-					j = -1;
-				} else {
+					j = jars[i].indexOf('-', j + 1);
+				}
+				if (j != -1) {
+					k = j;
 					j = jars[i].indexOf('-', j + 1);
 				}
 			}
