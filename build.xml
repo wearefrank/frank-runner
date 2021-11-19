@@ -888,13 +888,19 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 			var j = jars[i].indexOf('-');
 			var k = 0;
 			while (j != -1) {
-				name += jars[i].substring(k, j);
-				if (jars[i].charAt(j + 1) &gt;= '0' &amp;&amp; jars[i].charAt(j + 1) &lt;= '9') {
-					j = jars[i].indexOf('-', j + 1);
+				// Double jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT.jar
+				// Unique jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT-tests.jar ibis-ladybug-2.2-tests.jar
+				if ((jars[i].charAt(k) &lt; '0' || jars[i].charAt(k) &gt; '9')
+						&amp;&amp; jars[i].substring(k, j) != 'SNAPSHOT') {
+					if (k != 0) {
+						name += '-';
+					}
+					name += jars[i].substring(k, j);
 				}
-				if (j != -1) {
-					k = j;
-					j = jars[i].indexOf('-', j + 1);
+				k = j + 1;
+				j = jars[i].indexOf('-', k);
+				if (j == -1) {
+					j = jars[i].indexOf('.jar', k);
 				}
 			}
 			if (names.indexOf(name) != -1) {
