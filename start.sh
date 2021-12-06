@@ -27,7 +27,7 @@ if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
 fi
 if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
 	retVal=$?
 	if [[ $retVal -ne 0 ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
@@ -51,7 +51,7 @@ if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
 fi
 if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
 	retVal=$?
 	if [[ $retVal -ne 0 ]]; then
 		echo "Please ${DOWNLOAD_HELP}"

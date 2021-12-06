@@ -746,7 +746,7 @@ if not exist "%~dp0download\${zip}" (
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
 )
 if not exist "%~dp0${dir.windows}\" (
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
 		echo Please %DOWNLOAD_HELP%
 		goto error
@@ -777,7 +777,7 @@ if [[ ! -f "$${FR_DIR}download/$${ZIP}" ]]; then
 	mv "$${FR_DIR}download/$${ZIP}.tmp" "$${FR_DIR}/download/$${ZIP}"
 fi
 if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"
 	retVal=$?
 	if [[ $retVal -ne 0 ]]; then
 		echo "Please $${DOWNLOAD_HELP}"

@@ -18,7 +18,7 @@ if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u292b10.zip" (
 	move "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u292b10.zip.tmp" "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u292b10.zip"
 )
 if not exist "%~dp0build\jdk8u292-b10\" (
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u292b10.zip" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u292b10.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo Please %DOWNLOAD_HELP%
 		goto error
@@ -36,7 +36,7 @@ if not exist "%~dp0download\apache-ant-1.10.10-bin.zip" (
 	move "%~dp0download\apache-ant-1.10.10-bin.zip.tmp" "%~dp0download\apache-ant-1.10.10-bin.zip"
 )
 if not exist "%~dp0build\apache-ant-1.10.10\" (
-	tar --force-local --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-ant-1.10.10-bin.zip" -C "%~dp0build\tmp\build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-ant-1.10.10-bin.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo Please %DOWNLOAD_HELP%
 		goto error
