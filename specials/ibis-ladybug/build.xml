@@ -84,6 +84,7 @@
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
+			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
 		</exec>
 
 		<echo message="ibis-ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>
