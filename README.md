@@ -143,7 +143,9 @@ Demonstrates [module per config](#module-per-config).
 To run the webapp, example and test modules of 
 https://github.com/ibissource/iaf you can use the build.xml files in the
 specials folder. As with other projects the iaf folder needs to be a sibling
-folder of the frank-runner folder.
+folder of the frank-runner folder. See also the build-example.properties files
+in these folders that describe several properties that can be set to speed up
+and customize the build.
 
 
 # Project structure and customisation
