@@ -1,0 +1,14 @@
+<project default="restart-frank2example5-example1">
+	<target name="restart-frank2example5-example1">
+		<basename property="project.dir" file="${basedir}/../.."/>
+		<basename property="module.dir" file="${basedir}"/>
+		<condition property="exe" value="../../../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../../../restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
+			<arg value="-Dprojects.dir=${basedir}/../../.."/>
+			<arg value="-Dproject.dir=${project.dir}"/>
+			<arg value="-Dmodule.dir=${module.dir}"/>
+		</exec>
+	</target>
+</project>

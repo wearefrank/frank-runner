@@ -1,0 +1,16 @@
+<Configuration name="Frank2Example5">
+'
+	<!-- This configuration can be a good place to specify your jmsRealms -->
+
+	<Adapter name="Frank2Example5Adapter">
+		<Receiver name="Frank2Example5Receiver">
+			<JavaListener name="Frank2Example5" serviceName="Frank2Example5"/>
+		</Receiver>
+		<Pipeline firstPipe="Example">
+			<FixedResultPipe name="Example" returnString="Hello Frank2Example5">
+				<Forward name="success" path="EXIT"/>
+			</FixedResultPipe>
+			<Exit path="EXIT" state="success"/>
+		</Pipeline>
+	</Adapter>
+</Configuration>

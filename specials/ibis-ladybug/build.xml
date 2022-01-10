@@ -2,20 +2,6 @@
 	<target name="restart-ladybug">
 		<property file="../../build.properties"/>
 		<property file="build.properties"/>
-		<!--
-		Change the following properties to speed up the build process (either
-		here to have git report your changes or in build.properties which is
-		ignored by git). E.g. when you are not (re)moving any classes you could
-		do the following (it would still be a good idea to do a full build with
-		tests before you commit):
-		<property name="maven.skip.all" value="true"/>
-		<property name="maven.skip.clean" value="true"/>
-		<property name="maven.skip.tests" value="true"/>
-		<property name="maven.skip.javadoc" value="true"/>
-		<property name="maven.skip.recompile.all" value="true"/>
-		<property name="maven.skip.source.jar" value="true"/>
-		-->
-		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.skip.all" value="false"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
 		<property name="maven.skip.tests" value="${maven.skip.all}"/>
@@ -23,18 +9,17 @@
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
-		<!-- Set test.with.iaf to true to test with IAF -->
 		<property name="test.with.iaf" value="false"/>
-		<!-- Change iaf.module to example or test to test with one of those modules instead of module webapp -->
 		<property name="iaf.module" value="webapp"/>
 
-		<echo message="ibis-ladybug: Check ibis-ladybug version in iaf-ladybug pom.xml" if:true="${test.with.iaf}"/>
-		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ibis.ladybug.pom.xml" if:true="${test.with.iaf}"/>
-		<property name="iaf.ladybug.pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
+		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
+		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ladybug.pom.xml"/>
+		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" unless:true="${test.with.iaf}"/>
+		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
-			<resourcecontains resource="${iaf.ladybug.pom.xml}" substring="&lt;version&gt;${ibis.ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+			<resourcecontains resource="${pom.xml}" substring="&lt;version&gt;${ladybug.pom.xml.project.version}&lt;/version&gt;"/>
 		</condition>
-		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ibis.ladybug.pom.xml.project.version} in ${iaf.ladybug.pom.xml} " unless:true="${ladybug.version.ok}" if:true="${test.with.iaf}"/>
+		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ladybug.pom.xml.project.version} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
 
 		<echo message="ibis-ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
 		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
@@ -55,12 +40,18 @@
 		</condition>
 		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
 
+		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
+		<condition property="restart.exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="restart.arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
-		<property name="build.echo2" value="false"/><!-- Change ibis-echo2 version in ibis-ladybug pom.xml to SNAPSHOT version when changing to true -->
-		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
+		<property name="build.echo2" value="false"/>
+		<exec executable="${mvn.exe}" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
-			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
@@ -70,10 +61,11 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
-		<exec executable="../frank-runner/mvn.bat" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+		<exec executable="${mvn.exe}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
-			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
@@ -83,11 +75,16 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" unless:true="${test.with.iaf}"/>
-		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
+		<condition property="ibis-ladybug-test-webapp.not.present"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
+		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
+		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
+			<arg value="${restart.arg}"/>
 			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
-			<arg value="-Dwebapp.clean=&quot;WEB-INF/classes/**,WEB-INF/lib/**&quot;"/>
+			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
+			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
 		</exec>
 
 		<echo message="ibis-ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>

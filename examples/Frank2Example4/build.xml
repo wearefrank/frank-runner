@@ -1,9 +1,17 @@
 <project default="restart-frank2example4">
 	<target name="restart-frank2example4">
 		<basename property="project.dir" file="${basedir}"/>
-		<exec executable="../../restart.bat" vmlauncher="false" failonerror="true">
+		<condition property="exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
 			<arg value="-Dprojects.dir=${basedir}/.."/>
 			<arg value="-Dproject.dir=${project.dir}"/>
+			<!--
+			As a Frank!Flow developer you might want to use the following to have the Frank!Flow frontend servlet serve
+			the frontend from your development folder instead of the reading the frontend from the Frank!Flow jar:
+			-->
+			<!-- <arg value="-Dfrank-flow.frontend.path=C:\path\to\frank-flow\target\frontend"/> -->
 		</exec>
 	</target>
 </project>

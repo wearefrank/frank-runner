@@ -11,7 +11,6 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 				<IbisLocalSender name="Send_sender" javaListener="TestMessageStoreSender"/>
 				<JdbcMessageLog
 					name="Send_messageLog"
-					jmsRealm="jdbc"
 					slotId="${instance.name}/TestMessageLog"
 				/>
 				<Forward name="success" path="EXIT"/>
@@ -28,13 +27,11 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 			<SenderPipe name="Send">
 				<MessageStoreSender
 					name="Send_Sender"
-					jmsRealm="jdbc"
 					slotId="${instance.name}/TestMessageStore"
 					onlyStoreWhenMessageIdUnique="false"
 				/>
 				<DummyMessageLog
 					name="Send_MessageLog"
-					jmsRealm="jdbc"
 					slotId="${instance.name}/TestMessageStore"
 					type="M"
 				/>
@@ -51,21 +48,11 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 			transactionAttribute="Required"
 			pollInterval="1"
 		>
-		<MessageStoreListener
-			name="TestMessageStoreListenerAndErrorStorage_listener"
-			jmsRealm="jdbc"
-			slotId="${instance.name}/TestMessageStore"
-		/>
-		<JdbcErrorStorage
-			name="TestMessageStoreListenerAndErrorStorage_errors"
-			jmsRealm="jdbc"
-			slotId="${instance.name}/TestErrorStorage"
-		/>
-		<DummyMessageLog
-			name="TestMessageStoreListenerAndErrorStorage_log"
-			jmsRealm="jdbc"
-			slotId="${instance.name}/TestMessageStore"
-		/>
+			<MessageStoreListener
+				name="TestMessageStoreListenerAndErrorStorage_listener"
+				slotId="${instance.name}/TestMessageStore"
+				statusValueInProcess="I"
+			/>
 		</Receiver>
 		<Pipeline firstPipe="Send">  
 			<SenderPipe name="Send">

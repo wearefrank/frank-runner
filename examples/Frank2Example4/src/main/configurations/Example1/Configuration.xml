@@ -3,26 +3,25 @@
 		<Receiver name="TestFrankFlow">
 			<JavaListener name="TestFrankFlow"/>
 		</Receiver>
-		<Pipeline firstPipe="FirstPipe">
+		<Pipeline firstPipe="CheckInput">
+            <XmlWellFormedCheckerPipe
+                name="CheckInput"
+                >
+                <Forward name="success" path="Transform"/>
+                <Forward name="failure" path="FixedResult"/>
+            </XmlWellFormedCheckerPipe>
 			<FixedResultPipe
-				name="FirstPipe"
-				returnString="&lt;FirstPipe/&gt;"
+				name="FixedResult"
+				returnString="&lt;FixedResult&gt;Hello world!&lt;/FixedResult&gt;"
 				>
-				<Forward name="success" path="ThirdPipe"/>
+				<Forward name="success" path="Transform"/>
 			</FixedResultPipe>
-			<FixedResultPipe
-				name="SecondPipe"
-				returnString="&lt;SecondPipe/&gt;"
-				>
-				<Forward name="success" path="ThirdPipe"/>
-			</FixedResultPipe>
-			<XmlSwitchPipe 
-				name="ThirdPipe"
-				xpathExpression="local-name(/*)"
-				>
-				<Forward name="FirstPipe" path="SecondPipe"/>
-				<Forward name="SecondPipe" path="EXIT"/>
-			</XmlSwitchPipe>
+			<XsltPipe
+                name="Transform"
+                styleSheetName="xsl/Transform.xsl"
+                >
+				<Forward name="success" path="EXIT"/>
+			</XsltPipe>
 			<Exit path="EXIT" state="success" />
 		</Pipeline>
 	</Adapter>

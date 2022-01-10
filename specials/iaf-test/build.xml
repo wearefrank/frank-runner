@@ -2,24 +2,6 @@
 	<target name="restart-iaf-test">
 		<property file="../../build.properties"/>
 		<property file="build.properties"/>
-		<!--
-		Change the following properties to speed up the build process (either
-		here to have git report your changes or in build.properties which is
-		ignored by git). E.g. when you are working on core and you are not
-		(re)moving any classes you could do the following (it would still be a
-		good idea to do a full build with tests before you commit or after a
-		pull (which might have changed other modules)) (webapp needs to be
-		added to maven.projects because the (updated) iaf-core jar is added to
-		iaf-test with the webapp overlay):
-		<property name="maven.skip.all" value="true"/>
-		<property name="maven.skip.clean" value="true"/>
-		<property name="maven.skip.tests" value="true"/>
-		<property name="maven.skip.javadoc" value="true"/>
-		<property name="maven.skip.recompile.all" value="true"/>
-		<property name="maven.skip.source.jar" value="true"/>
-		<property name="maven.projects" value="core,webapp"/>
-		-->
-		<!-- Default values, foolproof but time consuming -->
 		<property name="maven.projects" value=""/>
 		<property name="maven.skip.all" value="false"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
@@ -27,24 +9,35 @@
 		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
+		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
 
+		<condition property="stop.exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="stop.arg" value="../../stop.sh" else=""><os family="unix"/></condition>
+		<condition property="start.exe" value="../../start.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="start.arg" value="../../start.sh" else=""><os family="unix"/></condition>
+		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
+
 		<echo message="iaf-test: Stop Tomcat to prevent files used by maven being locked"/>
-		<exec executable="../../stop.bat" vmlauncher="false" failonerror="true">
+		<exec executable="${stop.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${stop.arg}"/>
 			<arg value="-Dproject.dir=iaf/test"/>
+			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
-		<echo message="iaf-test: Clean possible previous builds of webapp with war:inplace as Maven will not do it and with start.bat below Frank!Runner will only manually clean module test" unless:true="${maven.skip.clean}"/>
+		<echo message="iaf-test: Clean possible previous builds of webapp with war:inplace as Maven will not do it (${start.exe} will workaround this limitation of Maven but in this file we call it for iaf-test and not for iaf-webapp)" unless:true="${maven.skip.clean}"/>
 		<delete dir="../../../iaf/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" unless:true="${maven.skip.clean}"/>
 
 		<echo message="iaf-test: Build iaf"/>
-		<exec dir="../../../iaf" executable="../frank-runner/mvn.bat" vmlauncher="false" failonerror="true">
+		<exec dir="../../../iaf" executable="${mvn.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
 			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
 			<arg value="--also-make" unless:blank="${maven.projects}"/><!-- also make parent which pom.xml contains common dependencies -->
-			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
@@ -54,7 +47,8 @@
 		</exec>
 
 		<echo message="iaf-test: Update iaf-test with artifacts from local repo and start Tomcat"/>
-		<exec executable="../../start.bat" vmlauncher="false" failonerror="true">
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=iaf/test"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.skip.clean=${maven.skip.clean}"/>
@@ -65,8 +59,6 @@
 			<arg value="-Dconfigurations.dir=src/main"/>
 			<!-- A number of test scenario's of iaf-test depend on ${web.contextpath} -->
 			<arg value="-Dweb.contextpath=/"/>
-			<!-- Prevent META-INF/context.xml from being copied to itself and becoming empty -->
-			<arg value="-Dmaven.args=&quot;-DfilteringMetaInf=false&quot;"/>
 			<!--
 			Optionally change application.server.type.custom as described in StageSpecifics_LOC.properties
 			Please note that ACTIVEMQ requires extra jar files that the Frank!Runner doesn't download yet, see:

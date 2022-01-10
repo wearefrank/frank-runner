@@ -5,20 +5,24 @@
 		<property file="build.properties"/>
 
 		<property name="project.dir" value="${main.project}" if:set="sub.project"/>
-		<property name="configurations.names" value="${main.project},${sub.project}" if:set="sub.project"/>
+		<property name="configurations.names" value="${sub.project}" if:set="sub.project"/>
+
+		<property name="modules.dir" value="configurations" if:set="module.dir"/>
+		<property name="configurations.names" value="${module.dir}" if:set="module.dir"/>
 
 		<property name="projects.dir" value="${basedir}/.."/>
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
-		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/war/pom.xml"/>
+		<property name="war.dir" value="war"/>
+		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
-		<property name="classes.dir" value="war/src/main/resources" if:set="war.pom.xml.available"/>
-		<property name="configurations.dir" value="war/src/main/configurations" if:set="war.pom.xml.available"/>
-		<property name="java.dir" value="war/src/main/java" if:set="war.pom.xml.available"/>
-		<property name="tests.dir" value="war/src/test/testtool" if:set="war.pom.xml.available"/>
-		<property name="context.xml" value="war/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
+		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
+		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
+		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
+		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/war" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
@@ -57,47 +61,86 @@
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
 
-		<property name="update.strategy" value="latest" unless:true="${maven}"/>
-		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
-		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
-		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
-		<property name="get.metadata.maxtime" value="10"/>
-		<property name="get.metadata.ignoreerrors" value="true"/>
-		<mkdir dir="download/metadata"/>
-		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
-		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
-		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
-		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
-		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
-
-		<property name="jdk.version" value="8"/>
-		<property name="jdk.version.u" value="252"/>
-		<property name="jdk.version.b" value="09"/>
-		<property name="jdk.zip" value="OpenJDK${jdk.version}U-jdk_x64_windows_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip"/>
-		<property name="jdk.url" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-upstream-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip}"/>
-		<property name="jdk.dir" value="build/openjdk-${jdk.version}u${jdk.version.u}-b${jdk.version.b}"/>
-		<property name="ant.version." value="1.10.8"/><!-- extra . because ant.version is a build-in property -->
-		<property name="ant.zip" value="apache-ant-${ant.version.}-bin.zip"/>
-		<property name="ant.url" value="https://archive.apache.org/dist/ant/binaries/${ant.zip}"/>
+		<condition property="os.windows"><os family="windows"/></condition>
+		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
+		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
+		<!--
+		Work in progress on JDK 11, to do:
+		- Wait for F!F to support Java 11
+		- Different location of cacerts
+		- Test on Linux en Mac
+		- Fall back to JDK 8 to be able to run older F!F versions?
+		- Remove or change property jdk11
+		- Change jdk.version(.u/b) to major minor patch
+		-->
+		<property name="jdk11" value="false"/>
+		<property name="jdk.version" value="8" unless:true="${jdk11}"/>
+		<property name="jdk.version.u" value="292" unless:true="${jdk11}"/>
+		<property name="jdk.version.b" value="10" unless:true="${jdk11}"/>
+		<property name="jdk.version" value="11"/>
+		<property name="jdk.version.u" value="0"/>
+		<property name="jdk.version.b" value="11"/>
+		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip" unless:true="${jdk11}"/>
+		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
+		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
+		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.zip"/>
+		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.zip.lin" value="${jdk.tar.lin}.gz"/>
+		<property name="jdk.zip.mac" value="${jdk.tar.mac}.gz"/>
+		<property name="jdk.zip" value="${jdk.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.tar" value="${jdk.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.zip" value="${jdk.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.tar" value="${jdk.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.zip" value="${jdk.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.win}" unless:true="${jdk11}"/>
+		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.lin}" unless:true="${jdk11}"/>
+		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}" unless:true="${jdk11}"/>
+		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.win}"/>
+		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.lin}"/>
+		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.mac}"/>
+		<property name="jdk.dir" value="build/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}" unless:true="${jdk11}"/>
+		<property name="jdk.dir" value="build/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}+9"/>
+		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
+		<property name="ant.zip" value="${ant.base}.zip"/>
+		<property name="ant.tar" value="${ant.base}.tar"/>
+		<property name="ant.gz" value="${ant.tar}.gz"/>
+		<property name="ant.base.url" value="https://archive.apache.org/dist/ant/binaries/"/>
+		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
+		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="maven.version" value="3.6.3"/>
-		<property name="maven.zip" value="apache-maven-${maven.version}-bin.zip"/>
-		<property name="maven.url" value="https://archive.apache.org/dist/maven/maven-3/${maven.version}/binaries/${maven.zip}"/>
+		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
+		<property name="maven.zip" value="${maven.base}.zip"/>
+		<property name="maven.tar" value="${maven.base}.tar"/>
+		<property name="maven.gz" value="${maven.tar}.gz"/>
+		<property name="maven.base.url" value="https://archive.apache.org/dist/maven/maven-3/${maven.version}/binaries/"/>
+		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
+		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.version" value="9.0.39"/>
+		<property name="tomcat.version" value="9.0.50"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/${tomcat.zip}"/>
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
 		<property name="tomcat.connector.port" value="80"/>
 		<property name="tomcat.server.port" value="8005"/>
+		<property name="eclipse.version" value="2021-09"/>
+		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
+		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
+		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
+		<property name="eclipse.zip" value="${eclipse.file}.zip" if:true="${os.windows}"/>
+		<property name="eclipse.zip" value="${eclipse.file}.tar.gz" unless:true="${os.windows}"/>
+		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
+		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
+		<property name="eclipse.dir" value="build/${eclipse.file}"/>
+		<property name="lombok.version" value="1.18.20"/>
+		<property name="lombok.jar" value="lombok-1.18.20.jar"/>
+		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<property name="winmerge.version" value="2.16.6"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
-		<property name="ff.version" value="7.6-20200501.172313"/>
-		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
-		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
-		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 		<property name="jms.version" value="1.1_spec-1.1"/>
 		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
@@ -112,14 +155,40 @@
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
 
+		<antcall target="cacerts"/><!-- install cacerts here when jdk is unzipped by bat or sh -->
+
+		<property name="update.strategy" value="latest" unless:true="${maven}"/>
+		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
+		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
+		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
+		<property name="get.metadata.maxtime" value="10"/>
+		<property name="get.metadata.ignoreerrors" value="true"/>
+		<mkdir dir="download/metadata"/>
+		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
+		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
+		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
+
+		<property name="ff.version" value="7.6-20200501.172313"/>
+		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
+		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
+
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
-		<available property="ant.zip.available" file="download/${ant.zip}"/>
+		<available property="ant.zip.available" file="download/${ant.zip}" if:true="${os.windows}"/>
+		<available property="ant.zip.available" file="download/${ant.gz}" unless:true="${os.windows}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
-		<available property="maven.zip.available" file="download/${maven.zip}"/>
+		<available property="maven.zip.available" file="download/${maven.zip}" if:true="${os.windows}"/>
+		<available property="maven.zip.available" file="download/${maven.gz}" unless:true="${os.windows}"/>
 		<available property="maven.dir.available" file="${maven.dir}"/>
 		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
 		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="eclipse.zip.available" file="download/${eclipse.zip}"/>
+		<available property="eclipse.dir.available" file="${eclipse.dir}"/>
+		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
+		<available property="lombok.dir.available" file="${lombok.dir}"/>
 		<available property="winmerge.zip.available" file="download/${winmerge.zip}"/>
 		<available property="winmerge.dir.available" file="${winmerge.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
@@ -156,11 +225,11 @@
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
 		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/>
-		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*" if:set="war.pom.xml.available"/>
+		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*" if:set="war.pom.xml.available"/>
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
-		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><flattenmapper/></pathconvert>
 		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
 			<attribute name="configurationsdirabs"/>
@@ -182,7 +251,13 @@
 			value += '\nconfigurations.directory=' + configurationsDirAbs.replace(/\\/g, "\\\\");
 			if (configurationsNames != '${configurations.names}') {
 				value += '\n# Set configurations.names to Frank!Runner property with the same name';
-				value += '\nconfigurations.names=' + configurationsNames.replace(/\\/g, "\\\\");
+				if (configurationNameDefault != '${configuration.name.default}') {
+					value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
+					value += '\nconfigurations.names=' + configurationNameDefault.replace(/\\/g, "\\\\") + ',';
+				} else {
+					value += '\nconfigurations.names=';
+				}
+				value += configurationsNames.replace(/\\/g, "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
 					value += '\n# Set configurations.names to the list of folders in configurations.directory';
@@ -202,8 +277,8 @@
 			if (configurationsDirsFlat.toString().length() > 0) {
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
-					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i] + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(' ', "\\ ") + '.classLoaderType='+ classLoaderType;
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(' ', "\\ ") + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
@@ -212,10 +287,12 @@
 
 		<property name="projects.dir.abs" location="${projects.dir}"/>
 		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}_${sub.project}/${tests.dir}" relative="true" if:set="sub.project"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${modules.dir}/${module.dir}/src/test/testtool" relative="true" if:set="module.dir"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${tests.dir}" relative="true"/>
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dir.abs" location="${tests.dirset.dir}/${project.dir}/${tests.dir}"/>
 		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool,${project.dir}/configurations/*/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="tests.dirset.includes" value="${tests.dir.rel}"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
 		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
@@ -254,25 +331,49 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
+	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available">
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
 			<patternset>
 				<exclude name="**/demo"/>
 				<exclude name="**/sample"/>
 				<exclude name="**/src.zip"/>
 			</patternset>
 		</unzip>
+		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}">
+			<patternset>
+				<exclude name="**/demo"/>
+				<exclude name="**/sample"/>
+				<exclude name="**/src.zip"/>
+			</patternset>
+		</untar>
+		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<antcall target="cacerts"/>
 		<!-- ant -->
-		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available">
+		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
 				<exclude name="**/manual"/>
 			</patternset>
 		</unzip>
+		<gunzip src="download/${ant.gz}" dest="build" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<untar src="build/${ant.tar}" dest="build" unless:set="ant.dir.available" unless:true="${os.windows}">
+			<patternset>
+				<exclude name="**/manual"/>
+			</patternset>
+		</untar>
+		<delete file="build/${ant.tar}" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/ant" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${ant.dir}/bin/antRun" perm="+x" unless:set="ant.dir.available" unless:true="${os.windows}"/>
 		<!-- maven -->
-		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available"/>
+		<unzip src="download/${maven.zip}" dest="build" unless:set="maven.dir.available" if:true="${os.windows}"/>
+		<gunzip src="download/${maven.gz}" dest="build" unless:set="maven.dir.available" unless:true="${os.windows}"/>
+		<untar src="build/${maven.tar}" dest="build" unless:set="maven.dir.available" unless:true="${os.windows}"/>
+		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="${os.windows}"/>
+		<delete file="build/${maven.tar}" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
-		<property name="webapp.dir" value="${projects.dir}/${project.dir}/war/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
+		<property name="webapp.dir" value="${projects.dir}/${project.dir}/${war.dir}/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
 		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/MANIFEST.MF      WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" unless:true="${maven.skip.clean}"/>
@@ -281,26 +382,31 @@
 		<echo file="${webapp.dir}/.gitignore" message="&#10;" append="true" if:true="${webapp.gitignore.add.newline}"/>
 		<echo file="${webapp.dir}/.gitignore" message="${webapp.gitignore}" append="true" if:true="${webapp.gitignore.add}"/>
 		<property name="project.gitignore" value="/target/" if:true="${maven}"/>
-		<condition property="project.gitignore.add" unless:true="${project.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${projects.dir}/${project.dir}/.gitignore" substring="${project.gitignore}"/></not></condition>
-		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${projects.dir}/${project.dir}/.gitignore" when="greater" length="0"/></condition>
-		<echo file="${projects.dir}/${project.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
-		<echo file="${projects.dir}/${project.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
+		<condition property="project.gitignore.add" unless:true="${project.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${maven.exec.dir}/.gitignore" substring="${project.gitignore}"/></not></condition>
+		<condition property="project.gitignore.add.newline" if:true="${project.gitignore.add}"><length file="${maven.exec.dir}/.gitignore" when="greater" length="0"/></condition>
+		<echo file="${maven.exec.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
+		<echo file="${maven.exec.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
-		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn.cmd" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
-			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}"/>
+		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
+		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
+			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" if:true="${os.linux}"/>
+			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}/Contents/Home" if:true="${os.mac}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="${maven.phase}"/>
 			<arg value="war:inplace"/>
-			<arg value="-Dmaven.test.skip=true" if:true="${maven.skip.tests}"/>
+			<arg value="--update-snapshots"/>
+			<arg value="--debug" if:true="${maven.verbose}"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
-			<arg value="-X" if:true="${maven.verbose}"/>
 		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete><!-- unless:set="tomcat.dir.available" to speed up startup time -->
+		<chmod dir="${tomcat.dir}/bin" perm="+x" includes="*.sh" unless:set="tomcat.dir.available"/>
+		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
@@ -308,29 +414,41 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,frank-ladybug-*.jar,ibis-ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<!-- eclipse -->
+		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
+		<unzip src="download/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
+		<gunzip src="download/${eclipse.zip}" dest="build" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<untar src="build/${eclipse.tar}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"><cutdirsmapper dirs="1"/></untar>
+		<delete file="build/${eclipse.tar}" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<chmod file="${eclipse.dir}/eclipse" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<chmod dir="${eclipse.dir}/plugins/" includes="**/jre/bin/*" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
+		<copy todir="${eclipse.dir}" file="download/${lombok.jar}" unless:set="eclipse.dir.available" if:true="${eclipse}"/>
+		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">-javaagent:${lombok.jar}&#13;&#10;</concat>
+		<!-- with newer lombok version the following 2 lines can probably be removed (tested with pre-built version from https://github.com/projectlombok/lombok/issues/2810 on linux) -->
+		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">--illegal-access=warn&#13;&#10;</concat><!-- see https://stackoverflow.com/questions/69218106/eclipse-not-able-to-open-java-files-unable-to-make-protected-final-java-lang -->
+		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}">--add-opens java.base/java.lang=ALL-UNNAMED&#13;&#10;</concat><!-- prevents eclipse from starting up properly on linux and doesn't seem to be necessary on linux -->
+		<antcall target="cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149"/></antcall>
 		<!-- winmerge -->
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<dirset id="contexts.dirs.id" dir="${tomcat.dir}/webapps" includes="*"/>
-		<pathconvert property="contexts.dirs" refid="contexts.dirs.id" dirsep="," pathsep=","><mapper type="flatten"/></pathconvert>
+		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*"/><flattenmapper/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
 		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
-		<fileset id="webapp.lib.jars.id" dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/>
-		<pathconvert property="webapp.lib.jars" refid="webapp.lib.jars.id" pathsep="|"><mapper type="flatten"/></pathconvert>
+		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
-		<fail message="The following double jars are found: ${double.jars}&#10;${webapp.dir}/WEB-INF/lib&#10;- When maven=true use maven.clean=true at least once&#10;- Check your pom.xml for dependencies that are being added that are already in the framework war (Maven doesn't check for duplicates against jar files in a war)&#10;- The framework war might contain a duplicate jar which should be reported as a bug (when an artifact changes it's groupid between versions Maven will not detect it to be a duplicat jar when one transitive dependency has the old one and another has the new one so one of them has to be excluded in the framework pom.xml)&#10;- As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
+		<fail message="The following double jars are found: ${double.jars}&#10;${webapp.dir}/WEB-INF/lib&#10;- When maven=true disable maven.skip.clean=true (when present) at least once&#10;- Check your pom.xml for dependencies already present in the framework war (Maven doesn't add jar files inside a war file to the dependency tree to resolve dependency conflicts (add framework core jar to your pom.xml and/or add maven-war-plugin or ibis-war-plugin (when https://github.com/ibissource/ibis-war-plugin/issues/1 is closed) with excludes like &lt;exclude>WEB-INF/lib/example-*.jar&lt;/exclude>))&#10;- The framework war might contain a duplicate jar which should be reported as a bug (when an artifact changes it's groupid between versions Maven will not detect it to be a duplicate jar when one transitive dependency has the old one and another has the new one so one of them has to be excluded in the framework pom.xml)&#10;- As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
 		<!-- context.xml -->
 		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
 		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
@@ -365,84 +483,83 @@
 		<antcall target="generate.bat"><param name="filename" value="run"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="restart"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="rerun"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="ant"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="mvn"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="start"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="stop"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="run"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="restart"/></antcall>
+		<antcall target="generate.sh"><param name="filename" value="rerun"/></antcall>
 	</target>
 
-	<target name="start" depends="build">
-		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
-		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
-		<!-- with exec in windows a new window will be opened -->
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-start.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg value="start"/>
-			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
-			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
+	<target name="tomcat">
+		<condition property="catalina.exe" value="${tomcat.dir.windows}\bin\catalina.bat" else="${tomcat.dir}/bin/catalina.sh"><os family="windows"/></condition>
+		<property name="catalina.out" value="${tomcat.dir}/logs/tomcat-${action}.txt"/>
+		<property name="redirect.out" value="true"/>
+		<exec executable="${catalina.exe}" vmlauncher="false" failonerror="true" if:true="${use.exec}">
+			<arg value="${action}"/>
+			<env key="JAVA_HOME" value="${jdk.dir.windows}" if:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${jdk.dir}" if:true="${os.linux}"/>
+			<env key="JAVA_HOME" value="${jdk.dir}/Contents/Home" if:true="${os.mac}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir.windows}" if:true="${os.windows}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir}" unless:true="${os.windows}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
+			<redirector output="${catalina.out}" if:true="${redirect.out}"/>
 		</exec>
-		<!-- with java in windows no new window will be opened -->
-		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true" maxmemory="${maxmemory}" if:set="use.java">
+		<property name="spawn" value="true"/>
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg value="start"/>
+			<arg value="${action}"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</java>
+	</target>
+
+	<target name="start" depends="build">
+		<!-- with exec in windows a new window will be opened -->
+		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<!-- with java in windows no new window will be opened -->
+		<condition property="use.java"><equals arg1="${use}" arg2="java"/></condition>
+		<antcall target="tomcat"><param name="action" value="start"/></antcall>
 		<antcall target="splash"/>
 	</target>
 
 	<target name="run" depends="build">
-		<condition property="use.exec"><equals arg1="${use}" arg2="exec"/></condition>
-		<condition property="use.java"><not><equals arg1="${use}" arg2="exec"/></not></condition>
 		<antcall target="splash"/>
 		<echo message=" "/><!-- space instead of empty for eclipse -->
 		<echo message=" "/>
+		<!-- use java by default as with exec in windows a ctrl-c will not kill tomcat -->
+		<condition property="use.exec" else="false"><equals arg1="${use}" arg2="exec"/></condition>
+		<condition property="use.java" else="false"><not><equals arg1="${use}" arg2="exec"/></not></condition>
+		<property name="spawn" value="false"/>
+		<property name="redirect.out" value="false"/>
 		<!-- with exec in windows a ctrl-c will not kill tomcat -->
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg value="run"/>
-			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
-			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
-			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
-		</exec>
+		<antcall target="tomcat" if:true="${use.exec}"><param name="action" value="run"/></antcall>
 		<!-- with java in windows a ctrl-c will kill tomcat -->
-		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" maxmemory="${maxmemory}" if:set="use.java">
-			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg value="start"/>
-			<classpath>
-				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
-				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
-			</classpath>
-		</java>
+		<antcall target="tomcat" if:true="${use.java}"><param name="action" value="start"/></antcall>
 	</target>
 
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<!-- prevent error in case another process in running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
-		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir.windows}\bin\catalina.bat"/></resourceexists></not></condition>
+		<!-- prevent error in case another process is running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
+		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></not></condition>
 		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
-		<exec executable="${tomcat.dir.windows}\bin\catalina.bat" output="${tomcat.dir.windows}\logs\tomcat-stop.txt" vmlauncher="false" failonerror="true" if:set="use.exec">
-			<arg value="stop"/>
-			<env key="JAVA_HOME" value="${jdk.dir.windows}"/>
-			<env key="CATALINA_HOME" value="${tomcat.dir.windows}"/>
-		</exec>
-		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" if:set="use.java">
-			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<arg value="stop"/>
-			<classpath>
-				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
-				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
-			</classpath>
-		</java>
+		<antcall target="tomcat"><param name="action" value="stop"/></antcall>
 		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
 		<property name="stop.maxwait" value="300"/>
 		<property name="stop.maxwaitunit" value="second"/>
-		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
-		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="catalina.bat.not.present">
+		<condition property="waitfor.unless"><or><isset property="catalina.bat.not.present"/><equals arg1="${tomcat.skip.waitfor}" arg2="true"/></or></condition>
+		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="waitfor.unless"/>
+		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="waitfor.unless">
 			<not><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></not>
 		</waitfor>
 		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again" if:set="stop.failed"/>
 		<tstamp><format property="stop.end" pattern="HH:mm:ss"/></tstamp>
-		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="catalina.bat.not.present"/>
+		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="waitfor.unless"/>
 	</target>
 
 	<target name="restart">
@@ -455,51 +572,101 @@
 		<antcall target="run"/>
 	</target>
 
-	<target name="get.java" unless="jdk.zip.available">
-		<get src="${jdk.url}" dest="download/${jdk.zip}" verbose="on"/>
+	<target name="get.java" unless="${jdk.zip.available}">
+		<get src="${jdk.url.win}" dest="download/${jdk.zip}" verbose="on" if:true="${os.windows}"/>
+		<get src="${jdk.url.lin}" dest="download/${jdk.zip}" verbose="on" if:true="${os.linux}"/>
+		<get src="${jdk.url.mac}" dest="download/${jdk.zip}" verbose="on" if:true="${os.mac}"/>
 	</target>
 
-	<target name="get.ant" unless="ant.zip.available">
-		<get src="${ant.url}" dest="download/${ant.zip}" verbose="on"/>
+	<target name="get.ant" unless="${ant.zip.available}">
+		<get src="${ant.zip.url}" dest="download/${ant.zip}" verbose="on" if:true="${os.windows}"/>
+		<get src="${ant.gz.url}" dest="download/${ant.gz}" verbose="on" unless:true="${os.windows}"/>
 	</target>
 
-	<target name="get.maven" unless="maven.zip.available">
-		<get src="${maven.url}" dest="download/${maven.zip}" verbose="on"/>
+	<target name="get.maven" unless="${maven.zip.available}">
+		<get src="${maven.zip.url}" dest="download/${maven.zip}" verbose="on" if:true="${os.windows}"/>
+		<get src="${maven.gz.url}" dest="download/${maven.gz}" verbose="on" unless:true="${os.windows}"/>
 	</target>
 
-	<target name="get.tomcat" unless="tomcat.zip.available">
+	<target name="get.tomcat" unless="${tomcat.zip.available}">
 		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
 	</target>
 
-	<target name="get.winmerge" unless="winmerge.zip.available">
+	<target name="get.eclipse" unless="${eclipse.zip.available}" if="${eclipse}">
+		<get src="${eclipse.url}" dest="download/${eclipse.zip}" verbose="on"/>
+	</target>
+
+	<target name="get.lombok" unless="${lombok.jar.available}">
+		<get src="${lombok.url}" dest="download/${lombok.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.winmerge" unless="${winmerge.zip.available}">
 		<get src="${winmerge.url}" dest="download/${winmerge.zip}" verbose="on"/>
 	</target>
 
-	<target name="get.ff" unless="ff.war.available">
+	<target name="get.ff" unless="${ff.war.available}">
 		<get src="${ff.url}" dest="download/${ff.war}" verbose="on"/>
 	</target>
 
-	<target name="get.jms" unless="jms.jar.available">
+	<target name="get.jms" unless="${jms.jar.available}">
 		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.h2" unless="h2.jar.available">
+	<target name="get.h2" unless="${h2.jar.available}">
 		<get src="${h2.url}" dest="download/${h2.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.ojdbc" unless="ojdbc.jar.available">
+	<target name="get.ojdbc" unless="${ojdbc.jar.available}">
 		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
 	</target>
 	
-	<target name="get.mssql" unless="mssql.jar.available">
+	<target name="get.mssql" unless="${mssql.jar.available}">
 		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
+	</target>
+
+	<target name="cacerts">
+		<condition property="copy.cacerts">
+			<and>
+				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+				<not><resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists></not><!-- the copy from cacerts-orig to cacerts later on will make the timestamp of cacerts newer and copied again on next run, hence this condition to prevent that -->
+			</and>
+		</condition>
+		<copy file="${jdk.dir}/jre/lib/security/cacerts" tofile="${jdk.dir}/jre/lib/security/cacerts-orig" if:set="copy.cacerts"/>
+		<pathconvert property="cacerts"><fileset dir="." includes="cacerts/*"/><flattenmapper/></pathconvert>
+		<pathconvert property="cacerts.jdk"><fileset dir="." includes="${jdk.dir}/jre/lib/security/cacerts-custom/*"/><flattenmapper/></pathconvert><!-- whole path in includes prevents error when jdk dir not present -->
+		<condition property="cacerts.changed">
+			<and>
+				<not><equals arg1="${cacerts}" arg2="${cacerts.jdk}"/></not>
+				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+			</and>
+		</condition>
+		<copy file="${jdk.dir}/jre/lib/security/cacerts-orig" tofile="${jdk.dir}/jre/lib/security/cacerts" overwrite="true" if:set="cacerts.changed"/>
+		<delete dir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"/>
+		<apply executable="${jdk.dir}/jre/bin/keytool" relative="true" vmlauncher="false" failonerror="true" if:set="cacerts.changed">
+			<arg value="-noprompt"/>
+			<arg value="-storepass"/>
+			<arg value="changeit"/>
+			<arg value="-importcert"/>
+			<arg value="-alias"/>
+			<targetfile/>
+			<arg value="-keystore"/>
+			<arg value="${jdk.dir}/jre/lib/security/cacerts"/>
+			<arg value="-file"/>
+			<srcfile/>
+			<fileset dir="." includes="cacerts/*"/>
+			<chainedmapper>
+				<flattenmapper/>
+				<regexpmapper  from="(.*)\.(.*)" to="\1"/>
+			</chainedmapper>
+		</apply>
+		<copy todir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
 	</target>
 
 	<target name="generate.bat">
 		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
 		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
 		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
-		<echo file="${filename}.bat">:: This file is generated as part of build.xml
+		<echo file="${filename}.bat">:: This file is generated by build.xml
 @echo off
 setlocal enabledelayedexpansion
 if not exist "%~dp0download\" (
@@ -508,16 +675,16 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip}"/><param name="url" value="${jdk.url}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
-		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
-		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip.win}"/><param name="url" value="${jdk.url.win}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.zip.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
 <echo file="${filename}.bat" append="true" unless:set="mvn">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
 <echo file="${filename}.bat" append="true">
 call "%~dp0</echo>
-<echo file="${filename}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant"</echo>
+<echo file="${filename}.bat" append="true" unless:set="mvn">${ant.dir.windows}\bin\ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 <echo file="${filename}.bat" append="true" unless:set="ant.or.mvn"> -buildfile "%~dp0build.xml"</echo>
 <echo file="${filename}.bat" append="true"> %*</echo>
@@ -533,14 +700,47 @@ exit /b %errorlevel%<!-- this will make failonerror="true" work when the bat fil
 </echo>
 	</target>
 
+	<target name="generate.sh">
+		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
+		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
+		<condition property="ant.or.mvn"><or><isset property="ant"/><isset property="mvn"/></or></condition>
+		<echo file="${filename}.sh">#!/bin/bash
+# This file is generated by build.xml
+FR_DIR="`pwd`/`dirname $0`/"
+if [[ ! -d "${FR_DIR}download/" ]]; then
+	mkdir "${FR_DIR}download/"
+fi
+if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
+	mkdir -p "${FR_DIR}build/tmp/build"
+fi</echo>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip.lin}"/><param name="url" value="${jdk.url.lin}"/><param name="dir" value="${jdk.dir}"/><param name="replace.linux.with.mac" value="true"/></antcall>
+		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.gz}"/><param name="url" value="${maven.gz.url}"/><param name="dir" value="${maven.dir}"/></antcall>
+		<echo file="${filename}.sh" append="true">
+export JAVA_HOME="${FR_DIR}${jdk.dir}"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	export JAVA_HOME="${FR_DIR}${jdk.dir}/Contents/Home"
+fi</echo>
+<echo file="${filename}.sh" append="true" unless:set="mvn">
+export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME point to an old ant version that version will be used which might not support all tasks and attributes) -->
+<echo file="${filename}.sh" append="true">
+"${FR_DIR}</echo>
+<echo file="${filename}.sh" append="true" unless:set="mvn">${ant.dir}/bin/ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
+<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> -buildfile "${FR_DIR}build.xml"</echo>
+<echo file="${filename}.sh" append="true"> "$@"</echo>
+<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn"> ${filename}</echo>
+		<chmod file="${filename}.sh" perm="+x"/>
+	</target>
+
 	<target name="generate.bat.download.unzip">
 		<echo file="${filename}.bat" append="true">
-set download.help=download ${url} manually, move it to %~dp0download and restart this script
+set DOWNLOAD_HELP=download ${url} manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\${zip}" (
-	echo In case of errors %download.help%
+	echo In case of errors %DOWNLOAD_HELP%
 	curl -f -o "%~dp0download\${zip}.tmp" -L ${url}<!-- -f will set errorlevel and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %download.help%
+		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
@@ -548,11 +748,43 @@ if not exist "%~dp0download\${zip}" (
 if not exist "%~dp0${dir.windows}\" (
 	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %download.help%
+		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
 	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
 )</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
+	</target>
+
+	<target name="generate.sh.download.unzip">
+		<echo file="${filename}.sh" append="true">
+FR_DIR="`pwd`/`dirname $0`/"
+ZIP=${zip}
+URL=${url}
+DIR=${dir}</echo><echo file="${filename}.sh" append="true" if:set="replace.linux.with.mac">
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	ZIP=$${ZIP/linux/mac}
+	URL=$${URL/linux/mac}
+fi</echo><echo file="${filename}.sh" append="true">
+DOWNLOAD_HELP="download $${URL} manually, move it to $${FR_DIR}download and restart this script"
+if [[ ! -f "$${FR_DIR}download/$${ZIP}" ]]; then
+	echo In case of errors $${DOWNLOAD_HELP}
+	curl -f -o "$${FR_DIR}download/$${ZIP}.tmp" -L $${URL}<!-- -f will return error 22 and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please $${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "$${FR_DIR}download/$${ZIP}.tmp" "$${FR_DIR}/download/$${ZIP}"
+fi
+if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please $${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "$${FR_DIR}build/tmp/$${DIR}" "$${FR_DIR}$${DIR}"
+fi</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
 	</target>
 
 	<target name="splash">
@@ -562,6 +794,9 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message=" " if:set="debug.true"/><!-- space instead of empty for eclipse -->
 		<echo message="projects.dir: ${projects.dir}" if:set="debug.true"/>
 		<echo message="project.dir: ${project.dir}" if:set="debug.true"/>
+		<echo message=" " if:set="debug.true"/>
+		<echo message="modules.dir: ${modules.dir}" if:set="debug.true"/>
+		<echo message="module.dir: ${module.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
@@ -626,7 +861,9 @@ if not exist "%~dp0${dir.windows}\" (
 		<echo message="    |  _|| | | (_| | | | |   &lt;|_|  _ &lt;| |_| | | | | | | |  __/ |"/>
 		<echo message="    |_|  |_|  \__,_|_| |_|_|\_(_)_| \_\\__,_|_| |_|_| |_|\___|_|"/>
 		<echo message=" "/>
-		<condition property="splash.name" value="${instance.name}" else="${main.project}_${sub.project}"><not><isset property="sub.project"/></not></condition>
+		<property name="splash.name" value="${main.project}_${sub.project}" if:set="sub.project"/>
+		<property name="splash.name" value="${instance.name} ${module.dir}" if:set="module.dir"/>
+		<property name="splash.name" value="${instance.name}"/>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
 		<echo message="    ${splash.name} on http://localhost/${splash.context}"/>
 		<echo message=" " unless:set="frank.runner.up.to.date"/>
@@ -649,12 +886,21 @@ if not exist "%~dp0${dir.windows}\" (
 		for (var i = 0; i &lt; jars.length; i++) {
 			var name = '';
 			var j = jars[i].indexOf('-');
+			var k = 0;
 			while (j != -1) {
-				name = jars[i].substring(0, j);
-				if (jars[i].charAt(j + 1) &gt;= '0' &amp;&amp; jars[i].charAt(j + 1) &lt;= '9') {
-					j = -1;
-				} else {
-					j = jars[i].indexOf('-', j + 1);
+				// Double jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT.jar
+				// Unique jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT-tests.jar ibis-ladybug-2.2-tests.jar
+				if ((jars[i].charAt(k) &lt; '0' || jars[i].charAt(k) &gt; '9')
+						&amp;&amp; jars[i].substring(k, j) != 'SNAPSHOT') {
+					if (k != 0) {
+						name += '-';
+					}
+					name += jars[i].substring(k, j);
+				}
+				k = j + 1;
+				j = jars[i].indexOf('-', k);
+				if (j == -1) {
+					j = jars[i].indexOf('.jar', k);
 				}
 			}
 			if (names.indexOf(name) != -1) {

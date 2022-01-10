@@ -12,10 +12,12 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Specials](#specials)
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
+- [Module per config](#module-per-config)
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
+- [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
 - [VSCode](#vscode)
 - [Command line](#command-line)
@@ -26,11 +28,15 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 
 Clone or download this Frank!Runner project into the projects folder that
 contains your Frank project(s) (make the frank-runner folder a sibling of your
-project folder). You can now run build.xml files in projects that already have
-them (like the example projects in frank-runner/examples). See the sections
-[Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and VSCode to
-run a build.xml. When Tomcat has started you can browse to the following
-address:
+project folder). You can now run Frank!Runner build.xml files in projects that
+already have them (like the example projects in frank-runner/examples). See the
+sections [Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and
+VSCode to run a build.xml. When you're behind a Secure Web Gateway like Zscaler
+and/or need to download files from your organization's internal repository
+(e.g. Artifactory), see section [Root CA certificates](#root-ca-certificates).
+
+When Tomcat has started by running a Frank!Runner build.xml file you can browse
+to the following address:
 
 http://localhost
 
@@ -41,12 +47,18 @@ folder of your project with the following content:
 <project default="restart">
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../frank-runner/restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
 			<arg value="-Dproject.dir=${project.dir}"/>
 		</exec>
 	</target>
 </project>
 ```
+
+For Mac we need to use /bin/bash with restart.sh as an argument to work around:
+Cannot run program "restart.sh" (in directory ".../FrankRunner/frank-runner"): error=2, No such file or directory
 
 To make the items in the Last Tasks list of the Task Explorer unique you can
 rename the target name restart in build.xml to something unique for your project
@@ -63,6 +75,13 @@ rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-n
 set arg0=%0
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 :end
+```
+
+And create a restart.sh with the following content to run on Linux or Mac:
+
+```
+#!/bin/bash
+../../ant.sh
 ```
 
 There are other ways possible to run the Frank!Runner scripts but to make it
@@ -104,8 +123,9 @@ https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages
 
 ## Frank2Example4
 
-Example usage of Frank!Flow. In Frank2Example4 the Frank!Flow can be found at
-the top of the Frank!Console menu. For information about the Frank!Flow go to:
+Example usage of Frank!Flow and Maven. In Frank2Example4 the Frank!Flow can be
+found at the top of the Frank!Console menu. For information about the
+Frank!Flow go to:
 
 https://github.com/ibissource/frank-flow#frankflow
 
@@ -113,13 +133,19 @@ Better example Frank! configuration files for Frank2Example4 to demonstrate
 and / or test Frank!Flow are appreciated. Please create a pull request, an
 issue or send an email with your improvements.
 
+## Frank2Example5
+
+Demonstrates [module per config](#module-per-config).
+
 
 # Specials
 
 To run the webapp, example and test modules of 
 https://github.com/ibissource/iaf you can use the build.xml files in the
 specials folder. As with other projects the iaf folder needs to be a sibling
-folder of the frank-runner folder.
+folder of the frank-runner folder. See also the build-example.properties files
+in these folders that describe several properties that can be set to speed up
+and customize the build.
 
 
 # Project structure and customisation
@@ -191,7 +217,7 @@ to use them can be found in the
 
 In case your application comprises several Frank!Configurations and you would
 like to have a project per configuration (e.g. to give each configuration it's
-own CI/CD pipeline) the following setup would be possible and is automatically
+own CI/CD pipeline) the following setup is possible and is automatically
 detected by the Frank!Runner based on the presence of the war/pom.xml:
 
 ```
@@ -204,7 +230,12 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |  |--pom.xml
       |--war
       |  |--src
-      |  |  |--...
+      |  |  |--main
+      |  |  |  |--configurations
+      |  |  |  |--webapp
+      |  |  |  |--...
+      |  |  |--test
+      |  |     |--testtool
       |  |--pom.xml
       |--build.xml
       |--pom.xml
@@ -212,8 +243,10 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
    |--frank2application_config1
       |--src
       |  |  |--main
-      |  |     |--configuration
-      |  |        |--Config1
+      |  |  |  |--configuration
+      |  |  |     |--Config1
+      |  |  |--test
+      |  |     |--testtool
       |--build.xml
       |--pom.xml
       |--restart.bat
@@ -223,9 +256,9 @@ detected by the Frank!Runner based on the presence of the war/pom.xml:
       |--...
 ```
 
-The build.xml in the config projects need to have to following content (see
-section [Installation](#installation) for the content of the build.xml that
-should be added to the main project) (you can rename target restart to
+The build.xml files in the config projects need to have to following content
+(see section [Installation](#installation) for the content of the build.xml
+that should be added to the main project) (you can rename target restart to
 restart-&lt;projectname&gt; to have better overview on the Last Tasks list of
 the Task Explorer):
 
@@ -234,7 +267,10 @@ the Task Explorer):
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
 		<split projectdir="${project.dir}"/>
-		<exec executable="../frank-runner/restart.bat" vmlauncher="false" failonerror="true">
+		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../frank-runner/restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
 			<arg value="-Dmain.project=${main.project}"/>
 			<arg value="-Dsub.project=${sub.project}"/>
 		</exec>
@@ -250,6 +286,99 @@ the Task Explorer):
 ```
 
 This way every (configuration) project can be started and tested by it's own.
+
+
+# Module per config
+
+In case your application comprises several Frank!Configurations and you would
+like to have a Maven module per configuration the following setup is possible
+and is automatically detected by the Frank!Runner based on the presence of the
+war/pom.xml (see Frank2Example5 also):
+
+```
+|--projects
+   |--frank-runner
+   |--frank2application
+      |--configurations
+      |  |--Example1
+      |  |  |--src
+      |  |  |  |--main
+      |  |  |  |--resources
+      |  |  |  |  |--Example1
+      |  |  |  |     |--Configuration.xml
+      |  |  |  |     |--...
+      |  |  |  |--test
+      |  |  |     |--testtool
+      |  |  |        |-...
+      |  |  |--build.xml
+      |  |  |--restart.bat
+      |  |  |--restart.sh
+      |  |  |--...
+      |  |--Example2
+      |  |  |--...
+      |  |--...
+      |--ear
+      |  |--src
+      |  |  |--...
+      |  |--pom.xml
+      |--war
+      |  |--src
+      |  |  |--main
+      |  |  |  |--configurations
+      |  |  |  |  |--...
+      |  |  |  |--resources
+      |  |  |  |  |--Configuration.xml
+      |  |  |  |  |--...
+      |  |  |  |--webapp
+      |  |  |  |--...
+      |  |  |--test
+      |  |     |--testtool
+      |  |        |-...
+      |  |--pom.xml
+      |--build.xml
+      |--pom.xml
+      |--restart.bat
+      |--restart.sh
+```
+
+The build.xml files for the modules need to have to following content (see
+section [Installation](#installation) for the content of the build.xml that
+should be added to the root of the project) (you can rename target restart to
+restart-&lt;projectname&gt;-&lt;modulename&gt; to have better overview on the
+Last Tasks list of the Task Explorer):
+
+```
+<project default="restart">
+	<target name="restart">
+		<basename property="project.dir" file="${basedir}"/>
+		<basename property="module.dir" file="${basedir}"/>
+		<condition property="exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
+			<arg value="-Dprojects.dir=${basedir}/.."/>
+			<arg value="-Dproject.dir=${project.dir}"/>
+			<arg value="-Dmodule.dir=&quot;${module.dir}&quot;"/>
+		</exec>
+	</target>
+</project>
+```
+
+This way every module can be started and tested on it's own running only the
+configuration of this specific module. It is also possible to start other
+configurations by adding the following:
+
+```
+	<arg value="-Dconfigurations.names=&quot;${module.name},OtherModuleName,OtherConfigurationName&quot;"/>
+```
+
+When a Configuration.xml is detected in war/src/main/resources it is
+automatically added to the list (this is also the case when
+configurations.names is not specified and defaults to only the configuration of
+one module).
+
+See Frank2Example5 for example pom.xml files for the modules and the parent.
+
 
 
 # Debug property
@@ -374,6 +503,19 @@ to lib/webapp are copied to the WEB-INF/lib containing the Frank!Framework jar
 files and dependencies.
 
 
+# Root CA certificates
+
+You may need to add your organistion's Root CA for Ant and Maven to be able to
+download files from behind a Secure Web Gateway like Zscaler and/or to download
+files from your organization's internal repository (e.g. Artifactory). To do so
+simply create a folder cacerts in the frank-runner folder and (re)start a
+Frank!Runner build.xml. Frank!Runner will detect added and removed files from
+the cacerts folder and reinstall all files in cacerts in the downloaded and
+unzipped JDK used by the Frank!Runner. Also when the Frank!Runner's JDK version
+is changed and a new JDK is downloaded Frank!Runner will install the Root CA's
+in the cacerts folder in the newly downloaded and unzipped JDK.
+
+
 # Eclipse
 
 Choose one of the methods described in the sections below to run the build.xml
@@ -390,6 +532,28 @@ button on the Toolbar.
 
 Open the terminal view, cd to your project and execute restart.bat.
 
+## Eclipse installation
+
+When property eclipse=true (false by default) the Frank!Runner will download
+and install Eclipse with Lombok and add the certficates found in the cacerts
+folder to the Eclipse JRE of this intallation.
+
+You can start Eclipse by running eclipse(.exe) from the Eclipse folder which
+can be found in the build folder of the Frank!Runner. Optionally create a
+shortcurt for this executable which you can move to another location.
+
+When using this Eclipse intallation to contribute to the Frank!Framework the
+steps mentioned in
+
+https://github.com/ibissource/iaf/blob/master/CONTRIBUTING.md#developing-with-eclipse
+
+to install Eclipse with Lombok can be skipped. You can also skip setting up a
+Tomcat server in Eclipse when you use [Specials](#specials) to start and stop
+Tomcat. For the mentioned Java 8 requirement you have to manually go to Window,
+Preferences, Java, Installed JREs and add the JDK 8 folder which can be found
+in the build folder of the Frank!Runner. Check the checkbox for this JDK in the
+overview of installed JREs.
+
 
 # VSCode
 
@@ -404,7 +568,10 @@ Install plugin Task Explorer and configure it to use ant.bat or any other
 Ant installation by filling "Path To Ant" in the Extension Settings of Task
 Explorer with:
 
-C:\\path\\to\\frank-runner\\ant.bat
+C:/path/to/frank-runner/ant.bat
+
+Backslashes will also work except when your VSCode is configured to use a bash
+shell.
 
 Disable the "Enable Ansicon For Ant" option. Now you can use Task Explorer to
 either run the build.xml or the restart.bat in your project.
@@ -496,13 +663,13 @@ Change directory to frank-runner:
 projects> cd frank-runner
 ```
 
-And on Windows run the following command:
+On Windows run the following command:
 
 ```
 projects\frank-runner> .\run.bat
 ```
 
-When not using Windows run (not available yet):
+And on Linux or Mac run:
 
 ```
 projects\frank-runner> ./run.sh
