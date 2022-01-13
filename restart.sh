@@ -59,9 +59,10 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10/Contents/Home"
+else
+	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
 fi
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" "$@" restart
