@@ -783,7 +783,6 @@ if not exist "%~dp0${dir.windows}\" (
 
 	<target name="generate.sh.download.unzip">
 		<echo file="${filename}.sh" append="true">
-FR_DIR="`pwd`/`dirname $0`/"
 ZIP=${zip}
 URL=${url}
 DIR=${dir}</echo><echo file="${filename}.sh" append="true" if:set="replace.linux.with.mac">

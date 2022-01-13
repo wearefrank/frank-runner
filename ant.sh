@@ -7,7 +7,6 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-FR_DIR="`pwd`/`dirname $0`/"
 ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
 URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
 DIR=build/jdk8u292-b10
@@ -35,7 +34,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-FR_DIR="`pwd`/`dirname $0`/"
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
 DIR=build/apache-ant-1.10.10
