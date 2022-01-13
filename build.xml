@@ -688,6 +688,7 @@ if not exist "%~dp0build\tmp\build\" (
 		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.zip.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
+endlocal
 set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
 <echo file="${filename}.bat" append="true" unless:set="mvn">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
