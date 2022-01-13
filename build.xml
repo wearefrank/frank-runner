@@ -752,9 +752,9 @@ export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems wit
 <echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
 <echo file="${filename}.sh" append="true" if:set="env">
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	export PATH="${FR_DIR}${jdk.dir}/Contents/Home/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}
+	export PATH="${FR_DIR}${jdk.dir}/Contents/Home/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}"
 else
-	export PATH=${FR_DIR}${jdk.dir}/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}
+	export PATH="${FR_DIR}${jdk.dir}/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}"
 fi</echo>
 		<chmod file="${filename}.sh" perm="+x"/>
 	</target>
