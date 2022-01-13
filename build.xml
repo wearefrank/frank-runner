@@ -734,9 +734,10 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.gz}"/><param name="url" value="${maven.gz.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
-export JAVA_HOME="${FR_DIR}${jdk.dir}"
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	export JAVA_HOME="${FR_DIR}${jdk.dir}/Contents/Home"
+else
+	export JAVA_HOME="${FR_DIR}${jdk.dir}"
 fi</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
 export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
@@ -749,7 +750,11 @@ export ANT_HOME="${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems wit
 <echo file="${filename}.sh" append="true" unless:set="env"> "$@"</echo>
 <echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
 <echo file="${filename}.sh" append="true" if:set="env">
-export PATH=${FR_DIR}${jdk.dir}/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}</echo>
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	export PATH="${FR_DIR}${jdk.dir}/Contents/Home/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}
+else
+	export PATH=${FR_DIR}${jdk.dir}/bin:${FR_DIR}${ant.dir}/bin:${FR_DIR}${maven.dir}/bin:${PATH}
+fi</echo>
 		<chmod file="${filename}.sh" perm="+x"/>
 	</target>
 
