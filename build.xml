@@ -340,6 +340,7 @@
 				<exclude name="**/src.zip"/>
 			</patternset>
 		</unzip>
+		<mkdir dir="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}">
 			<patternset>
