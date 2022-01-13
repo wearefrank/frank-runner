@@ -43,6 +43,7 @@ if not exist "%~dp0build\apache-maven-3.6.3\" (
 	)
 	move "%~dp0build\tmp\build\apache-maven-3.6.3" "%~dp0build\apache-maven-3.6.3"
 )
+endlocal
 set JAVA_HOME=%~dp0build\jdk8u292-b10
 call "%~dp0build\apache-maven-3.6.3\bin\mvn.cmd" %*
 if %errorlevel% equ 0 goto end

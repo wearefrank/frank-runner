@@ -43,6 +43,7 @@ if not exist "%~dp0build\apache-ant-1.10.10\" (
 	)
 	move "%~dp0build\tmp\build\apache-ant-1.10.10" "%~dp0build\apache-ant-1.10.10"
 )
+endlocal
 set JAVA_HOME=%~dp0build\jdk8u292-b10
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
 set PATH=%~dp0build\jdk8u292-b10\bin;%~dp0build\apache-ant-1.10.10\bin;%~dp0build\apache-maven-3.6.3\bin;%PATH%
