@@ -64,7 +64,7 @@ else
 fi
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	export PATH="${FR_DIR}build/jdk8u292-b10/Contents/Home/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.6.3/bin:${PATH}
+	export PATH="${FR_DIR}build/jdk8u292-b10/Contents/Home/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.6.3/bin:${PATH}"
 else
-	export PATH=${FR_DIR}build/jdk8u292-b10/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.6.3/bin:${PATH}
+	export PATH="${FR_DIR}build/jdk8u292-b10/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.6.3/bin:${PATH}"
 fi
