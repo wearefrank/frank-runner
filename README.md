@@ -693,6 +693,27 @@ projects\frank-runner> .\stop.bat
 projects\frank-runner> .\restart.bat
 ```
 
+In case you want to use the Java, Ant and Maven installations downloaded by the
+Frank!Runner on a command line for other projects too, double clicking cmd.bat
+(on Windows) to start a new command line window with a PATH that contains the
+Java, Ant and Maven installation. In case you already have a command line
+window open on Windows run:
+
+```
+path\to\frank-runner\env.bat
+```
+
+And on Linux or Mac run:
+
+```
+source path/to/frank-runner/env.sh
+```
+
+After this you should be able to run java, ant and mvn in this window. Please
+note that in case you use a Root CA certficate or Maven you have to run another
+Frank!Runner script at least once to install the Root CA certficate in the JDK
+folder and to download Maven.
+
 
 # Scripting
 
