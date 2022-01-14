@@ -328,6 +328,7 @@
 		<mkdir dir="download/frank-runner"/>
 		<get src="https://raw.githubusercontent.com/ibissource/frank-runner/master/build.xml" dest="download/frank-runner/build.xml" maxtime="${get.build.maxtime}" ignoreerrors="${get.build.ignoreerrors}" verbose="on" if:set="get.build"/>
 		<echo file="download/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
+		<copy file="build.xml" tofile="download/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
