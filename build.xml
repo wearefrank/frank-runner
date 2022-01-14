@@ -889,8 +889,9 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		<property name="splash.name" value="${main.project}_${sub.project}" if:set="sub.project"/>
 		<property name="splash.name" value="${instance.name} ${module.dir}" if:set="module.dir"/>
 		<property name="splash.name" value="${instance.name}"/>
+		<condition property="splash.port" value="" else=":${tomcat.connector.port}"><equals arg1="${tomcat.connector.port}" arg2="80"/></condition>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
-		<echo message="    ${splash.name} on http://localhost/${splash.context}"/>
+		<echo message="    ${splash.name} on http://localhost${splash.port}/${splash.context}"/>
 		<echo message=" " unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !! Your Frank!Runner is out of date, please pull or download new version !!" unless:set="frank.runner.up.to.date"/>
