@@ -119,7 +119,7 @@
 		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.version" value="9.0.50"/>
+		<property name="tomcat.version" value="9.0.56"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.version}/bin/${tomcat.zip}"/>
 		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
@@ -416,7 +416,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,frank-ladybug-*.jar,ibis-ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/>
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=frank-flow-*.jar,wearefrank__ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/><!-- https://www.webjars.org/documentation#servlet3 -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
@@ -549,22 +549,21 @@
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
-		<!-- prevent error in case another process is running on the tomcat port(s) and build.xml is running for the first time so catalina.bat is not present yet -->
-		<condition property="catalina.bat.not.present"><not><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></not></condition>
-		<condition property="use.exec" if:set="tomcat.running" unless:set="catalina.bat.not.present"><not><equals arg1="${use}" arg2="java"/></not></condition>
-		<condition property="use.java" if:set="tomcat.running" unless:set="catalina.bat.not.present"><equals arg1="${use}" arg2="java"/></condition>
+		<condition property="catalina.bat.present"><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></condition><!-- not present when build.xml is running for the first time or tomcat.version has changed -->
+		<fail message="Manually close current running Tomcat or other process running on port ${tomcat.connector.port} and restart Frank!Runner to upgrade to / install Tomcat ${tomcat.version}" if:set="tomcat.running" unless:set="catalina.bat.present"/>
+		<condition property="use.exec" if:set="tomcat.running"><not><equals arg1="${use}" arg2="java"/></not></condition>
+		<condition property="use.java" if:set="tomcat.running"><equals arg1="${use}" arg2="java"/></condition>
 		<antcall target="tomcat"><param name="action" value="stop"/></antcall>
 		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
 		<property name="stop.maxwait" value="300"/>
 		<property name="stop.maxwaitunit" value="second"/>
-		<condition property="waitfor.unless"><or><isset property="catalina.bat.not.present"/><equals arg1="${tomcat.skip.waitfor}" arg2="true"/></or></condition>
-		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:set="waitfor.unless"/>
-		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:set="waitfor.unless">
+		<echo message="${stop.begin} Wait max ${stop.maxwait} ${stop.maxwaitunit}s for Tomcat to stop" if:set="tomcat.running" unless:true="${tomcat.skip.waitfor}"/>
+		<waitfor maxwait="${stop.maxwait}" maxwaitunit="${stop.maxwaitunit}" timeoutproperty="stop.failed" if:set="tomcat.running" unless:true="${tomcat.skip.waitfor}">
 			<not><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></not>
 		</waitfor>
 		<fail message="Tomcat (or another process) is still running on port ${tomcat.connector.port} and/or ${tomcat.server.port}. Please stop Tomcat manually or try again" if:set="stop.failed"/>
 		<tstamp><format property="stop.end" pattern="HH:mm:ss"/></tstamp>
-		<echo message="${stop.end} Done" if:set="tomcat.running" unless:set="waitfor.unless"/>
+		<echo message="${stop.end} Done" if:set="tomcat.running" unless:true="${tomcat.skip.waitfor}"/>
 	</target>
 
 	<target name="restart">
