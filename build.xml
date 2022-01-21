@@ -68,7 +68,7 @@
 		Work in progress on JDK 11, to do:
 		- Wait for F!F to support Java 11
 		- Different location of cacerts
-		- Test on Linux en Mac
+		- Test on Linux and Mac
 		- Fall back to JDK 8 to be able to run older F!F versions?
 		- Remove or change property jdk11
 		- Change jdk.version(.u/b) to major minor patch
@@ -144,10 +144,6 @@
 		<property name="jms.version" value="1.1_spec-1.1"/>
 		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
-		<property name="h2.version" value="1.4.200"/>
-		<property name="h2.jar" value="h2-${h2.version}.jar"/>
-		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
-		<property name="h2.dir" value="${basedir}/build/h2"/>
 		<property name="ojdbc.version" value="8-19.3.0.0"/>
 		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
@@ -174,6 +170,22 @@
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
+
+		<!-- before 7.7-20220119 the combination h2 and liquibase requires h2 version 1 -->
+		<condition property="h2.version.major" value="1"><matches pattern="^7\.[0-6]-.*$" string="${ff.version}"/></condition>
+		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2021.*$" string="${ff.version}"/></condition>
+		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022010.*$" string="${ff.version}"/></condition>
+		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022011[0-8].*$" string="${ff.version}"/></condition>
+		<!-- from 7.7-20220119 the combination h2 and liquibase requires h2 version 2 -->
+		<property name="h2.version.major" value="2"/>
+		<condition property="h21"><equals arg1="${h2.version.major}" arg2="1"/></condition>
+		<condition property="h22"><equals arg1="${h2.version.major}" arg2="2"/></condition>
+		<property name="h2.version" value="1.4.200" if:true="${h21}"/>
+		<property name="h2.version" value="2.1.210" if:true="${h22}"/>
+		<property name="h2.jar" value="h2-${h2.version}.jar"/>
+		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
+		<property name="h2.dir" value="${basedir}/build/h2" if:true="${h21}"/>
+		<property name="h2.dir" value="${basedir}/build/h2/v2" if:true="${h22}"/>
 
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
@@ -410,6 +422,7 @@
 		<chmod dir="${tomcat.dir}/bin" perm="+x" includes="*.sh" unless:set="tomcat.dir.available"/>
 		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
+		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete><!-- h2 major version can be switched -->
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib"/>
