@@ -548,9 +548,9 @@
 
 	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
-		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<condition property="catalina.bat.present"><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></condition><!-- not present when build.xml is running for the first time or tomcat.version has changed -->
-		<fail message="Manually close current running Tomcat or other process running on port ${tomcat.connector.port} and restart Frank!Runner to upgrade to / install Tomcat ${tomcat.version}" if:set="tomcat.running" unless:set="catalina.bat.present"/>
+		<antcall target="build" unless:set="catalina.bat.present"/>
+		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.connector.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<condition property="use.exec" if:set="tomcat.running"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running"><equals arg1="${use}" arg2="java"/></condition>
 		<antcall target="tomcat"><param name="action" value="stop"/></antcall>
