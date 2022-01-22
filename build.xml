@@ -171,12 +171,12 @@
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
-		<!-- before 7.7-20220119 the combination h2 and liquibase requires h2 version 1 -->
+		<!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1 -->
+		<!-- >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
 		<condition property="h2.version.major" value="1"><matches pattern="^7\.[0-6].*$" string="${ff.version}"/></condition>
 		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2021.*$" string="${ff.version}"/></condition>
 		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022010.*$" string="${ff.version}"/></condition>
 		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022011[0-8].*$" string="${ff.version}"/></condition>
-		<!-- from 7.7-20220119 the combination h2 and liquibase requires h2 version 2 -->
 		<property name="h2.version.major" value="2"/>
 		<condition property="h21"><equals arg1="${h2.version.major}" arg2="1"/></condition>
 		<condition property="h22"><equals arg1="${h2.version.major}" arg2="2"/></condition>
