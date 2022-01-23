@@ -141,6 +141,14 @@
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
+		<property name="h2v1.version" value="1.4.200"/>
+		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
+		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2v1.jar}"/>
+		<property name="h2v1.dir" value="${basedir}/build/h2"/>
+		<property name="h2v2.version" value="2.1.210"/>
+		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
+		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2v2.jar}"/>
+		<property name="h2v2.dir" value="${basedir}/build/h2/v2"/>
 		<property name="jms.version" value="1.1_spec-1.1"/>
 		<property name="jms.jar" value="geronimo-jms_${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/${jms.jar}"/>
@@ -171,22 +179,6 @@
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
-		<!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1 -->
-		<!-- >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
-		<condition property="h2.version.major" value="1"><matches pattern="^7\.[0-6].*$" string="${ff.version}"/></condition>
-		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2021.*$" string="${ff.version}"/></condition>
-		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022010.*$" string="${ff.version}"/></condition>
-		<condition property="h2.version.major" value="1"><matches pattern="^7\.7-2022011[0-8].*$" string="${ff.version}"/></condition>
-		<property name="h2.version.major" value="2"/>
-		<condition property="h21"><equals arg1="${h2.version.major}" arg2="1"/></condition>
-		<condition property="h22"><equals arg1="${h2.version.major}" arg2="2"/></condition>
-		<property name="h2.version" value="1.4.200" if:true="${h21}"/>
-		<property name="h2.version" value="2.1.210" if:true="${h22}"/>
-		<property name="h2.jar" value="h2-${h2.version}.jar"/>
-		<property name="h2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2.version}/${h2.jar}"/>
-		<property name="h2.dir" value="${basedir}/build/h2" if:true="${h21}"/>
-		<property name="h2.dir" value="${basedir}/build/h2/v2" if:true="${h22}"/>
-
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}" if:true="${os.windows}"/>
@@ -206,7 +198,8 @@
 		<available property="ff.war.available" file="download/${ff.war}"/>
 		<available property="ff.dir.available" file="${ff.dir}"/>
 		<available property="jms.jar.available" file="download/${jms.jar}"/>
-		<available property="h2.jar.available" file="download/${h2.jar}"/>
+		<available property="h2v1.jar.available" file="download/${h2v1.jar}"/>
+		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
 		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
 
@@ -344,7 +337,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.jms,get.h2,get.ojdbc,get.mssql">
+	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -421,11 +414,9 @@
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<chmod dir="${tomcat.dir}/bin" perm="+x" includes="*.sh" unless:set="tomcat.dir.available"/>
 		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
-		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib"/>
-		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete><!-- h2 major version can be switched -->
-		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
-		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib"/>
-		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib"/>
+		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.connector.port}\2"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
@@ -464,6 +455,17 @@
 		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
 		<fail message="The following double jars are found: ${double.jars}&#10;${webapp.dir}/WEB-INF/lib&#10;- When maven=true disable maven.skip.clean=true (when present) at least once&#10;- Check your pom.xml for dependencies already present in the framework war (Maven doesn't add jar files inside a war file to the dependency tree to resolve dependency conflicts (add framework core jar to your pom.xml and/or add maven-war-plugin or ibis-war-plugin (when https://github.com/ibissource/ibis-war-plugin/issues/1 is closed) with excludes like &lt;exclude>WEB-INF/lib/example-*.jar&lt;/exclude>))&#10;- The framework war might contain a duplicate jar which should be reported as a bug (when an artifact changes it's groupid between versions Maven will not detect it to be a duplicate jar when one transitive dependency has the old one and another has the new one so one of them has to be excluded in the framework pom.xml)&#10;- As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
+		<!-- h2 -->
+		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- switch h2 major version based on ff version for both maven (doesn't use ff.version) and non-maven projects -->
+			<or><filename regex="core-7\.[0-6].*"/><filename regex="core-7\.7-2021.*"/><filename regex="core-7\.7-2022010.*"/><filename regex="core-7\.7-2022011[0-7].*"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
+		</fileset>
+		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
+		<property name="h2.jar" value="${h2v1.jar}" unless:blank="${h2.fallback}"/>
+		<property name="h2.jar" value="${h2v2.jar}"/>
+		<property name="h2.dir" value="${h2v1.dir}" unless:blank="${h2.fallback}"/>
+		<property name="h2.dir" value="${h2v2.dir}"/>
+		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
+		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<!-- context.xml -->
 		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
 		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
@@ -629,8 +631,12 @@
 		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.h2" unless="${h2.jar.available}">
-		<get src="${h2.url}" dest="download/${h2.jar}" verbose="on"/>
+	<target name="get.h2v1" unless="${h2v1.jar.available}">
+		<get src="${h2v1.url}" dest="download/${h2v1.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.h2v2" unless="${h2v2.jar.available}">
+		<get src="${h2v2.url}" dest="download/${h2v2.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.ojdbc" unless="${ojdbc.jar.available}">
@@ -871,6 +877,7 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		<echo message=" " if:set="debug.true"/>
 		<echo message="update.strategy: ${update.strategy}" if:set="debug.true"/>
 		<echo message="ff.version: ${ff.version}" if:set="debug.true"/>
+		<echo message="h2.jar: ${h2.jar}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="webapp.dir: ${webapp.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
