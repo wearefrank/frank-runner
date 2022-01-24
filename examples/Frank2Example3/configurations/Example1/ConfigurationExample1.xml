@@ -1,12 +1,12 @@
 <Module
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="./FrankConfig.xsd">
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
+
 	<Adapter name="01 TestMessageLog" description="Stop adapter 03 and 04, select this adapter (01) at Test a PipeLine and send one or more random messages to start the test. Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter on the message log page">
 		<Receiver name="TestMessageLogReceiver">
 			<JavaListener name="TestMessageLogListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
-			<Exit path="EXIT" state="success"/>
 			<SenderPipe name="Send">
 				<IbisLocalSender name="Send_sender" javaListener="TestMessageStoreSender"/>
 				<JdbcMessageLog
@@ -15,6 +15,7 @@
 				/>
 				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
+			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -23,15 +24,20 @@
 			<JavaListener name="TestMessageStoreSender"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">              
-			<Exit path="EXIT" state="success"/>
 			<SenderPipe name="Send">
 				<MessageStoreSender
 					name="Send_Sender"
 					slotId="${instance.name}/TestMessageStore"
 					onlyStoreWhenMessageIdUnique="false"
 				/>
+				<DummyMessageLog
+					name="Send_MessageLog"
+					slotId="${instance.name}/TestMessageStore"
+					type="M"
+				/>
 				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
+			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -49,7 +55,6 @@
 			/>
 		</Receiver>
 		<Pipeline firstPipe="Send">  
-			<Exit path="EXIT" state="success"/>
 			<SenderPipe name="Send">
 				<IbisLocalSender
 					name="Send_sender"
@@ -57,6 +62,7 @@
 					dependencyTimeOut="0"
 				/>
 			</SenderPipe>
+			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -65,10 +71,10 @@
 			<JavaListener name="TestFailureAndSuccess"/>
 		</Receiver>
 		<Pipeline firstPipe="Echo">
-			<Exit path="EXIT" state="success"/>
 			<EchoPipe name="Echo">
 				<Forward name="success" path="EXIT"/>
 			</EchoPipe>
+			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
