@@ -30,11 +30,6 @@
 					slotId="${instance.name}/TestMessageStore"
 					onlyStoreWhenMessageIdUnique="false"
 				/>
-				<DummyMessageLog
-					name="Send_MessageLog"
-					slotId="${instance.name}/TestMessageStore"
-					type="M"
-				/>
 				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
 		</Pipeline>

@@ -1,6 +1,6 @@
 <Configuration
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="./FrankConfig.xsd"
+xsi:noNamespaceSchemaLocation="../../FrankConfig.xsd"
 name="Example4">
 	<Adapter name="Example4">
 		<Receiver name="Example4">

@@ -1,6 +1,6 @@
 <Module
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="./FrankConfig.xsd">
+xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
 	<Adapter name="Example2">
 		<Receiver name="Example2">
 			<JavaListener name="Example2" serviceName="Example2"/>
