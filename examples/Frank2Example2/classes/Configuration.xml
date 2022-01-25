@@ -3,7 +3,6 @@
 	<!ENTITY Example2 SYSTEM "./ConfigurationExample2.xml">
 ]>
 <Configuration name="${instance.name}">
-	<jmsRealm datasourceName="jdbc/${instance.name.lc}" realmName="jdbc"/>
 	&Example1;
 	&Example2;
 </Configuration>
