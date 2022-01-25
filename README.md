@@ -99,11 +99,8 @@ The Frank!Runner is shipped with the following examples
 
 ## Frank2Example1
 
-Most basic Hello World example showing two configurations with unit tests. It
-is referenced by the manual, for example at the following locations:
-
-* https://frank-manual.readthedocs.io/en/latest/gettingStarted/examineExample.html#general-structure-of-the-example-frank
-* https://frank-manual.readthedocs.io/en/latest/gettingStarted/helloIbis.html
+Most basic Hello World example showing two configurations with unit tests. The Frank!Manual
+is being updated to reference this example properly.
 
 ## Frank2Example2
 
