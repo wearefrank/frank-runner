@@ -1,8 +1,0 @@
-<!DOCTYPE Configuration [
-	<!ENTITY Example5a SYSTEM "./ConfigurationExample5a.xml">
-	<!ENTITY Example5b SYSTEM "./ConfigurationExample5b.xml">
-]>
-<Configuration name="Example5">
-	&Example5a;
-	&Example5b;
-</Configuration>

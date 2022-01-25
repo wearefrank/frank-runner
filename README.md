@@ -99,16 +99,12 @@ The Frank!Runner is shipped with the following examples
 
 ## Frank2Example1
 
-Most basic Hello World example showing two configurations and a unit test. It
-is referenced by the manual, for example at the following locations:
-
-* https://frank-manual.readthedocs.io/en/latest/gettingStarted/examineExample.html#general-structure-of-the-example-frank
-* https://frank-manual.readthedocs.io/en/latest/gettingStarted/helloIbis.html
+Most basic Hello World example showing two configurations with unit tests. The Frank!Manual
+is being updated to reference this example properly.
 
 ## Frank2Example2
 
-Some more Hello Wold adapters using both the DirectoryClassLoader and the
-normal classpath. It is not referenced by the Frank!Manual.
+Some more Hello Wold adapters. These use the normal classpath. This example is not referenced by the Frank!Manual.
 
 ## Frank2Example3
 
