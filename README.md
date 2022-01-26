@@ -16,7 +16,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
-- [FrankConfig.xsd](#frankconfig.xsd)
+- [FrankConfig.xsd](#frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
 - [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
@@ -463,7 +463,7 @@ tomcat.server.port=8105
 
 When Frank!Runner starts it will copy the FrankConfig.xsd from the
 Frank!Framework webapp to your configurations folder so you can refer to it
-from your configuration file like:
+in your configuration files like:
 
 ```
 <Configuration
