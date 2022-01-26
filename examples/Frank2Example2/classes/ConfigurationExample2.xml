@@ -6,7 +6,7 @@ xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
 			<JavaListener name="Example2" serviceName="Example2"/>
 		</Receiver>
 		<Pipeline firstPipe="Example">
-			<Exit path="EXIT" state="success"/>
+			<Exit path="EXIT" state="SUCCESS"/>
 			<FixedResultPipe name="Example" returnString="Hello World2">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>

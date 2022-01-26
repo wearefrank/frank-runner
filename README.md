@@ -16,6 +16,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
+- [FrankConfig.xsd](#frankconfig.xsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
 - [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
@@ -457,6 +458,33 @@ E.g. use:
 ```
 tomcat.server.port=8105
 ```
+
+# FrankConfig.xsd
+
+When Frank!Runner starts it will copy the FrankConfig.xsd from the
+Frank!Framework webapp to your configurations folder so you can refer to it
+from your configuration file like:
+
+```
+<Configuration
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	>
+	<Adapter name="...">
+      ...
+	</Adapter>
+</Configuration>
+```
+This will enable code completion in your IDE. Depending on the IDE you are
+using you might need to configure your IDE. See the
+[Frank!Manual](https://frank-manual.readthedocs.io/en/latest/gettingStarted/configurationSyntaxChecking.html?highlight=code%20completion#try-code-completion)
+for more details.
+
+The Frank!Runner will also add a .gitignore (which you can commit to git) to
+eclude the FrankConfig.xsd from git.
+
+The Frank!Runner will update the FrankConfig.xsd every time the Frank!Framework
+version is changed.
 
 
 # How to add custom jars and classes

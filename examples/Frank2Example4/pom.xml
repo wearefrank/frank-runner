@@ -46,6 +46,7 @@
 	</dependencies>
 
 	<repositories>
+		<!-- Enable F!F SNAPSHOT versions -->
 		<repository>
 			<id>ibissource</id>
 			<name>Ibissource</name>

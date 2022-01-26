@@ -9,7 +9,6 @@
 			<arg value="-Dprojects.dir=${basedir}/../../.."/>
 			<arg value="-Dproject.dir=${project.dir}"/>
 			<arg value="-Dmodule.dir=${module.dir}"/>
-			<arg value="-Dconfigurations.names=&quot;Example1,${module.dir}&quot;"/>
 		</exec>
 	</target>
 </project>

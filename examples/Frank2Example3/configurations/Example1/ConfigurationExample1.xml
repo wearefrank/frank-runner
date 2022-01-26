@@ -1,12 +1,13 @@
 <Module
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
-
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	>
 	<Adapter name="01 TestMessageLog" description="Stop adapter 03 and 04, select this adapter (01) at Test a PipeLine and send one or more random messages to start the test. Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter on the message log page">
 		<Receiver name="TestMessageLogReceiver">
 			<JavaListener name="TestMessageLogListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
+			<Exit path="EXIT" state="SUCCESS"/>
 			<SenderPipe name="Send">
 				<IbisLocalSender name="Send_sender" javaListener="TestMessageStoreSender"/>
 				<JdbcMessageLog
@@ -15,7 +16,6 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 				/>
 				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
-			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -23,7 +23,8 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 		<Receiver name="TestMessageStoreSender">
 			<JavaListener name="TestMessageStoreSender"/>
 		</Receiver>
-		<Pipeline firstPipe="Send">              
+		<Pipeline firstPipe="Send">
+			<Exit path="EXIT" state="SUCCESS"/>
 			<SenderPipe name="Send">
 				<MessageStoreSender
 					name="Send_Sender"
@@ -37,7 +38,6 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 				/>
 				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
-			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -47,7 +47,7 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 			numThreads="4"
 			transactionAttribute="Required"
 			pollInterval="1"
-		>
+			>
 			<MessageStoreListener
 				name="TestMessageStoreListenerAndErrorStorage_listener"
 				slotId="${instance.name}/TestMessageStore"
@@ -55,6 +55,7 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 			/>
 		</Receiver>
 		<Pipeline firstPipe="Send">  
+			<Exit path="EXIT" state="SUCCESS"/>
 			<SenderPipe name="Send">
 				<IbisLocalSender
 					name="Send_sender"
@@ -62,7 +63,6 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 					dependencyTimeOut="0"
 				/>
 			</SenderPipe>
-			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 
@@ -71,10 +71,10 @@ xsi:noNamespaceSchemaLocation="../ibisdoc.xsd">
 			<JavaListener name="TestFailureAndSuccess"/>
 		</Receiver>
 		<Pipeline firstPipe="Echo">
+			<Exit path="EXIT" state="SUCCESS"/>
 			<EchoPipe name="Echo">
 				<Forward name="success" path="EXIT"/>
 			</EchoPipe>
-			<Exit path="EXIT" state="success"/>
 		</Pipeline>
 	</Adapter>
 

@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
-	<Adapter name="Adapter0">
-		<Receiver name="Receiver0">
-			<JavaListener name="Listener0" serviceName="Service0"/>
+	<Adapter name="Adapter3">
+		<Receiver name="Receiver3">
+			<JavaListener name="Listener3" serviceName="Service3"/>
 		</Receiver>
 		<Pipeline>
 			<Exit path="EXIT" state="SUCCESS"/>
-			<FixedResultPipe name="Example0" returnString="Hello World0">
+			<FixedResultPipe name="Example3" returnString="Hello World3">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>
 		</Pipeline>

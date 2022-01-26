@@ -8,7 +8,7 @@
 	<groupId>org.ibissource</groupId>
 	<artifactId>Frank2Example5-Example2</artifactId>
 	<version>1.0</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.ibissource</groupId>
