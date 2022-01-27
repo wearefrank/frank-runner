@@ -502,22 +502,44 @@
 			</patternset>
 			<flattenmapper/>
 		</unjar>
-		<available property="update.config.xsd" resource="build/frankdoc/FrankConfig.xsd"/>
-		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/>
+		<available property="update.config.xsd.and.available" file="build/frankdoc/FrankConfig-strict.xsd" if:true="${update.config.xsd}"/>
+		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd.and.available}"/>
 		<scriptdef language="javascript" name="multicopyconfigxsd"><!-- configs can be divided over serveral modules/projects, hence a copy to configurations.dir only is not enough) -->
 			<attribute name="dirs"/>
 			var dirs = attributes.get("dirs").split('|');
 			for (var i = 0; i &lt; dirs.length; i++) {
-				var task = project.createTask("antcall");
-				task.setTarget("copy.config.xsd");
-				var param = task.createParam();
-				param.setName("dir");
-				param.setValue(dirs[i] + "/..");
-				task.perform();
+				if (dirs[i].length > 0) {
+					var task = project.createTask("antcall");
+					task.setTarget("copy.config.xsd");
+					var param = task.createParam();
+					param.setName("dir");
+					param.setValue(dirs[i] + "/..");
+					task.perform();
+				}
 			}
 		</scriptdef>
-		<multicopyconfigxsd dirs="${configurations.dirs}" if:true="${update.config.xsd}"/>
-		<antcall target="copy.config.xsd" if:true="${update.config.xsd}"><param name="dir" value="${projects.dir}/${project.dir}/${classes.dir}/.."/><param name="dir2check" value="${projects.dir}/${project.dir}/${classes.dir}"/></antcall>
+		<multicopyconfigxsd dirs="${configurations.dirs}" if:true="${update.config.xsd.and.available}"/>
+		<antcall target="copy.config.xsd" if:true="${update.config.xsd.and.available}"><param name="dir" value="${projects.dir}/${project.dir}/${classes.dir}/.."/><param name="dir2check" value="${projects.dir}/${project.dir}/${classes.dir}"/></antcall>
+		<dirset id="project.dirs.id" dir="${configurations.dirset.dir}" includes="${project.dir},${project.dir}_*" if:true="${update.config.xsd.and.available}"/>
+		<pathconvert property="project.dirs" refid="project.dirs.id" pathsep="|" if:true="${update.config.xsd.and.available}"/>
+		<scriptdef language="javascript" name="multiaddgitignore"><!-- configs can be divided over serveral projects, hence a copy to project.dir only is not enough) -->
+			<attribute name="dirs"/>
+			var dirs = attributes.get("dirs").split('|');
+			for (var i = 0; i &lt; dirs.length; i++) {
+				if (dirs[i].length > 0) {
+					var task = project.createTask("antcall");
+					task.setTarget("add.gitignore");
+					var param1 = task.createParam();
+					param1.setName("dir");
+					param1.setValue(dirs[i]);
+					var param2 = task.createParam();
+					param2.setName("ignore");
+					param2.setValue("FrankConfig.xsd");
+					task.perform();
+				}
+			}
+		</scriptdef>
+		<multiaddgitignore dirs="${project.dirs}" if:true="${update.config.xsd.and.available}"/>
 		<!-- scripts -->
 		<antcall target="generate.bat"><param name="filename" value="ant"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="mvn"/></antcall>
@@ -715,10 +737,13 @@
 		<property name="dir2check" value="${dir}"/><!-- dir is default value for dir2check -->
 		<available property="dir2check.available" file="${dir2check}"/>
 		<copy file="build/frankdoc/FrankConfig.xsd" todir="${dir}" if:true="${dir2check.available}"/>
-		<condition property="gitignore.add" if:true="${dir2check.available}"><not><resourcecontains resource="${dir}/.gitignore" substring="FrankConfig.xsd"/></not></condition>
+	</target>
+
+	<target name="add.gitignore">
+		<condition property="gitignore.add"><not><resourcecontains resource="${dir}/.gitignore" substring="${ignore}"/></not></condition>
 		<condition property="gitignore.add.newline" if:true="${gitignore.add}"><length file="${dir}/.gitignore" when="greater" length="0"/></condition>
 		<echo file="${dir}/.gitignore" message="&#10;" append="true" if:true="${gitignore.add.newline}"/>
-		<echo file="${dir}/.gitignore" message="FrankConfig.xsd" append="true" if:true="${gitignore.add}"/>
+		<echo file="${dir}/.gitignore" message="${ignore}" append="true" if:true="${gitignore.add}"/>
 	</target>
 
 	<target name="generate.bat">
