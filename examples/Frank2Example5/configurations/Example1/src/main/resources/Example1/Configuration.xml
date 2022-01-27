@@ -1,14 +1,14 @@
-<Configuration>
+<Configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
 	<Adapter name="Adapter1">
 		<Receiver name="Receiver1">
-			<JavaListener name="Listener1" serviceName="Service1"/>
+			<ApiListener name="Listener1" uriPattern="service1"/>
 		</Receiver>
 		<Pipeline>
 			<Exit path="EXIT" state="SUCCESS"/>
-			<FixedResultPipe name="Example1" returnString="Hello World1">
+			<FixedResultPipe name="HelloWorld" returnString="Hello World!">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>
 		</Pipeline>

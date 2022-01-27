@@ -4,11 +4,11 @@
 	>
 	<Adapter name="Adapter2">
 		<Receiver name="Receiver2">
-			<JavaListener name="Listener2" serviceName="Service2"/>
+			<ApiListener name="Listener2" uriPattern="service2"/>
 		</Receiver>
 		<Pipeline>
 			<Exit path="EXIT" state="SUCCESS"/>
-			<FixedResultPipe name="Example2" returnString="Hello World2">
+			<FixedResultPipe name="HelloWorld" returnString="Hello World!!">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>
 		</Pipeline>
