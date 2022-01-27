@@ -494,6 +494,7 @@
 		</copy>
 		<!-- frank config xsd -->
 		<condition property="update.config.xsd"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not></or></condition>
+		<delete file="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/><!-- prevent available task after unjar to detect xsd from previous ff version when current ff version doesn't have one -->
 		<unjar dest="build/frankdoc" if:true="${update.config.xsd}">
 			<fileset dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"></fileset>
 			<patternset>
@@ -501,6 +502,7 @@
 			</patternset>
 			<flattenmapper/>
 		</unjar>
+		<available property="update.config.xsd" resource="build/frankdoc/FrankConfig.xsd"/>
 		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/>
 		<scriptdef language="javascript" name="multicopyconfigxsd"><!-- configs can be divided over serveral modules/projects, hence a copy to configurations.dir only is not enough) -->
 			<attribute name="dirs"/>
