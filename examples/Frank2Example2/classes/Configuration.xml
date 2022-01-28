@@ -1,8 +1,8 @@
 <!DOCTYPE Configuration [
-	<!ENTITY Example1 SYSTEM "./ConfigurationExample1.xml">
-	<!ENTITY Example2 SYSTEM "./ConfigurationExample2.xml">
+	<!ENTITY Example2a SYSTEM "./ConfigurationExample2a.xml">
+	<!ENTITY Example2b SYSTEM "./ConfigurationExample2b.xml">
 ]>
-<Configuration name="${instance.name}">
-	&Example1;
-	&Example2;
+<Configuration>
+	&Example2a;
+	&Example2b;
 </Configuration>

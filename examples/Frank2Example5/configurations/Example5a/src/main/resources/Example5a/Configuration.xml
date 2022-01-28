@@ -1,16 +1,16 @@
-<Module
+<Configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
-	<Adapter name="Adapter2">
-		<Receiver name="Receiver2">
-			<ApiListener name="Listener2" uriPattern="service2"/>
+	<Adapter name="Adapter5a">
+		<Receiver name="Receiver5a">
+			<ApiListener name="Listener5a" uriPattern="service5a"/>
 		</Receiver>
 		<Pipeline>
 			<Exit path="EXIT" state="SUCCESS"/>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!!">
+			<FixedResultPipe name="HelloWorld" returnString="Hello World!">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>
 		</Pipeline>
 	</Adapter>
-</Module>
+</Configuration>
