@@ -480,8 +480,8 @@ using you might need to configure your IDE. See the
 [Frank!Manual](https://frank-manual.readthedocs.io/en/latest/gettingStarted/configurationSyntaxChecking.html?highlight=code%20completion#try-code-completion)
 for more details.
 
-The Frank!Runner will also add a .gitignore (which you can commit to git) to
-eclude the FrankConfig.xsd from git.
+The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
+present) to exclude the FrankConfig.xsd from git.
 
 The Frank!Runner will update the FrankConfig.xsd every time the Frank!Framework
 version is changed.
