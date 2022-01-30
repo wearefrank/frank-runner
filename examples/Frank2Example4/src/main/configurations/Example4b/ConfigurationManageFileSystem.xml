@@ -1,6 +1,6 @@
-<!-- 20210917: Copied from iaf-core to test the Frank!Flow (renamed to ManageFileSystem2 to prevent conflict with ManageFileSystem2 in IAF_Util) -->
+<!-- 20210917: Copied from iaf-core to test the Frank!Flow -->
 <Module>
-	<Adapter name="ManageFileSystem2" description="Manage the file" active="${manageFileSystem.active}">
+	<Adapter name="ManageFileSystem" description="Manage the file" active="${manageFileSystem.active}">
 		<Receiver name="ManageFileSystem">
 			<JavaListener name="ManageFileSystem" serviceName="${manageFileSystem.serviceName}" />
 		</Receiver>
