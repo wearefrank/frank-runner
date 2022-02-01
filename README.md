@@ -484,7 +484,9 @@ The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
 present) to exclude the FrankConfig.xsd from git.
 
 The Frank!Runner will update the FrankConfig.xsd every time the Frank!Framework
-version is changed.
+version is changed. In case you manually delete the FrankConfig.xsd it will
+only be recreated when the Frank!Framework version is changed or when
+maven=true.
 
 
 # How to add custom jars and classes
