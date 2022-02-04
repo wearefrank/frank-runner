@@ -190,7 +190,7 @@ project to run. In case you need to change the default value for projects.dir
 (which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
 
-Your project doesn't need to contain a context.xml in case you want to use H2.
+Your project doesn't need to contain a context.xml in case you want to use a H2 database.
 
 When changing files in the classes folder you need to restart Tomcat. When
 changing files in the configurations folder you need to reload the configuration
