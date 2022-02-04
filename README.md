@@ -477,7 +477,7 @@ in your configuration files like:
 ```
 This will enable code completion in your IDE. Depending on the IDE you are
 using you might need to configure your IDE. For Eclipse, no configuration is needed.
-For VSCode, you need a few plugins that are listed in [VSCode](#vscode).
+For VSCode, you need a plugin that is shown in [VSCode](#vscode).
 
 The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
 present) to exclude the FrankConfig.xsd from git.
