@@ -578,6 +578,12 @@ from `FrankConfig.xsd` while programming Frank configurations:
 * "XML Language Support by Red Hat", by Red Hat.
 * "XML Tools" by Josh Johnson.
 
+These plugins may require Java 8. VSCode may show you a button that installs
+the Red Hat OpenJDK for you. Alternatively, you may follow the instructions
+of https://code.visualstudio.com/docs/java/java-tutorial. To use your Java
+installation, you need to have environment variable ``JAVA_HOME`` and its value
+should point to your Java installation.
+
 Choose one of the methods described in the sections below to run the build.xml
 and/or restart.bat in your project. See section [Installation](#installation)
 for more information on the build.xml and restart.bat and how to add them to
