@@ -476,9 +476,8 @@ in your configuration files like:
 </Configuration>
 ```
 This will enable code completion in your IDE. Depending on the IDE you are
-using you might need to configure your IDE. See the
-[Frank!Manual](https://frank-manual.readthedocs.io/en/latest/gettingStarted/configurationSyntaxChecking.html?highlight=code%20completion#try-code-completion)
-for more information.
+using you might need to configure your IDE. For Eclipse, no configuration is needed.
+For VSCode, you need a plugin that is shown in [VSCode](#vscode).
 
 The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
 present) to exclude the FrankConfig.xsd from git.
@@ -573,6 +572,8 @@ overview of installed JREs.
 
 
 # VSCode
+
+To have syntax checking, autocomplete and tooltips from `FrankConfig.xsd` while programming Frank configurations, install the plugin "XML Language Support by Red Hat", by Red Hat.
 
 Choose one of the methods described in the sections below to run the build.xml
 and/or restart.bat in your project. See section [Installation](#installation)
