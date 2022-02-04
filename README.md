@@ -483,10 +483,14 @@ For VSCode, you need a plugin that is shown in [VSCode](#vscode).
 The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
 present) to exclude the FrankConfig.xsd from git.
 
+In case of a module per config or project per config setup the FrankConfig.xsd
+will be copied to all modules / projects.
+
 The Frank!Runner will update the FrankConfig.xsd every time the Frank!Framework
-version is changed. In case you manually delete the FrankConfig.xsd it will
-only be recreated when the Frank!Framework version is changed or when
-maven=true.
+version is changed. In case you manually delete the FrankConfig.xsd from one of
+the modules / projects it will only be recreated when the Frank!Framework
+version is changed or when maven=true or when the FrankConfig.xsd is missing in
+configurations.dir too.
 
 
 # How to add custom jars and classes
