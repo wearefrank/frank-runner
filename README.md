@@ -190,7 +190,8 @@ project to run. In case you need to change the default value for projects.dir
 (which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
 
-Your project doesn't need to contain a context.xml in case you want to use a H2 database.
+Your project doesn't need to contain a context.xml in case you want to use an
+H2 database.
 
 When changing files in the classes folder you need to restart Tomcat. When
 changing files in the configurations folder you need to reload the configuration
@@ -573,7 +574,9 @@ overview of installed JREs.
 
 # VSCode
 
-To have syntax checking, autocomplete and tooltips from `FrankConfig.xsd` while programming Frank configurations, install the plugin "XML Language Support by Red Hat", by Red Hat.
+To have syntax checking, autocomplete and tooltips from `FrankConfig.xsd` while
+programming Frank configurations, install the plugin "XML Language Support by
+Red Hat".
 
 Choose one of the methods described in the sections below to run the build.xml
 and/or restart.bat in your project. See section [Installation](#installation)

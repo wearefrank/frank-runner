@@ -490,7 +490,13 @@
 			<fileset dir="${projects.dir}/${project.dir}/${classes.dir}"/>
 		</copy>
 		<!-- frank config xsd -->
-		<condition property="update.config.xsd"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not></or></condition>
+		<condition property="update.config.xsd">
+			<or>
+				<istrue value="${maven}"/><!-- f!f version could be changed -->
+				<not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><!-- f!f version changed -->
+				<not><resourceexists><file file="${configurations.dir}/FrankConfig.xsd"/></resourceexists></not><!-- maybe a new project and f!f version not changed -->
+			</or>
+		</condition>
 		<delete file="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/><!-- prevent available task after unjar to detect xsd from previous ff version when current ff version doesn't have one -->
 		<unjar dest="build/frankdoc" if:true="${update.config.xsd}">
 			<fileset dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"></fileset>
