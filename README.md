@@ -16,7 +16,7 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
-- [FrankConfig.xsd](#frankconfigxsd)
+- [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
 - [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
@@ -459,7 +459,7 @@ E.g. use:
 tomcat.server.port=8105
 ```
 
-# FrankConfig.xsd
+# Code completion with FrankConfig.xsd
 
 When Frank!Runner starts it will copy the FrankConfig.xsd from the
 Frank!Framework webapp to your configurations folder so you can refer to it
@@ -478,7 +478,7 @@ in your configuration files like:
 This will enable code completion in your IDE. Depending on the IDE you are
 using you might need to configure your IDE. See the
 [Frank!Manual](https://frank-manual.readthedocs.io/en/latest/gettingStarted/configurationSyntaxChecking.html?highlight=code%20completion#try-code-completion)
-for more details.
+for more information.
 
 The Frank!Runner will also add FrankConfig.xsd to .gitignore (when not already
 present) to exclude the FrankConfig.xsd from git.
