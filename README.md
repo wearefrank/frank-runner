@@ -574,10 +574,9 @@ overview of installed JREs.
 # VSCode
 
 Install the following plugins to have syntax checking, autocomplete and tooltips
-while programming Frank configurations:
+from `FrankConfig.xsd` while programming Frank configurations:
 * "XML Language Support by Red Hat", by Red Hat.
 * "XML Tools" by Josh Johnson.
-These plugins disclose the information available in `FrankConfig.xsd`.
 
 Choose one of the methods described in the sections below to run the build.xml
 and/or restart.bat in your project. See section [Installation](#installation)
