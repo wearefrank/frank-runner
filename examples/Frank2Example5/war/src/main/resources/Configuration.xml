@@ -7,7 +7,9 @@
 			<JavaListener name="Listener5" serviceName="Service5"/>
 		</Receiver>
 		<Pipeline>
-			<Exit path="EXIT" state="SUCCESS"/>
+			<Exits>
+				<Exit path="EXIT" state="SUCCESS"/>
+			</Exits>
 			<FixedResultPipe name="Example5d" returnString="Hello World">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>

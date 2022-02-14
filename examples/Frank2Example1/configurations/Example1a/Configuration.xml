@@ -7,7 +7,9 @@
 			<ApiListener name="Listener1a" uriPattern="service1a"/>
 		</Receiver>
 		<Pipeline>
-			<Exit path="EXIT" state="SUCCESS"/>
+			<Exits>
+				<Exit path="EXIT" state="SUCCESS"/>
+			</Exits>
 			<FixedResultPipe name="HelloWorld" returnString="Hello World!">
 				<Forward name="success" path="EXIT"/>
 			</FixedResultPipe>
