@@ -282,8 +282,8 @@
 			if (configurationsDirsFlat.toString().length() > 0) {
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(' ', "\\ ") + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(' ', "\\ ") + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.classLoaderType='+ classLoaderType;
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
