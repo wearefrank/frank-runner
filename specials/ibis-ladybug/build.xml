@@ -9,15 +9,34 @@
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
+		<property name="test.with.test.webapp" value="true"/>
 		<property name="test.with.iaf" value="false"/>
 		<property name="iaf.module" value="webapp"/>
 
+		<echo message="ibis-ladybug: Check ibis-ladybug present"/>
+		<condition property="ibis-ladybug.not.present"><not><resourceexists><file file="../../../ibis-ladybug"/></resourceexists></not></condition>
+		<fail message="Folder ibis-ladybug not found, please clone https://github.com/ibissource/ibis-ladybug.git" if:set="ibis-ladybug.not.present"/>
+
+		<echo message="ibis-ladybug: Check ibis-ladybug-test-webapp present"/>
+		<condition property="ibis-ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
+		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
+
+		<echo message="ibis-ladybug: Check iaf present"/>
+		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../iaf"/></resourceexists></not></condition>
+		<fail message="Folder iaf not found, please clone https://github.com/ibissource/iaf.git" if:set="iaf.not.present"/>
+
 		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
 		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ladybug.pom.xml"/>
-		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" unless:true="${test.with.iaf}"/>
+		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
 		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
-			<resourcecontains resource="${pom.xml}" substring="&lt;version&gt;${ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+			<or>
+				<resourcecontains resource="${pom.xml}" substring="&lt;version&gt;${ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+				<and>
+					<equals arg1="${test.with.test.webapp}" arg2="false"/>
+					<equals arg1="${test.with.iaf}" arg2="false"/>
+				</and>
+			</or>
 		</condition>
 		<fail message="Check ibis-ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ladybug.pom.xml.project.version} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
 
@@ -74,10 +93,8 @@
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
 
-		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" unless:true="${test.with.iaf}"/>
-		<condition property="ibis-ladybug-test-webapp.not.present"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
-		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
-		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" unless:true="${test.with.iaf}">
+		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
+		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}">
 			<arg value="${restart.arg}"/>
 			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
