@@ -2,7 +2,10 @@
 
 This project will help you run your Frank configurations with Tomcat.
 
-Add a small build.xml to your project and run it to (re)start your Frank.
+Add [a small build.xml](#small-build.xml-for-every-project) to your project and
+run it using a [small restart.bat](small-restart.bat-for-every-project) or
+[small restart.sh](small-restart.sh-for-every-project) or run it using
+[VSCode](#vscode) or [Eclipse](#eclipse).
 
 
 # Contents
@@ -27,19 +30,29 @@ Add a small build.xml to your project and run it to (re)start your Frank.
 
 # Installation
 
+## Clone or download the Frank!Runner
+
 Clone or download this Frank!Runner project into the projects folder that
 contains your Frank project(s) (make the frank-runner folder a sibling of your
-project folder). You can now run Frank!Runner build.xml files in projects that
-already have them (like the example projects in frank-runner/examples). See the
+project folder).
+
+You can now run Frank!Runner build.xml files in projects that already have them
+(like the example projects in [frank-runner/examples](frank-runner/examples)).
+
+Use the [restart.bat](small-restart.bat-for-every-project) or
+[restart.sh](small-restart.sh-for-every-project) in these projects or see the
 sections [Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and
 VSCode to run a build.xml. When you're behind a Secure Web Gateway like Zscaler
 and/or need to download files from your organization's internal repository
 (e.g. Artifactory), see section [Root CA certificates](#root-ca-certificates).
 
-When Tomcat has started by running a Frank!Runner build.xml file you can browse
-to the following address:
+When Tomcat has started by running a Frank!Runner
+[build.xml](#small-build.xml-for-every-project) you can browse to the following
+address:
 
 http://localhost
+
+## Small build.xml for every project
 
 In case your project doesn't contain a build.xml yet you can add it to the root
 folder of your project with the following content:
@@ -66,8 +79,10 @@ rename the target name restart in build.xml to something unique for your project
 (e.g. restart-frank2yourproject) (make the value of the default attribute of the
 project element the same).
 
-You can also create a restart.bat with the following content which you can also
-run from Windows Explorer:
+## Small restart.bat for every project
+
+Create a restart.bat with the following content in the root folder of your
+project which you can run from Windows Explorer:
 
 ```
 call ..\frank-runner\ant.bat
@@ -78,19 +93,29 @@ if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 :end
 ```
 
-And create a restart.sh with the following content to run on Linux or Mac:
+## Small restart.sh for every project
+
+Create a restart.sh with the following content in the root folder of your
+project for Linux and Mac:
 
 ```
 #!/bin/bash
 ../../ant.sh
 ```
 
+## Customizations of build.xml
+
 There are other ways possible to run the Frank!Runner scripts but to make it
 easy for all project members and to have good integration with
 [Eclipse](#eclipse) and [VSCode](#vscode) the preferred way is to use a
-build.xml and optionally a restart.bat. Because the build.xml can be customized
-and to keep all customasations in one place restart.bat calls ant.bat to run
-the build.xml (instead of calling restart.bat).
+[build.xml](#small-build.xml-for-every-project) and optionally a
+[restart.bat](small-restart.bat-for-every-project) and
+[restart.sh](small-restart.sh-for-every-project). Because the
+[build.xml](#small-build.xml-for-every-project) can be customized and to keep
+all customizations in one place
+[restart.bat](small-restart.bat-for-every-project) calls
+[ant.bat](ant.bat) to run the build.xml (instead of calling
+[restart.bat](restart.bat)).
 
 
 # Examples
