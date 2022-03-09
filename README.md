@@ -114,8 +114,8 @@ easy for all project members and to have good integration with
 [build.xml](#small-buildxml-for-every-project) can be customized and to keep
 all customizations in one place
 [restart.bat](#small-restartbat-for-every-project) calls
-[ant.bat](ant.bat) to run the build.xml (instead of calling
-[restart.bat](restart.bat)).
+[ant.bat](ant.bat) to run the [build.xml](#small-buildxml-for-every-project)
+(instead of calling [restart.bat](restart.bat)).
 
 
 # Examples
