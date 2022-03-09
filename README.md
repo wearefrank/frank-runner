@@ -37,7 +37,7 @@ contains your Frank project(s) (make the frank-runner folder a sibling of your
 project folder).
 
 You can now run Frank!Runner build.xml files in projects that already have them
-(like the example projects in [frank-runner/examples](examples)).
+(like the example projects in [frank-runner/examples](#examples)).
 
 Use the [restart.bat](#small-restartbat-for-every-project) or
 [restart.sh](#small-restartsh-for-every-project) in these projects or see the
