@@ -2,9 +2,9 @@
 
 This project will help you run your Frank configurations with Tomcat.
 
-Add [a small build.xml](#small-build.xml-for-every-project) to your project and
-run it using a [small restart.bat](small-restart.bat-for-every-project) or
-[small restart.sh](small-restart.sh-for-every-project) or run it using
+Add [a small build.xml](#small-buildxml-for-every-project) to your project and
+run it using a [small restart.bat](small-restartbat-for-every-project) or
+[small restart.sh](small-restartsh-for-every-project) or run it using
 [VSCode](#vscode) or [Eclipse](#eclipse).
 
 
@@ -39,8 +39,8 @@ project folder).
 You can now run Frank!Runner build.xml files in projects that already have them
 (like the example projects in [frank-runner/examples](frank-runner/examples)).
 
-Use the [restart.bat](small-restart.bat-for-every-project) or
-[restart.sh](small-restart.sh-for-every-project) in these projects or see the
+Use the [restart.bat](small-restartbat-for-every-project) or
+[restart.sh](small-restartsh-for-every-project) in these projects or see the
 sections [Eclipse](#eclipse) and [VSCode](#vscode) on how to use Eclipse and
 VSCode to run a build.xml. When you're behind a Secure Web Gateway like Zscaler
 and/or need to download files from your organization's internal repository
@@ -108,12 +108,12 @@ project for Linux and Mac:
 There are other ways possible to run the Frank!Runner scripts but to make it
 easy for all project members and to have good integration with
 [Eclipse](#eclipse) and [VSCode](#vscode) the preferred way is to use a
-[build.xml](#small-build.xml-for-every-project) and optionally a
-[restart.bat](small-restart.bat-for-every-project) and
-[restart.sh](small-restart.sh-for-every-project). Because the
-[build.xml](#small-build.xml-for-every-project) can be customized and to keep
+[build.xml](#small-buildxml-for-every-project) and optionally a
+[restart.bat](small-restartbat-for-every-project) and
+[restart.sh](small-restartsh-for-every-project). Because the
+[build.xml](#small-buildxml-for-every-project) can be customized and to keep
 all customizations in one place
-[restart.bat](small-restart.bat-for-every-project) calls
+[restart.bat](small-restartbat-for-every-project) calls
 [ant.bat](ant.bat) to run the build.xml (instead of calling
 [restart.bat](restart.bat)).
 
