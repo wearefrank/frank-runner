@@ -31,11 +31,11 @@ jobs:
         restore-keys: ${{ runner.os }}-maven
 
     - name: Start Frank!Runner
-      run: ./start.sh > startup.log &
+      run: ./start.sh -Dtomcat.connector.port=8090 > startup.log &
     - name: Wait for website localhost
       uses: nev7n/wait_for_response@v1
       with:
-        url: 'http://localhost'
+        url: 'http://localhost:8090'
         timeout: 5000
         interval: 150000
 
