@@ -30,11 +30,11 @@ jobs:
         key: ${{ runner.os }}-maven
         restore-keys: ${{ runner.os }}-maven
 
-      - name: Start Frank!Runner
-        run: ./start.sh &
-      - name: Wait for website localhost
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: 'http://localhost'
-          timeout: 300
-          interval: 2000
+    - name: Start Frank!Runner
+      run: ./start.sh &
+    - name: Wait for website localhost
+      uses: nev7n/wait_for_response@v1
+      with:
+        url: 'http://localhost'
+        timeout: 300
+        interval: 2000
