@@ -35,8 +35,7 @@ jobs:
     - name: Wait for website localhost
       uses: nev7n/wait_for_response@v1
       with:
-        url: 'http://localhost:8090'
-        responseCode: 302
+        url: 'http://localhost:8090/iaf/gui'
         timeout: 5000
         interval: 150000
 
