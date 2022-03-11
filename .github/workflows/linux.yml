@@ -37,10 +37,21 @@ jobs:
       with:
         url: 'http://localhost'
         timeout: 5000
-        interval: 150000
+        interval: 15000
 
     - name: Save startup log
       uses: actions/upload-artifact@v2
       if: always()
       with:
+        name: startup.log
         path: startup.log
+    - name: Fetch Tomcat logs
+      run: bash copyTomcatLogs.sh
+      if: always()
+      working-directory: .github/workflows
+    - name: Save Tomcat logs
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: Tomcat logs
+        path: tomcatLogs
