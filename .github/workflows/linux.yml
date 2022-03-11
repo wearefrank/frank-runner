@@ -37,7 +37,7 @@ jobs:
       with:
         url: 'http://localhost'
         timeout: 5000
-        interval: 15000
+        interval: 150000
 
     - name: Save startup log
       uses: actions/upload-artifact@v2
