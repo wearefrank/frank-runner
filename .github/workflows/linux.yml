@@ -31,10 +31,16 @@ jobs:
         restore-keys: ${{ runner.os }}-maven
 
     - name: Start Frank!Runner
-      run: ./start.sh &
+      run: ./start.sh > startup.log &
     - name: Wait for website localhost
       uses: nev7n/wait_for_response@v1
       with:
         url: 'http://localhost'
         timeout: 5000
         interval: 150000
+
+    - name: Save startup log
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        path: startup.log
