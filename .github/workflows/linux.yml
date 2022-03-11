@@ -36,6 +36,7 @@ jobs:
       uses: nev7n/wait_for_response@v1
       with:
         url: 'http://localhost:8090'
+        responseCode: 302
         timeout: 5000
         interval: 150000
 
