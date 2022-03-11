@@ -36,5 +36,5 @@ jobs:
       uses: nev7n/wait_for_response@v1
       with:
         url: 'http://localhost'
-        timeout: 600
-        interval: 5000
+        timeout: 5000
+        interval: 150000
