@@ -52,6 +52,10 @@ address:
 
 http://localhost
 
+Or use the secure port:
+
+https://localhost
+
 ## Small build.xml for every project
 
 In case your project doesn't contain a build.xml yet you can add it to the root
@@ -467,12 +471,14 @@ to keep the Frank!Runner up to date with the latest software versions.
 In some cases you might want to run on a different port and/or context. E.g. to
 run on:
 
-http://localhost:81/test
+http://localhost:8080/test
+https://localhost:8443/test
 
 Use:
 
 ```
-tomcat.connector.port=81
+tomcat.port=8080
+tomcat.secure.port=8443
 context.path=test
 ```
 
