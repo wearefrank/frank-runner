@@ -1,4 +1,4 @@
-<Configuration 
+<Configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
@@ -7,12 +7,7 @@
 			<ApiListener name="Listener1a" uriPattern="service1a"/>
 		</Receiver>
 		<Pipeline>
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS"/>
-			</Exits>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!">
-				<Forward name="success" path="EXIT"/>
-			</FixedResultPipe>
+			<FixedResultPipe name="HelloWorld" returnString="Hello World!"/>
 		</Pipeline>
 	</Adapter>
 </Configuration>

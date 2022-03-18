@@ -7,10 +7,7 @@
 			<ApiListener name="Listener5c" uriPattern="service5c"/>
 		</Receiver>
 		<Pipeline>
-			<Exit path="EXIT" state="SUCCESS"/>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!!!">
-				<Forward name="success" path="EXIT"/>
-			</FixedResultPipe>
+			<FixedResultPipe name="HelloWorld" returnString="Hello World!!!"/>
 		</Pipeline>
 	</Adapter>
 </Configuration>

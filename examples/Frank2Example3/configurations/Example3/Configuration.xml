@@ -8,16 +8,12 @@
 			<JavaListener name="TestMessageLogListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS"/>
-			</Exits>
 			<SenderPipe name="Send">
 				<IbisLocalSender name="Send_sender" javaListener="TestMessageStoreSender"/>
 				<JdbcMessageLog
 					name="Send_messageLog"
 					slotId="${instance.name}/TestMessageLog"
 				/>
-				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
 		</Pipeline>
 	</Adapter>
@@ -27,9 +23,6 @@
 			<JavaListener name="TestMessageStoreSender"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS"/>
-			</Exits>
 			<SenderPipe name="Send">
 				<MessageStoreSender
 					name="Send_Sender"
@@ -41,7 +34,6 @@
 					slotId="${instance.name}/TestMessageStore"
 					type="M"
 				/>
-				<Forward name="success" path="EXIT"/>
 			</SenderPipe>
 		</Pipeline>
 	</Adapter>
@@ -60,9 +52,6 @@
 			/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS"/>
-			</Exits>
 			<SenderPipe name="Send">
 				<IbisLocalSender
 					name="Send_sender"
@@ -78,12 +67,7 @@
 			<JavaListener name="TestFailureAndSuccess"/>
 		</Receiver>
 		<Pipeline firstPipe="Echo">
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS"/>
-			</Exits>
-			<EchoPipe name="Echo">
-				<Forward name="success" path="EXIT"/>
-			</EchoPipe>
+			<EchoPipe name="Echo"/>
 		</Pipeline>
 	</Adapter>
 
