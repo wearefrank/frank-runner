@@ -1,33 +1,31 @@
 <Configuration
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	xmlns:flow="urn:frank-flow"
 	>
 	<Adapter name="TestFrankFlow">
 		<Receiver name="TestFrankFlow">
 			<JavaListener name="TestFrankFlow"/>
 		</Receiver>
 		<Pipeline firstPipe="CheckInput">
-			<Exits>
-				<Exit path="EXIT" state="SUCCESS" />
-			</Exits>
-            <XmlWellFormedCheckerPipe
-                name="CheckInput"
-                >
-                <Forward name="success" path="Transform"/>
-                <Forward name="failure" path="FixedResult"/>
-            </XmlWellFormedCheckerPipe>
+			<XmlWellFormedCheckerPipe
+				name="CheckInput" flow:x="110" flow:y="270"
+				>
+				<Forward name="success" path="Transform"/>
+				<Forward name="failure" path="FixedResult"/>
+			</XmlWellFormedCheckerPipe>
 			<FixedResultPipe
 				name="FixedResult"
 				returnString="&lt;FixedResult&gt;Hello world!&lt;/FixedResult&gt;"
+				flow:x="110"
+				flow:y="450"
 				>
 				<Forward name="success" path="Transform"/>
 			</FixedResultPipe>
 			<XsltPipe
-                name="Transform"
-                styleSheetName="xsl/Transform.xsl"
-                >
-				<Forward name="success" path="EXIT"/>
-			</XsltPipe>
+				name="Transform"
+				styleSheetName="xsl/Transform.xsl" flow:x="490" flow:y="360"
+			/>
 		</Pipeline>
 	</Adapter>
 </Configuration>
