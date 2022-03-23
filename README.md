@@ -508,6 +508,46 @@ in your configuration files like:
 	</Adapter>
 </Configuration>
 ```
+
+For configuration files that are included with an entity reference in the main
+Configuration.xml you can use the following in case your configuration file
+contains only one adapter:
+
+```
+<Adapter
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	name="..."
+	>
+	<Receiver>
+		...
+	</Receiver>
+	<Pipeline name="...">
+      ...
+	</Pipeline>
+</Adapter>
+```
+
+When you need to add more than one adapter and/or other elements (like a
+Scheduler) you can use:
+
+```
+<Module
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	>
+	<Adapter name="...">
+      ...
+	</Adapter>
+	<Adapter name="...">
+      ...
+	</Adapter>
+	<Scheduler>
+		...
+	</Scheduler>
+</Module>
+```
+
 This will enable code completion in your IDE. Depending on the IDE you are
 using you might need to configure your IDE. For Eclipse, no configuration is needed.
 For VSCode, you need a plugin that is shown in [VSCode](#vscode).
