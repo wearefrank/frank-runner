@@ -9,6 +9,7 @@
 		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
+		<property name="maven.do.frankdoc" value="false"/>
 		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
 
@@ -38,6 +39,7 @@
 			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
 			<arg value="--also-make" unless:blank="${maven.projects}"/><!-- also make parent which pom.xml contains common dependencies -->
 			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Pibissource,attachFrankDoc" if:true="${maven.do.frankdoc}"/><!-- profile ibissource seems necesssary to download frank-doc-1.1-SNAPSHOT.jar -->
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
