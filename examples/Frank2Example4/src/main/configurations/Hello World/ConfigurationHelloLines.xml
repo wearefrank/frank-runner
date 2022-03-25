@@ -1,0 +1,101 @@
+<Module
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
+	xmlns:flow="urn:frank-flow"
+	>
+	<Adapter
+		name="HelloLines"
+		active="${HelloLines.active}"
+		description="Call http://localhost/api/hello-lines to see &lt;results> ... Hello World One ... Two ... Three ... Four ... Five ... &lt;/results>"
+		>
+		<Receiver name="HelloLines" >
+			<!-- This listener is used when the API is called as specified in OpenAPI 3.0 at the Webservices page -->
+			<ApiListener
+				name="HelloLines"
+				uriPattern="hello-lines" flow:x="100" flow:y="270"
+			/>
+		</Receiver>
+		<Receiver name="HelloLines">
+			<!-- This listener is used by the scheduler -->
+			<JavaListener
+				name="HelloLines" flow:x="440" flow:y="270"
+			/>
+		</Receiver>
+		<Pipeline firstPipe="CheckInputIsXml">
+			<Exits><Exit path="READY" state="SUCCESS" flow:x="170" flow:y="1110"/></Exits>
+			<XmlWellFormedCheckerPipe
+				name="CheckInputIsXml"
+				flow:x="110"
+				flow:y="450"
+				>
+				<Forward name="success" path="CallHelloWorld"/>
+				<Forward name="failure" path="ConvertEmptyMessageToDummyMessage"/>
+			</XmlWellFormedCheckerPipe>
+			<!-- Input will be null when called using the ApiListener and empty string when called by scheduler -->
+			<EchoPipe
+				name="ConvertEmptyMessageToDummyMessage"
+				emptyInputReplacement="Dummy"
+				flow:x="440"
+				flow:y="450"
+				>
+				<Forward name="success" path="Text2Xml"/>
+			</EchoPipe>
+			<Text2XmlPipe
+				name="Text2Xml"
+				xmlTag="tests"
+				splitLines="true"
+				flow:x="440"
+				flow:y="620"
+				>
+				<Forward name="success" path="RenameElementLineToTest"/>
+			</Text2XmlPipe>
+			<XsltPipe
+				name="RenameElementLineToTest"
+				styleSheetName="HelloLines/xsl/RenameElementLineToTest.xsl"
+				flow:x="440"
+				flow:y="790"
+				>
+				<Forward name="success" path="CheckDummyMessage"/>
+			</XsltPipe>
+			<XmlSwitchPipe
+				name="CheckDummyMessage"
+				xpathExpression="/tests/test = 'Dummy'"
+				flow:x="770"
+				flow:y="790"
+				>
+				<Forward name="true" path="CreateExampleMessage"/>
+				<Forward name="false" path="CallHelloWorld"/>
+			</XmlSwitchPipe>
+			<FixedResultPipe
+				name="CreateExampleMessage"
+				returnString="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
+				flow:x="770"
+				flow:y="450"
+				>
+				<Forward name="success" path="Text2Xml"/>
+			</FixedResultPipe>
+			<ForEachChildElementPipe
+				name="CallHelloWorld"
+				blockSize="2"
+				blockPrefix="&lt;batch>"
+				blockSuffix="&lt;/batch>"
+				elementXPathExpression="/tests/test"
+				flow:x="120"
+				flow:y="940"
+				>
+				<IbisLocalSender javaListener="HelloWorld"/>
+				<Param name="message"/>
+				<Forward name="success" path="READY"/>
+			</ForEachChildElementPipe>
+		</Pipeline>
+	</Adapter>
+	<Scheduler>
+		<Job
+			name="HelloLines"
+			cronExpression="0 55 2 * * ?"
+			javaListener="HelloLines"
+			function="sendMessage"
+			active="${HelloLines.active}"
+		/>
+	</Scheduler>
+</Module>
