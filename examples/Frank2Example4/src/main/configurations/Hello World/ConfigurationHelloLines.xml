@@ -1,7 +1,7 @@
 <Module
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
-	xmlns:flow="urn:frank-flow"
+	xmlns:flow="urn:frank-flow" flow:forwardStyle="flowchart" flow:direction="horizontal" flow:gridSize="100"
 	>
 	<Adapter
 		name="HelloLines"
@@ -12,21 +12,21 @@
 			<!-- This listener is used when the API is called as specified in OpenAPI 3.0 at the Webservices page -->
 			<ApiListener
 				name="HelloLines"
-				uriPattern="hello-lines" flow:x="100" flow:y="270"
+				uriPattern="hello-lines" flow:x="100" flow:y="100"
 			/>
 		</Receiver>
 		<Receiver name="HelloLines">
 			<!-- This listener is used by the scheduler -->
 			<JavaListener
-				name="HelloLines" flow:x="440" flow:y="270"
+				name="HelloLines" flow:x="400" flow:y="100"
 			/>
 		</Receiver>
 		<Pipeline firstPipe="CheckInputIsXml">
 			<Exits><Exit path="READY" state="SUCCESS" flow:x="170" flow:y="1110"/></Exits>
 			<XmlWellFormedCheckerPipe
 				name="CheckInputIsXml"
-				flow:x="110"
-				flow:y="450"
+				flow:x="100"
+				flow:y="300"
 				>
 				<Forward name="success" path="CallHelloWorld"/>
 				<Forward name="failure" path="ConvertEmptyMessageToDummyMessage"/>
@@ -35,8 +35,8 @@
 			<EchoPipe
 				name="ConvertEmptyMessageToDummyMessage"
 				emptyInputReplacement="Dummy"
-				flow:x="440"
-				flow:y="450"
+				flow:x="400"
+				flow:y="300"
 				>
 				<Forward name="success" path="Text2Xml"/>
 			</EchoPipe>
@@ -44,24 +44,24 @@
 				name="Text2Xml"
 				xmlTag="tests"
 				splitLines="true"
-				flow:x="440"
-				flow:y="620"
+				flow:x="400"
+				flow:y="500"
 				>
 				<Forward name="success" path="RenameElementLineToTest"/>
 			</Text2XmlPipe>
 			<XsltPipe
 				name="RenameElementLineToTest"
 				styleSheetName="HelloLines/xsl/RenameElementLineToTest.xsl"
-				flow:x="440"
-				flow:y="790"
+				flow:x="400"
+				flow:y="700"
 				>
 				<Forward name="success" path="CheckDummyMessage"/>
 			</XsltPipe>
 			<XmlSwitchPipe
 				name="CheckDummyMessage"
 				xpathExpression="/tests/test = 'Dummy'"
-				flow:x="770"
-				flow:y="790"
+				flow:x="700"
+				flow:y="700"
 				>
 				<Forward name="true" path="CreateExampleMessage"/>
 				<Forward name="false" path="CallHelloWorld"/>
@@ -69,8 +69,8 @@
 			<FixedResultPipe
 				name="CreateExampleMessage"
 				returnString="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
-				flow:x="770"
-				flow:y="450"
+				flow:x="700"
+				flow:y="300"
 				>
 				<Forward name="success" path="Text2Xml"/>
 			</FixedResultPipe>
@@ -80,8 +80,8 @@
 				blockPrefix="&lt;batch>"
 				blockSuffix="&lt;/batch>"
 				elementXPathExpression="/tests/test"
-				flow:x="120"
-				flow:y="940"
+				flow:x="100"
+				flow:y="900"
 				>
 				<IbisLocalSender javaListener="HelloWorld"/>
 				<Param name="message"/>
