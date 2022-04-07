@@ -9,12 +9,6 @@
 		name="jdbc/@instance.name.lc@"
 		type="javax.sql.DataSource"
 		driverClassName="org.h2.Driver"
-		url="jdbc:h2:mem:NON_KEYWORDS=VALUE"
+		url="jdbc:h2:mem:"
 	/> -->
-	<!--
-		H2 v2 needs: ;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE;TRACE_LEVEL_FILE=0
-		See the following about the settings at the end of the url:
-			https://github.com/ibissource/iaf/issues/2919
-			http://h2database.com/html/features.html#other_settings
-	-->
 </Context>
