@@ -3,12 +3,11 @@
 	<xsl:output omit-xml-declaration="yes"/>
 	<xsl:template match="*|@*|comment()|processing-instruction()|text()">
 		<xsl:copy>
-			<xsl:apply-templates/>
+			<xsl:for-each select="line">
+				<xsl:element name="line{position()}">
+					<xsl:apply-templates/>
+				</xsl:element>
+			</xsl:for-each>
 		</xsl:copy>
-	</xsl:template>
-	<xsl:template match="line">
-		<xsl:element name="test">
-			<xsl:apply-templates/>
-		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>

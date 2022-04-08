@@ -1,0 +1,15 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:hello-lines">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <urn:lines>
+        <urn:line1>11111</urn:line1>
+        <!--Optional:-->
+        <urn:line2>22222</urn:line2>
+        <!--Optional:-->
+        <urn:line3>33333</urn:line3>
+        <!--Optional:-->
+        <urn:line4>44444</urn:line4>
+        <!--Optional:-->
+        <urn:line5>55555</urn:line5>
+    </urn:lines>
+</soapenv:Body></soapenv:Envelope>

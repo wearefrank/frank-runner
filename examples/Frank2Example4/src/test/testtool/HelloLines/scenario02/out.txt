@@ -1,0 +1,28 @@
+<results>
+	<result>
+		<batch>
+			<line1>Hello World number 1</line1>
+			<line2>Hello World number 2</line2>
+		</batch>
+	</result>
+	<result>
+		<batch>
+			<line3>Hello World number 3</line3>
+			<line4>The last Hello World or not the last Hello World</line4>
+		</batch>
+	</result>
+</results><!--
+
+HelloLines calls the HelloWorld adapter for every line in the input message.
+The input message can be plain text, JSON, XML or SOAP.
+Use an empty mesaage or an invalid XML or JSON message to see example input in the documentation below.
+Note that when the order of the lines in the JSON message is not correct the input validator will repair the order based on the XSD.
+
+Your input message was:
+
+Line number 1
+Line number 2
+Line number 3
+The last Line or not the last Line
+
+-->

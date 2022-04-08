@@ -8,85 +8,155 @@
 		active="${HelloLines.active}"
 		description="Call http://localhost/api/hello-lines to see &lt;results> ... Hello World One ... Two ... Three ... Four ... Five ... &lt;/results>"
 		>
-		<Receiver name="HelloLines" >
+		<Receiver name="ApiListener" flow:x="100" flow:y="900" >
 			<!-- This listener is used when the API is called as specified in OpenAPI 3.0 at the Webservices page -->
 			<ApiListener
 				name="HelloLines"
 				uriPattern="hello-lines" flow:x="100" flow:y="100"
 			/>
 		</Receiver>
-		<Receiver name="HelloLines">
+		<Receiver name="WebServiceListener" flow:x="100" flow:y="1100">
+			<!-- This listener is used when the SOAP endpoint is called as specified in WSDL at the Webservices page -->
+			<WebServiceListener
+				name="HelloLines"
+				serviceNamespaceURI="urn:hello-lines"
+				soap="false"
+				/>
+		</Receiver>
+		<Receiver name="JavaListener" flow:x="100" flow:y="1300">
 			<!-- This listener is used by the scheduler -->
 			<JavaListener
-				name="HelloLines" flow:x="400" flow:y="100"
+				name="HelloLines"
+				flow:x="400"
+				flow:y="100"
 			/>
 		</Receiver>
-		<Pipeline firstPipe="CheckInputIsXml">
-			<Exits><Exit path="READY" state="SUCCESS" flow:x="170" flow:y="1110"/></Exits>
-			<XmlWellFormedCheckerPipe
-				name="CheckInputIsXml"
-				flow:x="100"
-				flow:y="300"
+		<Pipeline firstPipe="Remove namespaces">
+			<SoapInputValidator
+				name="ValidateInput"
+				schemaLocation="urn:hello-lines HelloLines/xsd/Lines.xsd"
+				addNamespaceToSchema="true"
+				soapBody="lines"
+				allowPlainXml="true"
+				rootElementSessionKey="receivedRootElement"
+				reasonSessionKey="validatorMessage"
 				>
-				<Forward name="success" path="CallHelloWorld"/>
-				<Forward name="failure" path="ConvertEmptyMessageToDummyMessage"/>
-			</XmlWellFormedCheckerPipe>
-			<!-- Input will be null when called using the ApiListener and empty string when called by scheduler -->
-			<EchoPipe
-				name="ConvertEmptyMessageToDummyMessage"
-				emptyInputReplacement="Dummy"
-				flow:x="400"
-				flow:y="300"
-				>
-				<Forward name="success" path="Text2Xml"/>
-			</EchoPipe>
-			<Text2XmlPipe
-				name="Text2Xml"
-				xmlTag="tests"
-				splitLines="true"
-				flow:x="400"
-				flow:y="500"
-				>
-				<Forward name="success" path="RenameElementLineToTest"/>
-			</Text2XmlPipe>
+				<Forward name="failure" path="Failure: Create example plain text message"/>
+				<Forward name="exception" path="Exception: Replace error message with original plain text message"/>
+			</SoapInputValidator>
+			<SoapInputWrapper
+				onlyIfSessionKey="receivedRootElement"
+				onlyIfValue="Envelope"
+				direction="UNWRAP"
+			/>
+			<SoapOutputWrapper
+				onlyIfSessionKey="receivedRootElement"
+				onlyIfValue="Envelope"
+			/>
+			<Exits>
+				<Exit path="READY" state="SUCCESS" flow:x="1300" flow:y="1300"/>
+			</Exits>
 			<XsltPipe
-				name="RenameElementLineToTest"
-				styleSheetName="HelloLines/xsl/RenameElementLineToTest.xsl"
-				flow:x="400"
-				flow:y="700"
+				name="Remove namespaces"
+				removeNamespaces="true"
+				xpathExpression="/"
+				outputType="XML" flow:x="400" flow:y="900"
 				>
-				<Forward name="success" path="CheckDummyMessage"/>
+				<Forward name="success" path="Only one line?"/>
 			</XsltPipe>
 			<XmlSwitchPipe
-				name="CheckDummyMessage"
-				xpathExpression="/tests/test = 'Dummy'"
+				name="Only one line?"
+				xpathExpression="count(/lines/*) = 1"
 				flow:x="700"
-				flow:y="700"
+				flow:y="900"
 				>
-				<Forward name="true" path="CreateExampleMessage"/>
-				<Forward name="false" path="CallHelloWorld"/>
+				<Forward name="true" path="Call HelloWorld"/>
+				<Forward name="false" path="Call HelloWorld for every line"/>
 			</XmlSwitchPipe>
-			<FixedResultPipe
-				name="CreateExampleMessage"
-				returnString="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
-				flow:x="700"
-				flow:y="300"
+			<SenderPipe name="Call HelloWorld" flow:x="1000" flow:y="900">
+				<IbisLocalSender javaListener="HelloWorld"/>
+				<Forward name="success" path="Transform result to XML"/>
+			</SenderPipe>
+			<Text2XmlPipe
+				name="Transform result to XML"
+				xmlTag="result" flow:x="1000" flow:y="1100"
 				>
-				<Forward name="success" path="Text2Xml"/>
-			</FixedResultPipe>
+				<Forward name="success" path="Add documentation"/>
+			</Text2XmlPipe>
 			<ForEachChildElementPipe
-				name="CallHelloWorld"
+				name="Call HelloWorld for every line"
 				blockSize="2"
 				blockPrefix="&lt;batch>"
 				blockSuffix="&lt;/batch>"
-				elementXPathExpression="/tests/test"
-				flow:x="100"
-				flow:y="900"
+				elementXPathExpression="/lines/*"
+				flow:x="700"
+				flow:y="1300"
 				>
 				<IbisLocalSender javaListener="HelloWorld"/>
 				<Param name="message"/>
-				<Forward name="success" path="READY"/>
+				<Forward name="success" path="Add documentation"/>
 			</ForEachChildElementPipe>
+			<XsltPipe
+				name="Add documentation"
+				styleSheetName="HelloLines/xsl/AddDocumentation.xsl"
+				flow:x="1000"
+				flow:y="1300"
+				>
+				<Param name="originalMessage" sessionKey="originalMessage"/>
+				<Param name="validatorMessage" sessionKey="validatorMessage"/>
+				<Param name="exampleMessage" sessionKey="exampleMessage"/>
+				<Param name="exampleMessageAsXml" sessionKey="exampleMessageAsXml"/>
+				<Param name="exampleMessageAsJson" sessionKey="exampleMessageAsJson"/>
+				<Forward name="success" path="READY" />
+			</XsltPipe>
+			<FixedResultPipe
+				name="Failure: Create example plain text message"
+				returnString="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
+				storeResultInSessionKey="exampleMessage"
+				flow:x="100"
+				flow:y="500"
+				>
+				<Forward name="success" path="Transform plain text message to XML"/>
+			</FixedResultPipe>
+			<EchoPipe
+				name="Exception: Replace error message with original plain text message"
+				getInputFromSessionKey="originalMessage"
+				flow:x="100"
+				flow:y="700"
+				>
+				<Forward name="success" path="Transform plain text message to XML"/>
+			</EchoPipe>
+			<Text2XmlPipe
+				name="Transform plain text message to XML"
+				xmlTag="lines"
+				splitLines="true"
+				flow:x="400"
+				flow:y="700"
+				>
+				<Forward name="success" path="Add position to elements"/>
+			</Text2XmlPipe>
+			<XsltPipe
+				name="Add position to elements"
+				styleSheetName="HelloLines/xsl/AddPositionToElements.xsl"
+				storeResultInSessionKey="exampleMessageAsXml"
+				flow:x="700"
+				flow:y="700"
+				>
+				<Forward name="success" path="Transform XML message to JSON message"/>
+			</XsltPipe>
+			<Json2XmlValidatorPipe
+				name="Transform XML message to JSON message"
+				noNamespaceSchemaLocation="HelloLines/xsd/Lines.xsd"
+				root="lines"
+				outputFormat="JSON"
+				preserveInput="true"
+				storeResultInSessionKey="exampleMessageAsJson"
+				throwException="true"
+				flow:x="1000"
+				flow:y="700"
+				>
+				<Forward name="success" path="Remove namespaces"/>
+			</Json2XmlValidatorPipe>
 		</Pipeline>
 	</Adapter>
 	<Scheduler>

@@ -1,0 +1,44 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><results>
+	<result>
+		<batch>
+			<line1>11111</line1>
+			<line2>22222</line2>
+		</batch>
+	</result>
+	<result>
+		<batch>
+			<line3>33333</line3>
+			<line4>44444</line4>
+		</batch>
+	</result>
+	<result>
+		<batch>
+			<line5>55555</line5>
+		</batch>
+	</result>
+</results><!--
+
+HelloLines calls the HelloWorld adapter for every line in the input message.
+The input message can be plain text, JSON, XML or SOAP.
+Use an empty mesaage or an invalid XML or JSON message to see example input in the documentation below.
+Note that when the order of the lines in the JSON message is not correct the input validator will repair the order based on the XSD.
+
+Your input message was:
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:hello-lines">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <urn:lines>
+        <urn:line1>11111</urn:line1>
+        <!- -Optional:- ->
+        <urn:line2>22222</urn:line2>
+        <!- -Optional:- ->
+        <urn:line3>33333</urn:line3>
+        <!- -Optional:- ->
+        <urn:line4>44444</urn:line4>
+        <!- -Optional:- ->
+        <urn:line5>55555</urn:line5>
+    </urn:lines>
+</soapenv:Body></soapenv:Envelope>
+
+--></soapenv:Body></soapenv:Envelope>

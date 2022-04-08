@@ -1,0 +1,14 @@
+<result>Hello World!</result><!--
+
+HelloLines calls the HelloWorld adapter for every line in the input message.
+The input message can be plain text, JSON, XML or SOAP.
+Use an empty mesaage or an invalid XML or JSON message to see example input in the documentation below.
+Note that when the order of the lines in the JSON message is not correct the input validator will repair the order based on the XSD.
+
+Your input message was:
+
+<lines xmlns="urn:hello-lines">
+  <line1>Line number 1</line1>
+</lines>
+
+-->
