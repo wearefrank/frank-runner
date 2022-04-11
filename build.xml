@@ -529,8 +529,8 @@
 				}
 			}
 		</scriptdef>
-		<multicopyconfigxsd dirs="${configurations.dirs}" if:true="${update.config.xsd.and.available}"/>
-		<antcall target="copy.config.xsd" if:true="${update.config.xsd.and.available}"><param name="dir" value="${projects.dir}/${project.dir}/${classes.dir}/.."/><param name="dir2check" value="${projects.dir}/${project.dir}/${classes.dir}"/></antcall>
+		<multicopyconfigxsd dirs="${configurations.dirs}" if:true="${update.config.xsd}"/>
+		<antcall target="copy.config.xsd" if:true="${update.config.xsd}"><param name="dir" value="${projects.dir}/${project.dir}/${classes.dir}/.."/><param name="dir2check" value="${projects.dir}/${project.dir}/${classes.dir}"/></antcall>
 		<dirset id="project.dirs.id" dir="${configurations.dirset.dir}" includes="${project.dir},${project.dir}_*" if:true="${update.config.xsd.and.available}"/>
 		<pathconvert property="project.dirs" refid="project.dirs.id" pathsep="|" if:true="${update.config.xsd.and.available}"/>
 		<scriptdef language="javascript" name="multiaddgitignore"><!-- configs can be divided over serveral projects, hence a copy to project.dir only is not enough) -->
@@ -745,9 +745,10 @@
 	</target>
 
 	<target name="copy.config.xsd">
-		<property name="dir2check" value="${dir}"/><!-- dir is default value for dir2check -->
+		<property name="dir2check" value="${dir}"/><!-- make dir the default value for dir2check -->
 		<available property="dir2check.available" file="${dir2check}"/>
-		<copy file="build/frankdoc/FrankConfig.xsd" todir="${dir}" if:true="${dir2check.available}"/>
+		<delete file="${dir}/FrankConfig.xsd" if:true="${dir2check.available}"/><!-- remove xsd when not available in current ff version -->
+		<copy file="build/frankdoc/FrankConfig.xsd" todir="${dir}" failonerror="false" if:true="${dir2check.available}"/><!-- don't fail when xsd not available in current ff version, hence failonerror="false" -->
 	</target>
 
 	<target name="add.gitignore">
