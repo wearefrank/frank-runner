@@ -43,7 +43,7 @@
 					<xsl:value-of select="'&#10;&#10;'"/>
 					<xsl:value-of select="'Example message transformed to XML:'"/>
 					<xsl:value-of select="'&#10;&#10;'"/>
-					<xsl:value-of select="concat('&lt;lines xmlns=&quot;urn:hello-lines&quot;', substring($exampleMessageAsXml, 7))"/>
+					<xsl:value-of select="$exampleMessageAsXml"/>
 					<xsl:value-of select="'&#10;&#10;'"/>
 					<xsl:value-of select="'Example message transformed to JSON:'"/>
 					<xsl:value-of select="'&#10;&#10;'"/>

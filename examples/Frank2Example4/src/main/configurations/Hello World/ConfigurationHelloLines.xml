@@ -38,6 +38,7 @@
 				addNamespaceToSchema="true"
 				soapBody="lines"
 				allowPlainXml="true"
+				acceptNamespaceLessXml="true"
 				rootElementSessionKey="receivedRootElement"
 				reasonSessionKey="validatorMessage"
 				>
