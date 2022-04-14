@@ -71,6 +71,9 @@ jobs:
         name: logs
         path: build/*/logs/catalina.out
 
+    - name: Check existence of FrankConfig.xsd
+      run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
+
   testing-windows:
     strategy:
       matrix:
@@ -137,3 +140,5 @@ jobs:
         name: logs
         path: build\*\logs\catalina.out
 
+    - name: Check that FrankConfig.xsd exists
+      run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd exit /b 1
