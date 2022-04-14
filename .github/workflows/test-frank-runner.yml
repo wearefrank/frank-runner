@@ -75,7 +75,7 @@ jobs:
       run: sleep 30; test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
 
     - name: Show files
-      run: tree -d -L 5 .
+      run: tree -L 5 .
       if: always()
 
   testing-windows:
@@ -148,5 +148,5 @@ jobs:
       run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd exit /b 1
 
     - name: Show files
-      run: tree -d -L 5 .
+      run: tree -L 5 .
       if: always()
