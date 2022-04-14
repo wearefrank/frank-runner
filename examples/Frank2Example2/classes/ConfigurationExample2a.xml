@@ -2,12 +2,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
-	<Adapter name="Adapter2a">
+	<xxx name="Adapter2a">
 		<Receiver name="Receiver2a">
 			<ApiListener name="Listener2a" uriPattern="service2a"/>
 		</Receiver>
 		<Pipeline>
 			<FixedResultPipe name="HelloWorld" returnString="Hello World!"/>
 		</Pipeline>
-	</Adapter>
+	</xxx>
 </Module>
