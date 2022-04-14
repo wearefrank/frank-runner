@@ -146,7 +146,7 @@ jobs:
       if: always()
       with:
         name: Windows-${{ matrix.example}}-logs
-        path: build\*\logs\catalina.out
+        path: build\*\logs\catalina*.log
 
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
@@ -158,5 +158,5 @@ jobs:
       run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
-      run: tree /F
+      run: tree /A /F
       if: always()
