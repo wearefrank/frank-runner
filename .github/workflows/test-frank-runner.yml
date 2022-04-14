@@ -115,14 +115,11 @@ jobs:
           ${{ runner.os }}-maven
 
     - name: Configure another port
-      shell: cmd
       run: echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
     - name: Start Frank!Runner ${{ matrix.example }}
       run: cmd /C .\restart.bat
-      shell: cmd
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      shell: cmd
       run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
     - name: Capture status
       id: captureStatus
@@ -148,7 +145,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: logs
+        name: Windows-${{ matrix.example}}-logs
         path: build\*\logs\catalina.out
 
     - name: Check that FrankConfig.xsd exists - for classes
@@ -161,6 +158,5 @@ jobs:
       run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
-      shell: cmd
       run: tree -L 5 .
       if: always()
