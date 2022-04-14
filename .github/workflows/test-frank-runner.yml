@@ -146,9 +146,6 @@ jobs:
       with:
         name: Windows-${{ matrix.example}}-logs
         path: build\*\logs\catalina*.log
-    - name: Delete FrankConfig.xsd - others
-      if: ${{ matrix.example != 'Frank2Example2' }}
-      run: del examples\${{ matrix.example }}\configurations\FrankConfig.xsd
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
       shell: cmd
