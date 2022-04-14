@@ -72,7 +72,7 @@ jobs:
         path: build/*/logs/catalina.out
 
     - name: Check existence of FrankConfig.xsd
-      run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
+      run: sleep 30; test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
 
   testing-windows:
     strategy:
