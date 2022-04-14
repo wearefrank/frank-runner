@@ -49,6 +49,7 @@ jobs:
         url: "http://localhost:8091/iaf/api/server/health"
     - name: Analyze status
       uses: actions/github-script@v6
+      if: always()
       with:
         script: |
           let rawStatus = '${{ steps.captureStatus.outputs.response }}'
