@@ -154,7 +154,7 @@ jobs:
         path: build\*\logs\catalina*.log
     - name: Delete FrankConfig.xsd - Frank2Example2
       if: ${{ matrix.example == 'Frank2Example2' }}
-      run: del exist examples\${{ matrix.example }}\FrankConfig.xsd
+      run: del examples\${{ matrix.example }}\FrankConfig.xsd
     - name: Delete FrankConfig.xsd - others
       if: ${{ matrix.example != 'Frank2Example2' }}
       run: del examples\${{ matrix.example }}\configurations\FrankConfig.xsd
