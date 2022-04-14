@@ -158,5 +158,5 @@ jobs:
       run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
-      run: tree -L 5 .
+      run: tree /F
       if: always()
