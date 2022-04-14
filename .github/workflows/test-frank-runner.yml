@@ -51,7 +51,6 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          core.setFailed('Try whether core.setFailed does what I expect')
           let rawStatus = '${{ steps.captureStatus.outputs.response }}'
           core.info('Captured status: ' + rawStatus)
           let status = JSON.parse(rawStatus)
