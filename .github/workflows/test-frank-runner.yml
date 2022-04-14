@@ -6,8 +6,12 @@ on:
 
 jobs:
   testing-linux:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        example: [Frank2Example1, Frank2Example2, Frank2Example3]
     name: Test Frank!Runner
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
@@ -35,12 +39,21 @@ jobs:
           ${{ runner.os }}-maven
 
     - name: Configure another port
-      run: echo "tomcat.port=8091" > examples/Frank2Example1/frank-runner.properties
-    - name: Start Frank!Runner Frank2Example1
+      run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
+    - name: Start Frank!Runner ${{ matrix.example }} - linux
+      if: ${{ matrix.os }} === 'ubuntu-latest'
       run: bash ./restart.sh &
-      working-directory: examples/Frank2Example1
-    - name: Wait until Frank!Framework is up
+      working-directory: examples/${{ matrix.example }}
+    - name: Start Frank!Runner ${{ matrix.example }} - windows
+      if: ${{ matrix.os }} === 'windows-latest'
+      run: cmd /C .\restart.bat
+      working-directory: examples\${{ matrix.example }}
+    - name: Wait until Frank!Framework is up - linux
+      if: ${{ matrix.os }} === 'ubuntu-latest'
       run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
+    - name: Wait until Frank!Framework is up - windows
+      if: ${{ matrix.os }} === 'windows-latest'
+      run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
     - name: Capture status
       id: captureStatus
       uses: fjogeleit/http-request-action@v1
