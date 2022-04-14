@@ -68,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: logs
+        name: Linux-${{ matrix.example}}-logs
         path: build/*/logs/catalina.out
 
     - name: Check existence of FrankConfig.xsd - for classes
