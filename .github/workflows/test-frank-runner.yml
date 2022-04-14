@@ -41,11 +41,11 @@ jobs:
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
     - name: Start Frank!Runner ${{ matrix.example }} - linux
-      if: ${{ matrix.os }} === 'ubuntu-latest'
+      if: ${{ matrix.os === 'ubuntu-latest' }}
       run: bash ./restart.sh &
       working-directory: examples/${{ matrix.example }}
     - name: Start Frank!Runner ${{ matrix.example }} - windows
-      if: ${{ matrix.os }} === 'windows-latest'
+      if: ${{ matrix.os === 'windows-latest' }}
       run: cmd /C .\restart.bat
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up - linux
