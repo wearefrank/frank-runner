@@ -115,12 +115,15 @@ jobs:
           ${{ runner.os }}-maven
 
     - name: Configure another port
-      run: cmd echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
+      shell: cmd
+      run: echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
     - name: Start Frank!Runner ${{ matrix.example }}
       run: cmd /C .\restart.bat
+      shell: cmd
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      run: cmd .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
+      shell: cmd
+      run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
     - name: Capture status
       id: captureStatus
       uses: fjogeleit/http-request-action@v1
@@ -150,11 +153,14 @@ jobs:
 
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
-      run: cmd if not exist examples\${{ matrix.example }}\FrankConfig.xsd ( exit /b 1 )
+      shell: cmd
+      run: if not exist examples\${{ matrix.example }}\FrankConfig.xsd ( exit /b 1 )
     - name: Check that FrankConfig.xsd exists - for configurations
       if: ${{ matrix.example != 'Frank2Example2' }}
-      run: cmd if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
+      shell: cmd
+      run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
-      run: cmd tree -L 5 .
+      shell: cmd
+      run: tree -L 5 .
       if: always()
