@@ -49,10 +49,10 @@ jobs:
       run: cmd /C .\restart.bat
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up - linux
-      if: ${{ matrix.os }} === 'ubuntu-latest'
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
     - name: Wait until Frank!Framework is up - windows
-      if: ${{ matrix.os }} === 'windows-latest'
+      if: ${{ matrix.os == 'windows-latest' }}
       run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
     - name: Capture status
       id: captureStatus
