@@ -70,12 +70,6 @@ jobs:
       with:
         name: Linux-${{ matrix.example}}-logs
         path: build/*/logs/catalina.out
-    - name: Remove FrankConfig.xsd - Frank2Example2
-      if: ${{ matrix.example == 'Frank2Example2' }}
-      run: rm examples/${{ matrix.example }}/FrankConfig.xsd
-    - name: Remove FrankConfig.xsd - others
-      if: ${{ matrix.example != 'Frank2Example2' }}
-      run: rm examples/${{ matrix.example }}/configurations/FrankConfig.xsd
     - name: Check existence of FrankConfig.xsd - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
       run: test -e examples/${{ matrix.example }}/FrankConfig.xsd
