@@ -150,10 +150,10 @@ jobs:
 
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
-      run: if not exist examples\${{ matrix.example }}\FrankConfig.xsd exit /b 1
+      run: if not exist examples\${{ matrix.example }}\FrankConfig.xsd ( exit /b 1 )
     - name: Check that FrankConfig.xsd exists - for configurations
       if: ${{ matrix.example != 'Frank2Example2' }}
-      run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd exit /b 1
+      run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
       run: tree -L 5 .
