@@ -19,6 +19,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: build
+        key: ${{ runner.os }}-frank-runner-build
         restore-keys: |
           ${{ runner.os }}-frank-runner-build
     - name: Cache Frank!Runner dependencies - download
