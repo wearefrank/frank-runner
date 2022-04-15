@@ -3,7 +3,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-
+    inputs:
+      forceLatestFF:
+        description: Force testing against the latest F!F version from Nexus
+        type: boolean
+        required: true
+        default: false
 jobs:
   testing-linux:
     strategy:
@@ -36,6 +41,11 @@ jobs:
         key: ${{ runner.os }}-maven
         restore-keys: |
           ${{ runner.os }}-maven
+    - name: Show input
+      run: echo ${{ github.event.inputs.forceLatestFF }}
+    - name: Force using the latest F!F version
+      if: ${{ github.event.inputs.forceLatestFF }}
+      run: rm -rf download/metadata
 
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
@@ -112,6 +122,11 @@ jobs:
         key: ${{ runner.os }}-maven
         restore-keys: |
           ${{ runner.os }}-maven
+
+    - name: Force using the latest F!F version
+      if: ${{ github.event.inputs.forceLatestFF }}
+      shell: cmd
+      run: rmdir /S /Q download\metadata
 
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
