@@ -3,12 +3,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-  inputs:
-    forceLatestFF:
-      description: Force testing against the latest F!F version from Nexus
-      type: boolean
-      required: true
-      default: false
+    inputs:
+      forceLatestFF:
+        description: Force testing against the latest F!F version from Nexus
+        type: boolean
+        required: true
+        default: false
 jobs:
   testing-linux:
     strategy:
