@@ -42,9 +42,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven
     - name: Show input
-      run: echo ${{ github.events.inputs.forceLatestFF }}
+      run: echo ${{ github.event.inputs.forceLatestFF }}
     - name: Force using the latest F!F version
-      if: ${{ github.events.inputs.forceLatestFF }}
+      if: ${{ github.events.input.forceLatestFF }}
       run: rm -rf download/metadata
 
     - name: Configure another port
@@ -124,7 +124,7 @@ jobs:
           ${{ runner.os }}-maven
 
     - name: Force using the latest F!F version
-      if: ${{ github.events.inputs.forceLatestFF }}
+      if: ${{ github.event.inputs.forceLatestFF }}
       run: rmdir /S download/metadata
 
     - name: Configure another port
