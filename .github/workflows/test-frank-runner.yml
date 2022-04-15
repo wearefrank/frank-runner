@@ -1,0 +1,175 @@
+name: TestFrankRunner.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      forceLatestFF:
+        description: Force testing against the latest F!F version from Nexus
+        type: boolean
+        required: true
+        default: false
+jobs:
+  testing-linux:
+    strategy:
+      matrix:
+        example: [Frank2Example1, Frank2Example2, Frank2Example3]
+    name: Test linux ${{ matrix.example }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Cache Frank!Runner dependencies - build
+      uses: actions/cache@v2
+      with:
+        path: build
+        key: ${{ runner.os }}-frank-runner-build
+        restore-keys: |
+          ${{ runner.os }}-frank-runner-build
+    - name: Cache Frank!Runner dependencies - download
+      uses: actions/cache@v2
+      with:
+        path: download
+        key: ${{ runner.os }}-frank-runner-download
+        restore-keys: |
+          ${{ runner.os }}-frank-runner-download
+    - name: Cache Maven downloads
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository/
+        key: ${{ runner.os }}-maven
+        restore-keys: |
+          ${{ runner.os }}-maven
+    - name: Show input
+      run: echo ${{ github.event.inputs.forceLatestFF }}
+    - name: Force using the latest F!F version
+      if: ${{ github.event.inputs.forceLatestFF }}
+      run: rm -rf download/metadata
+
+    - name: Configure another port
+      run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
+    - name: Start Frank!Runner ${{ matrix.example }}
+      run: bash ./restart.sh &
+      working-directory: examples/${{ matrix.example }}
+    - name: Wait until Frank!Framework is up
+      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
+    - name: Capture status
+      id: captureStatus
+      uses: fjogeleit/http-request-action@v1
+      with:
+        method: GET
+        url: "http://localhost:8091/iaf/api/server/health"
+    - name: Analyze status
+      uses: actions/github-script@v6
+      with:
+        script: |
+          let rawStatus = '${{ steps.captureStatus.outputs.response }}'
+          core.info('Captured status: ' + rawStatus)
+          let status = JSON.parse(rawStatus)
+          if(! status.status) {
+            core.setFailed('Response has no field "status"')
+          } else if(status.status !== 'OK') {
+            core.setFailed('Field "status" is not "OK"')
+          } else {
+            core.info('status is OK');
+          }
+    - name: Store Apache Tomcat log
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Linux-${{ matrix.example}}-logs
+        path: build/*/logs/catalina.out
+    - name: Check existence of FrankConfig.xsd - for classes
+      if: ${{ matrix.example == 'Frank2Example2' }}
+      run: test -e examples/${{ matrix.example }}/FrankConfig.xsd
+    - name: Check existence of FrankConfig.xsd - for configurations
+      if: ${{ matrix.example != 'Frank2Example2' }}
+      run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
+
+    - name: Show files
+      run: tree -L 5 .
+      if: always()
+
+  testing-windows:
+    strategy:
+      matrix:
+        example: [Frank2Example1, Frank2Example2, Frank2Example3]
+    name: Test windows ${{ matrix.example }}
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Cache Frank!Runner dependencies - build
+      uses: actions/cache@v2
+      with:
+        path: build
+        key: ${{ runner.os }}-frank-runner-build
+        restore-keys: |
+          ${{ runner.os }}-frank-runner-build
+    - name: Cache Frank!Runner dependencies - download
+      uses: actions/cache@v2
+      with:
+        path: download
+        key: ${{ runner.os }}-frank-runner-download
+        restore-keys: |
+          ${{ runner.os }}-frank-runner-download
+    - name: Cache Maven downloads
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository/
+        key: ${{ runner.os }}-maven
+        restore-keys: |
+          ${{ runner.os }}-maven
+
+    - name: Force using the latest F!F version
+      if: ${{ github.event.inputs.forceLatestFF }}
+      shell: cmd
+      run: rmdir /S /Q download\metadata
+
+    - name: Configure another port
+      run: echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
+    - name: Start Frank!Runner ${{ matrix.example }}
+      run: cmd /C .\restart.bat
+      working-directory: examples\${{ matrix.example }}
+    - name: Wait until Frank!Framework is up
+      run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
+    - name: Capture status
+      id: captureStatus
+      uses: fjogeleit/http-request-action@v1
+      with:
+        method: GET
+        url: "http://localhost:8091/iaf/api/server/health"
+    - name: Analyze status
+      uses: actions/github-script@v6
+      with:
+        script: |
+          let rawStatus = '${{ steps.captureStatus.outputs.response }}'
+          core.info('Captured status: ' + rawStatus)
+          let status = JSON.parse(rawStatus)
+          if(! status.status) {
+            core.setFailed('Response has no field "status"')
+          } else if(status.status !== 'OK') {
+            core.setFailed('Field "status" is not "OK"')
+          } else {
+            core.info('status is OK');
+          }
+    - name: Store Apache Tomcat log
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Windows-${{ matrix.example}}-logs
+        path: build\*\logs\catalina*.log
+    - name: Check that FrankConfig.xsd exists - for classes
+      if: ${{ matrix.example == 'Frank2Example2' }}
+      shell: cmd
+      run: if not exist examples\${{ matrix.example }}\FrankConfig.xsd ( exit /b 1 )
+    - name: Check that FrankConfig.xsd exists - for configurations
+      if: ${{ matrix.example != 'Frank2Example2' }}
+      shell: cmd
+      run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
+
+    - name: Show files
+      run: tree /A /F
+      if: always()
