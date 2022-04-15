@@ -38,7 +38,7 @@
 				addNamespaceToSchema="true"
 				soapBody="lines"
 				allowPlainXml="true"
-				acceptNamespaceLessXml="true"
+				acceptNamespacelessXml="true"
 				rootElementSessionKey="receivedRootElement"
 				reasonSessionKey="validatorMessage"
 				>
@@ -55,7 +55,7 @@
 				onlyIfValue="Envelope"
 			/>
 			<Exits>
-				<Exit path="READY" state="SUCCESS" flow:x="1300" flow:y="1000"/>
+				<Exit name="READY" state="SUCCESS" flow:x="1300" flow:y="1000"/>
 			</Exits>
 			<XsltPipe
 				name="Remove namespaces"
