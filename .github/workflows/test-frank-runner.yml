@@ -125,6 +125,7 @@ jobs:
 
     - name: Force using the latest F!F version
       if: ${{ github.event.inputs.forceLatestFF }}
+      shell: cmd
       run: rmdir /S download/metadata
 
     - name: Configure another port
