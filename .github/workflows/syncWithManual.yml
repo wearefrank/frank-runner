@@ -1,0 +1,21 @@
+name: Sync with manual.
+on:
+  push:
+  pull_request:
+jobs:
+  Frank2Example1-Example1a:
+    name: Check that Frank2Example1-Example1a is the same as documented in the Frank!Manual
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Frank!Runner repository
+      uses: actions/checkout@v2
+      with:
+        path: frank-runner
+    - name: Checkout Frank!Manual repository
+      uses: actions/checkout@v2
+      with:
+        repository: ibissource/frank-manual
+        path: frank-manual
+    - name: Compare
+      run: git diff --exit-code frank-runner/examples/Frank2Example1/configurations/Example1a frank-manual/srcSteps/FrankRunnerExample1a/v500/Frank2Example1/Example1a
