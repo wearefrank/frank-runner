@@ -54,11 +54,13 @@ When Tomcat has started by running a Frank!Runner
 addresses:
 
 http://localhost
+
 http://localhost/frank-flow
 
 The secure port is also enabled:
 
 https://localhost
+
 https://localhost/frank-flow
 
 ## Small build.xml for every project
@@ -154,7 +156,7 @@ https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages
 
 ## Frank2Example4
 
-Example usage of Maven, custom views and a very small web application, see the
+Example usage of Maven, custom views and a very small web application. See the
 custom menu items at top of the Frank!Console menu. Better example Frank!
 configuration or web application files are appreciated. Please create a pull
 request, an issue or send an email with your improvements.
