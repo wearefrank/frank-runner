@@ -60,6 +60,7 @@
 		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
+		<property name="frank-flow.context-path" value="/"/>
 
 		<condition property="os.windows"><os family="windows"/></condition>
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
@@ -167,19 +168,30 @@
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
 		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not></and></condition>
+		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
-		<mkdir dir="download/metadata"/>
+		<mkdir dir="download/metadata/frank-flow"/>
 		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/maven-metadata.xml" dest="download/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
 		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<move file="download/metadata/frank-flow/maven-metadata-tmp.xml" tofile="download/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
+		<xmlproperty file="download/metadata/frank-flow/maven-metadata.xml" prefix="frankflow"/>
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
+		<echo file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
+		<property name="frankflow.version" value="${frankflow.metadata.versioning.release}" if:set="frankflow.metadata.versioning.release"/>
 
 		<property name="ff.version" value="7.7"/>
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
+
+		<property name="frankflow.version" value="2.20.4"/>
+		<property name="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"/>
+		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
+		<property name="frankflow.dir" value="${tomcat.dir}/webapps/frank-flow"/>
 
 		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
@@ -199,6 +211,8 @@
 		<available property="winmerge.dir.available" file="${winmerge.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
 		<available property="ff.dir.available" file="${ff.dir}"/>
+		<available property="frankflow.war.available" file="download/${frankflow.war}"/>
+		<available property="frankflow.dir.available" file="${frankflow.dir}"/>
 		<available property="jms.jar.available" file="download/${jms.jar}"/>
 		<available property="h2v1.jar.available" file="download/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
@@ -213,6 +227,7 @@
 			<propertyref name="instance.name"/>
 			<propertyref name="ibistesttool.directory"/>
 			<propertyref name="larva.windiff.command"/>
+			<propertyref name="frank-flow.context-path"/>
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
@@ -339,7 +354,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
+	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
 		<!-- jdk -->
 		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -449,11 +464,15 @@
 		<!-- winmerge -->
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
-		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="pom.properties."/>
-		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*"/><flattenmapper/></pathconvert>
-		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
-		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
+		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
+		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties."/>
+		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
+		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
+		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.version}"/></not></condition>
+		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*" excludes="frank-flow/**/*"/></delete>
+		<delete includeemptydirs="true" if:set="frankflow.version.changed"><fileset dir="${tomcat.dir}/webapps" includes="frank-flow/**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
+		<unzip src="download/${frankflow.war}" dest="${frankflow.dir}" if:set="frankflow.version.changed"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
@@ -501,7 +520,7 @@
 		<condition property="update.config.xsd">
 			<or>
 				<istrue value="${maven}"/><!-- f!f version could be changed -->
-				<not><equals arg1="${ff.version}" arg2="${pom.properties.version}"/></not><!-- f!f version changed -->
+				<not><equals arg1="${ff.version}" arg2="${ff.pom.properties.version}"/></not><!-- f!f version changed -->
 				<not><resourceexists><file file="${configurations.dir}/FrankConfig.xsd"/></resourceexists></not><!-- maybe a new project and f!f version not changed -->
 			</or>
 		</condition>
@@ -684,6 +703,10 @@
 
 	<target name="get.ff" unless="${ff.war.available}">
 		<get src="${ff.url}" dest="download/${ff.war}" verbose="on"/>
+	</target>
+
+	<target name="get.frankflow" unless="${frankflow.war.available}">
+		<get src="${frankflow.url}" dest="download/${frankflow.war}" verbose="on"/>
 	</target>
 
 	<target name="get.jms" unless="${jms.jar.available}">
