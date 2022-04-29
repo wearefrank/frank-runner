@@ -34,15 +34,6 @@ jobs:
         key: ${{ runner.os }}-frank-runner-download
         restore-keys: |
           ${{ runner.os }}-frank-runner-download
-    - name: Cache Maven downloads
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-maven-dependencies
-      with:
-        path: ~/.m2/repository/
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
     - name: Show input
       run: echo ${{ github.event.inputs.forceLatestFF }}
     - name: Force using the latest F!F version
@@ -89,9 +80,6 @@ jobs:
       if: ${{ matrix.example != 'Frank2Example2' }}
       run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
 
-    - name: Show Maven dependencies
-      run: tree -L 5 ~/.m2/repository/
-      if: always()
     - name: Show files
       run: tree -L 5 .
       if: always()
@@ -120,13 +108,6 @@ jobs:
         key: ${{ runner.os }}-frank-runner-download
         restore-keys: |
           ${{ runner.os }}-frank-runner-download
-    - name: Cache Maven downloads
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository/
-        key: ${{ runner.os }}-maven
-        restore-keys: |
-          ${{ runner.os }}-maven
 
     - name: Force using the latest F!F version
       if: ${{ github.event.inputs.forceLatestFF }}
