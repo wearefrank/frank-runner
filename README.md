@@ -24,6 +24,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Other properties and software versions](#other-properties-and-software-versions)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
+- [Web development](#web-development)
 - [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
 - [VSCode](#vscode)
@@ -603,7 +604,7 @@ files and dependencies.
 In case you want to develop and package a web application with your Frank! it
 is recommended to setup your project as a Maven project as it will allow you to
 edit the web application files in src/main/webapp and see the changes in your
-browser without the need to restart tour Frank!. A small example can be found
+browser without the need to restart your Frank!. A small example can be found
 in [Frank2Example4](#frank2example4).
 
 
