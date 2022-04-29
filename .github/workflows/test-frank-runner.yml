@@ -89,6 +89,9 @@ jobs:
       if: ${{ matrix.example != 'Frank2Example2' }}
       run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
 
+    - name: Show Maven dependencies
+      run: tree -L 5 ~/.m2/repository/
+      if: always()
     - name: Show files
       run: tree -L 5 .
       if: always()
