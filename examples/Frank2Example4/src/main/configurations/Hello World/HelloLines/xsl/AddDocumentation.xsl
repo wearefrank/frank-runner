@@ -18,7 +18,7 @@
 			<xsl:value-of select="'&#10;'"/>
 			<xsl:value-of select="'The input message can be plain text, JSON, XML or SOAP.'"/>
 			<xsl:value-of select="'&#10;'"/>
-			<xsl:value-of select="'Use an empty mesaage or an invalid XML or JSON message to see example input in the documentation below.'"/>
+			<xsl:value-of select="'Use an empty message or an invalid XML or JSON message to see example input in the documentation below.'"/>
 			<xsl:value-of select="'&#10;'"/>
 			<xsl:value-of select="'Note that when the order of the lines in the JSON message is not correct the input validator will repair the order based on the XSD.'"/>
 			<xsl:if test="string-length($originalMessage) > 0">
