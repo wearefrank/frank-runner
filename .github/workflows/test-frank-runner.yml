@@ -84,8 +84,11 @@ jobs:
       if: ${{ matrix.example == 'Frank2Example2' }}
       run: test -e examples/${{ matrix.example }}/FrankConfig.xsd
     - name: Check existence of FrankConfig.xsd - for configurations
-      if: ${{ matrix.example != 'Frank2Example2' }}
+      if: ${{ (matrix.example == 'Frank2Example1') || (matrix.example == 'Frank2Example3') }}
       run: test -e examples/${{ matrix.example }}/configurations/FrankConfig.xsd
+    - name: Check existence of FrankConfig.xsd - for Maven project
+      if: ${{ matrix.example == 'Frank2Example4' }}
+      run: test -e examples/${{ matrix.example }}/src/main/configurations/FrankConfig.xsd
 
     - name: Show files
       run: tree -L 5 .
@@ -166,9 +169,13 @@ jobs:
       shell: cmd
       run: if not exist examples\${{ matrix.example }}\FrankConfig.xsd ( exit /b 1 )
     - name: Check that FrankConfig.xsd exists - for configurations
-      if: ${{ matrix.example != 'Frank2Example2' }}
+      if: ${{ (matrix.example == 'Frank2Example1') || (matrix.example == 'Frank2Example3') }}
       shell: cmd
       run: if not exist examples\${{ matrix.example }}\configurations\FrankConfig.xsd ( exit /b 1 )
+    - name: Check that FrankConfig.xsd exists - for Maven project
+      if: ${{ matrix.example == 'Frank2Example4' }}
+      shell: cmd
+      run: if not exist examples\${{ matrix.example }}\src\main\configurations\FrankConfig.xsd ( exit /b 1 )
 
     - name: Show files
       run: tree /A /F
