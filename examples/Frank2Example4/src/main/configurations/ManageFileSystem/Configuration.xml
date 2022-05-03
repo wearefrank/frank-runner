@@ -1,6 +1,0 @@
-<!DOCTYPE Configuration [
-	<!ENTITY ManageFileSystem SYSTEM "./ConfigurationManageFileSystem.xml">
-]>
-<Configuration>
-	&ManageFileSystem;
-</Configuration>
