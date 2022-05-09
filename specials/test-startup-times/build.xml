@@ -1,0 +1,70 @@
+<project default="test-startup-times" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
+	<target name="test-startup-times">
+
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220426.180610"/><param name="remarks" value="#3104 Open"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220426.180610"/><param name="remarks" value="#3104 Open"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220426.180610"/><param name="remarks" value="#3104 Open"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220426.180610"/><param name="remarks" value="#3104 Open"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220426.180610"/><param name="remarks" value="#3104 Open"/></antcall>
+
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220509.115859"/><param name="remarks" value="#3104 Closed"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220509.115859"/><param name="remarks" value="#3104 Closed"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220509.115859"/><param name="remarks" value="#3104 Closed"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220509.115859"/><param name="remarks" value="#3104 Closed"/></antcall>
+		<antcall target="test-startup-time"><param name="ff.version" value="7.8-20220509.115859"/><param name="remarks" value="#3104 Closed"/></antcall>
+
+		<echo message=" "/>
+		<echo message="DONE (see result.txt)"/>
+	</target>
+
+	<target name="test-startup-time">
+		<antcall target="stop"/>
+		<tstamp><format property="today" pattern="yyyy-MM-dd"/></tstamp>
+		<delete file="../../build/apache-tomcat-9.0.60/logs/catalina.${today}.log"/>
+		<antcall target="start"><param name="ff.version" value="${ff.version}"/></antcall>
+		<echo message=" "/>
+		<echo message="Wait for Tomcat to start..."/>
+		<waitfor maxwait="5" maxwaitunit="minute" checkevery="5" checkeveryunit="second">
+			<http url="http://localhost/"/>
+		</waitfor>
+		<concat destfile="result.txt" append="true">
+			<fileset file="../../build/apache-tomcat-9.0.60/logs/catalina.${today}.log"/>
+			<filterchain>
+				<linecontains>
+					<contains value="] has finished in ["/>
+				</linecontains>
+				<replaceregex pattern=".*frank-flow]" replace="Frank!Flow"/>
+				<replaceregex pattern=".*ROOT]" replace="Frank!Framework"/>
+				<sortfilter reverse="true"/>
+				<replaceregex pattern="," replace=""/>
+				<replaceregex pattern="Frank!Framework has finished in \[" replace=""/>
+				<replaceregex pattern="Frank!Flow has finished in \[" replace=","/>
+				<replaceregex pattern="\] ms" replace=""/>
+				<striplinebreaks/>
+			</filterchain>
+		</concat>
+		<echo message=",${ff.version},${remarks}${line.separator}" file="result.txt" append="true"/>
+	</target>
+
+	<target name="stop">
+		<condition property="exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../stop.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
+		</exec>
+	</target>
+
+	<target name="start">
+		<condition property="exe" value="../../start.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../start.sh" else=""><os family="unix"/></condition>
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
+			<arg value="${arg}"/>
+			<arg value="-Dprojects.dir=${basedir}/.."/>
+			<arg value="-Dproject.dir=examples/frank2example1"/>
+			<arg value="-Dff.version=${ff.version}"/>
+			<arg value="-Dignore.double.jars=true"/><!-- some snapshot versions have double jars, not relevant for this test -->
+		</exec>
+	</target>
+
+</project>
