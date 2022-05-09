@@ -4,28 +4,24 @@
 	>
 
 	<Adapter name="01 RR sending system / app / browser" description="Stop adapter 04 to emulate a failing backend system, select this adapter (01) at Test a PipeLine and send one or more random messages to emulate an RR sending system. This adapter also demonstrates the use of a message log on a sender: Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter">
-		<Receiver name="TestMessageLogReceiver">
-			<JavaListener name="TestMessageLogListener"/>
+		<Receiver name="01 JavaReceiver">
+			<JavaListener name="01 JavaListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
 			<SenderPipe name="Send">
-				<IbisLocalSender name="Send_sender" javaListener="TestMessageStoreSender"/>
-				<JdbcMessageLog
-					name="Send_messageLog"
-					slotId="${instance.name}/TestMessageLog"
-				/>
+				<IbisLocalSender javaListener="02 JavaListener"/>
+				<JdbcMessageLog slotId="${instance.name}/TestMessageLog"/>
 			</SenderPipe>
 		</Pipeline>
 	</Adapter>
 
 	<Adapter name="02 RR receiving adapter with message store sender" description="Not much to see in this adapter unless you also stop adapter 03 and send messages with adapter 01. Then click the small blue envelope at the sender information of this adapter to browse the message store for messages that have not yet been processed. Start adapter 03 again to have them processed">
-		<Receiver name="TestMessageStoreSender">
-			<JavaListener name="TestMessageStoreSender"/>
+		<Receiver name="02 JavaReceiver">
+			<JavaListener name="02 JavaListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Send">
 			<SenderPipe name="Send">
 				<MessageStoreSender
-					name="Send_Sender"
 					slotId="${instance.name}/TestMessageStore"
 					onlyStoreWhenMessageIdUnique="false"
 				/>
@@ -40,13 +36,13 @@
 
 	<Adapter name="03 FF sending adapter with message store listener" description="Click the small white in red cross at the listener information of this adapter to go to the error storage page and see that messages are not processed because of failures. Start adapter 04 and resend them from the error storage page">
 		<Receiver
-			name="TestMessageStoreListenerAndErrorStorage"
+			name="03 MessageStoreReceiver"
 			numThreads="4"
 			transactionAttribute="Required"
 			pollInterval="1"
 			>
 			<MessageStoreListener
-				name="TestMessageStoreListenerAndErrorStorage_listener"
+				name="03 MessageStoreListener"
 				slotId="${instance.name}/TestMessageStore"
 				statusValueInProcess="I"
 			/>
@@ -54,8 +50,7 @@
 		<Pipeline firstPipe="Send">
 			<SenderPipe name="Send">
 				<IbisLocalSender
-					name="Send_sender"
-					javaListener="TestFailureAndSuccess"
+					javaListener="04 JavaListener"
 					dependencyTimeOut="0"
 				/>
 			</SenderPipe>
@@ -63,8 +58,8 @@
 	</Adapter>
 
 	<Adapter name="04 FF receiving (backend) system emulation" description="Stop this adapter to emulate a backend system failure">
-		<Receiver name="TestFailureAndSuccess">
-			<JavaListener name="TestFailureAndSuccess"/>
+		<Receiver name="04 JavaReceiver">
+			<JavaListener name="04 JavaListener"/>
 		</Receiver>
 		<Pipeline firstPipe="Echo">
 			<EchoPipe name="Echo"/>
