@@ -25,11 +25,6 @@
 					slotId="${instance.name}/TestMessageStore"
 					onlyStoreWhenMessageIdUnique="false"
 				/>
-				<DummyMessageLog
-					name="Send_MessageLog"
-					slotId="${instance.name}/TestMessageStore"
-					type="M"
-				/>
 			</SenderPipe>
 		</Pipeline>
 	</Adapter>
