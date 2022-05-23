@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="../FrankConfig.xsd"
 	>
 
-	<Adapter name="01 RR sending system / app / browser" description="Stop adapter 04 to emulate a failing backend system, select this adapter (01) at Test a PipeLine and send one or more random messages to emulate an RR sending system. This adapter also demonstrates the use of a message log on a sender: Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter">
+	<Adapter name="01 RR sending system or app or browser" description="Stop adapter 04 to emulate a failing backend system, select this adapter (01) at Test a PipeLine and send one or more random messages to emulate an RR sending system. This adapter also demonstrates the use of a message log on a sender: Click the small blue envelope at the sender information of this adapter to see the messages sent by this adapter">
 		<Receiver name="01 JavaReceiver">
 			<JavaListener name="01 JavaListener"/>
 		</Receiver>
