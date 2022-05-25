@@ -60,6 +60,8 @@ jobs:
       with:
         method: GET
         url: "http://localhost:8091/iaf/api/server/health"
+    - name: Wait, otherwise we fail with status STARTING
+      run: sleep 10s
     - name: Analyze status
       uses: actions/github-script@v6
       with:
@@ -138,6 +140,9 @@ jobs:
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up
       run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
+    - name: Wait, otherwise we fail with status STARTING
+      run: Start-Sleep -s 10
+      shell: powershell
     - name: Capture status
       id: captureStatus
       uses: fjogeleit/http-request-action@v1
@@ -180,3 +185,4 @@ jobs:
     - name: Show files
       run: tree /A /F
       if: always()
+
