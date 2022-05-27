@@ -50,6 +50,8 @@ jobs:
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
     # From https://github.com/actions/virtual-environments/issues/1187, but the -o option mentioned there did not work
+    - name: Configure another SSL port
+      run: echo "tomcat.secure.port=8443" >> examples/${{ matrix.example }}/frank-runner.properties
     - name: Check network
       run: time ping -c 4 -O -v -w 60 localhost
     - name: Start Frank!Runner ${{ matrix.example }}
@@ -137,7 +139,9 @@ jobs:
       run: rmdir /S /Q download\metadata
 
     - name: Configure another port
-      run: echo "tomcat.port=8091" > examples\${{ matrix.example }}/frank-runner.properties
+      run: echo "tomcat.port=8091" > examples\${{ matrix.example }}\frank-runner.properties
+    - name: Configure another SSL port
+      run: echo "tomcat.secure.port=8443" >> examples\${{ matrix.example }}\frank-runner.properties
     - name: Start Frank!Runner ${{ matrix.example }}
       run: cmd /C .\restart.bat
       working-directory: examples\${{ matrix.example }}
