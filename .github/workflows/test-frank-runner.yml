@@ -57,14 +57,14 @@ jobs:
       working-directory: examples/${{ matrix.example }}
     - name: Wait until Frank!Framework is up
       run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
+    - name: Wait, otherwise we fail with status STARTING
+      run: sleep 10s
     - name: Capture status
       id: captureStatus
       uses: fjogeleit/http-request-action@v1
       with:
         method: GET
         url: "http://localhost:8091/iaf/api/server/health"
-    - name: Wait, otherwise we fail with status STARTING
-      run: sleep 10s
     - name: Analyze status
       uses: actions/github-script@v6
       with:
