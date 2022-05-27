@@ -49,9 +49,9 @@ jobs:
 
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples/${{ matrix.example }}/frank-runner.properties
-    # From https://github.com/actions/virtual-environments/issues/1187
+    # From https://github.com/actions/virtual-environments/issues/1187, but the -o option mentioned there did not work
     - name: Check network
-      run: time ping -o localhost
+      run: time ping -O -v -w 60 localhost
     - name: Start Frank!Runner ${{ matrix.example }}
       run: bash ./restart.sh &
       working-directory: examples/${{ matrix.example }}
