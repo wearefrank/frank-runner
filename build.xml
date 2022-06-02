@@ -181,14 +181,14 @@
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
 		<echo file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
-		<property name="frankflow.version" value="${frankflow.metadata.versioning.release}" if:set="frankflow.metadata.versioning.release"/>
+		<property name="frankflow.version" value="${frankflow.metadata.versioning.latest}" if:set="frankflow.metadata.versioning.latest"/>
 
 		<property name="ff.version" value="7.7"/>
 		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
-		<property name="frankflow.version" value="2.20.4"/>
+		<property name="frankflow.version" value="2.23.3-20220602.170008"/>
 		<property name="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"/>
 		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
 		<property name="frankflow.dir" value="${tomcat.dir}/webapps/frank-flow"/>
