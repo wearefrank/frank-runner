@@ -34,9 +34,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-ZIP=apache-maven-3.6.3-bin.tar.gz
-URL=https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-DIR=build/apache-maven-3.6.3
+ZIP=apache-maven-3.8.4-bin.tar.gz
+URL=https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+DIR=build/apache-maven-3.8.4
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	echo In case of errors ${DOWNLOAD_HELP}
@@ -62,4 +62,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
 	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
 fi
-"${FR_DIR}build/apache-maven-3.6.3/bin/mvn" "$@"
+"${FR_DIR}build/apache-maven-3.8.4/bin/mvn" "$@"

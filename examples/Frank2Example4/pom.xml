@@ -14,35 +14,25 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>ibis-adapterframework-webapp</artifactId>
-			<version>[7.7-20210726.162851,)</version>
+			<version>[7.8-20220426.180610,)</version>
 			<!--
-			Keep this version and the frank-flow version as high as possible to prevent a lot of pom version's being
-			downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as it
-			starts with an empty local repository on every new run
+			Keep this version as high as possible or use a fixed version like 7.7 to prevent a lot of pom version's
+			being downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as
+			it starts with an empty local repository on every new run (unless configured to cache the Maven repository)
 			-->
 			<type>war</type>
 		</dependency>
 		<!--
-		Adding core jar can prevent double jars when the versions of Frank!Flow's dependencies are different than the
-		same dependencies in Frank!Framework. When core jar is added Maven will only select the version as specified
-		by the core jar (the webapp doesn't have this effect as it is of type war and is only used as an overlay)
+		Adding core jar can prevent double jars when you add other dependencies to this pom.xml that have dependencies
+		which are different than the same dependencies in Frank!Framework. When core jar is added Maven will compare
+		the versions with the versions specified by the core jar (the webapp doesn't have this effect as it is of type
+		war which is only used as an overlay)
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>ibis-adapterframework-core</artifactId>
 			<version>[7.6,)</version>
 		</dependency>
 		-->
-		<dependency>
-			<groupId>org.ibissource</groupId>
-			<artifactId>frank-flow</artifactId>
-			<version>[2.0.2-SNAPSHOT,)</version>
-			<!--
-			When you have a local clone of Frank!Flow that has built a SNAPSHOT of the latest Frank!Flow version to
-			your local repo this local SNAPSHOT will be used instead of the latest version from Nexus. This is probably
-			what you are doing when you are a Frank!Flow (backend) developer. As a Frank!Flow (frontend) you probably
-			also want to set frank-flow.frontend.path in build.xml (see build.xml for more info)
-			 -->
-		</dependency>
 	</dependencies>
 
 	<repositories>

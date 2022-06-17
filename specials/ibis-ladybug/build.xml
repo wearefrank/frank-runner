@@ -81,6 +81,7 @@
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
 		<exec executable="${mvn.exe}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+			<env key="PATH" path="${java.library.path}:${git.path}" if:set="git.path" unless:true="${maven.skip.copyright}"/>
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
@@ -88,6 +89,7 @@
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
+			<arg value="-Dmaven.skip.copyright=true" if:true="${maven.skip.copyright}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>

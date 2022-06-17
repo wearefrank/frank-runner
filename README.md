@@ -1,11 +1,14 @@
 # Frank!Runner
 
-This project will help you run your Frank configurations with Tomcat.
+This project will help you run the
+[Frank!Framework](https://frankframework.org/) and the
+[Frank!Flow](https://github.com/ibissource/frank-flow#frankflow) to develop
+your [Frank! configurations](https://frank-manual.readthedocs.io/en/latest/).
 
-Add [a small build.xml](#small-buildxml-for-every-project) to your project and
-run it using a [small restart.bat](#small-restartbat-for-every-project) or
-[small restart.sh](#small-restartsh-for-every-project) or run it using
-[VSCode](#vscode) or [Eclipse](#eclipse).
+Add a [small build.xml](#small-buildxml-for-every-project) to your project and
+run it using a [small restart.bat](#small-restartbat-for-every-project) /
+[.sh](#small-restartsh-for-every-project), [VSCode](#vscode) or
+[Eclipse](#eclipse).
 
 
 # Contents
@@ -21,6 +24,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) or
 - [Other properties and software versions](#other-properties-and-software-versions)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
+- [Web development](#web-development)
 - [Root CA certificates](#root-ca-certificates)
 - [Eclipse](#eclipse)
 - [VSCode](#vscode)
@@ -48,13 +52,17 @@ and/or need to download files from your organization's internal repository
 
 When Tomcat has started by running a Frank!Runner
 [build.xml](#small-buildxml-for-every-project) you can browse to the following
-address:
+addresses:
 
 http://localhost
 
-Or use the secure port:
+http://localhost/frank-flow
+
+The secure port is also enabled:
 
 https://localhost
+
+https://localhost/frank-flow
 
 ## Small build.xml for every project
 
@@ -149,15 +157,10 @@ https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages
 
 ## Frank2Example4
 
-Example usage of Frank!Flow and Maven. In Frank2Example4 the Frank!Flow can be
-found at the top of the Frank!Console menu. For information about the
-Frank!Flow go to:
-
-https://github.com/ibissource/frank-flow#frankflow
-
-Better example Frank! configuration files for Frank2Example4 to demonstrate
-and / or test Frank!Flow are appreciated. Please create a pull request, an
-issue or send an email with your improvements.
+Example usage of Maven, custom views and a very small web application. See the
+custom menu items at top of the Frank!Console menu. Better example Frank!
+configuration or web application files are appreciated. Please create a pull
+request, an issue or send an email with your improvements.
 
 ## Frank2Example5
 
@@ -594,6 +597,15 @@ lib.webapp.dir=lib/webapp
 All jars added to lib/server are copied to the Tomcat lib folder. All jars added
 to lib/webapp are copied to the WEB-INF/lib containing the Frank!Framework jar
 files and dependencies.
+
+
+# Web development
+
+In case you want to develop and package a web application with your Frank! it
+is recommended to setup your project as a Maven project as it will allow you to
+edit the web application files in src/main/webapp and see the changes in your
+browser without the need to restart your Frank!. A small example can be found
+in [Frank2Example4](#frank2example4).
 
 
 # Root CA certificates

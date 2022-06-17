@@ -25,27 +25,27 @@ if not exist "%~dp0build\jdk8u292-b10\" (
 	)
 	move "%~dp0build\tmp\build\jdk8u292-b10" "%~dp0build\jdk8u292-b10"
 )
-set DOWNLOAD_HELP=download https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\apache-maven-3.6.3-bin.zip" (
+set DOWNLOAD_HELP=download https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\apache-maven-3.8.4-bin.zip" (
 	echo In case of errors %DOWNLOAD_HELP%
-	curl -f -o "%~dp0download\apache-maven-3.6.3-bin.zip.tmp" -L https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
+	curl -f -o "%~dp0download\apache-maven-3.8.4-bin.zip.tmp" -L https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip
 	if !errorlevel! neq 0 (
 		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
-	move "%~dp0download\apache-maven-3.6.3-bin.zip.tmp" "%~dp0download\apache-maven-3.6.3-bin.zip"
+	move "%~dp0download\apache-maven-3.8.4-bin.zip.tmp" "%~dp0download\apache-maven-3.8.4-bin.zip"
 )
-if not exist "%~dp0build\apache-maven-3.6.3\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-maven-3.6.3-bin.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\apache-maven-3.8.4\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-maven-3.8.4-bin.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo Please %DOWNLOAD_HELP%
 		goto error
 	)
-	move "%~dp0build\tmp\build\apache-maven-3.6.3" "%~dp0build\apache-maven-3.6.3"
+	move "%~dp0build\tmp\build\apache-maven-3.8.4" "%~dp0build\apache-maven-3.8.4"
 )
 endlocal
 set JAVA_HOME=%~dp0build\jdk8u292-b10
-call "%~dp0build\apache-maven-3.6.3\bin\mvn.cmd" %*
+call "%~dp0build\apache-maven-3.8.4\bin\mvn.cmd" %*
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
