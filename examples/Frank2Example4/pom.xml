@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>org.ibissource</groupId>
 			<artifactId>ibis-adapterframework-webapp</artifactId>
-			<version>[7.8-20220426.180610,)</version>
+			<version>[7.8-20220624.101938,)</version>
 			<!--
 			Keep this version as high as possible or use a fixed version like 7.7 to prevent a lot of pom version's
 			being downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as
