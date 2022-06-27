@@ -54,6 +54,9 @@
 				onlyIfSessionKey="receivedRootElement"
 				onlyIfValue="Envelope"
 			/>
+			<Exits>
+				<Exit name="READY" state="SUCCESS" flow:x="1300" flow:y="1000"/>
+			</Exits>
 			<XsltPipe
 				name="Remove namespaces"
 				removeNamespaces="true"
