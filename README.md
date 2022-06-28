@@ -149,7 +149,7 @@ Some more Hello Wold adapters. These use the normal classpath. This example is n
 Example usage of message log, error store, message store sender and message
 store listener. Description attributes have been added to the adapters which
 can be read from the console. This will explain how to test and use the
-adapters to be able to understand how the to e.g. resend messages.
+adapters to be able to understand how to e.g. resend messages.
 
 This example is referenced by the Frank!Manual at the following location:
 
@@ -157,10 +157,14 @@ https://frank-manual.readthedocs.io/en/latest/operator/managingProcessedMessages
 
 ## Frank2Example4
 
-Example usage of Maven, custom views and a very small web application. See the
+Example usage of Maven, custom views, a very small web application and the Frank!Flow. See the
 custom menu items at top of the Frank!Console menu. Better example Frank!
 configuration or web application files are appreciated. Please create a pull
 request, an issue or send an email with your improvements.
+
+This example is referenced by the Frank!Manual at the following location:
+
+https://frank-manual.readthedocs.io/en/latest/advancedDevelopment/deployment/usingFrankRunner.html
 
 ## Frank2Example5
 
