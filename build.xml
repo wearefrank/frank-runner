@@ -188,7 +188,7 @@
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
-		<property name="frankflow.version" value="2.23.3-20220602.170008"/>
+		<property name="frankflow.version" value="2.24.0-20220701.205223"/>
 		<property name="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"/>
 		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
 		<property name="frankflow.dir" value="${tomcat.dir}/webapps/frank-flow"/>
