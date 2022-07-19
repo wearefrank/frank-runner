@@ -20,6 +20,23 @@
 # Set to string value "lf"
 #   This setting forces Git to normalize line endings to LF on checkin and prevents conversion to CRLF when the file is checked out.
 
+# Git config
+# When .gitattributes isn't used the core.autocrlf setting comes into play. The
+# Git install wizard will present the following radio buttons during
+# installation:
+# - Checkout Windows-style, commit Unix-style line endings
+#     Git will convert LF to CRLF when checking out text files. When committing
+#     text files, CRLF will be converted to LF. For cross-platform projects,
+#     this is the recommended setting on Windows ("core.autocrlf" is set to "true").
+# - Checkout as-is, commit Unix-style line endings
+#     Git will not perform any conversion when checking out text files. When
+#     committing text files, CRLF will be converted to LF. For cross-platform projects,
+#     this is the recommended setting on Unix ("core.autocrlf" is set to "input").
+# - Checkout as-is, commit as-is
+#     Git will not perform any conversions when checking out or committing
+#     text files. Choosing this option is not recommended for cross-platform
+#     projects ("core.autocrlf" is set to "false").
+
 # Legacy:
 # Older Git versions didn't auto detect which files are text for checkhout so
 # you needed to specify the file types for checkhout but this has been fixed.
