@@ -332,6 +332,7 @@ war/pom.xml (see Frank2Example5 also):
       |  |  |     |--testtool
       |  |  |        |-...
       |  |  |--build.xml
+      |  |  |--pom.xml
       |  |  |--restart.bat
       |  |  |--restart.sh
       |  |  |--...
