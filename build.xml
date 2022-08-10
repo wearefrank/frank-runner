@@ -14,6 +14,8 @@
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
+		<available property="application.war.pom.xml.available" file="${projects.dir}/${project.dir}/application/war/pom.xml"/>
+		<property name="war.dir" value="application/war" if:set="application.war.pom.xml.available"/>
 		<property name="war.dir" value="war"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
@@ -23,7 +25,7 @@
 		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
 		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
-		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/war" if:set="war.pom.xml.available"/>
+		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/${war.dir}" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
@@ -246,12 +248,14 @@
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
-		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/>
-		<property name="configurations.dirset.includes" value="${project.dir}/${configurations.dir}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*" if:set="war.pom.xml.available"/>
-		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
+		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
+		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*,${project.dir}/configurations/*"/>
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
 		<pathconvert property="configurations.dirs" refid="configurations.dirs.id" pathsep="|"/>
 		<pathconvert property="configurations.dirs.flat" refid="configurations.dirs.id" pathsep="|"><flattenmapper/></pathconvert>
+		<dirset id="configurations.base.path.dirs.id" dir="${projects.dir}/${project.dir}" includes="configurations/*/adapters"/>
+		<pathconvert property="configurations.base.path.flat" refid="configurations.base.path.dirs.id" setonempty="false"><flattenmapper/></pathconvert>
+		<condition property="configurations.base.path" value="adapters"><isset property="configurations.base.path.flat"/></condition>
 		<scriptdef language="javascript" name="configurationsproperties">
 			<attribute name="name"/>
 			<attribute name="configurationsdirabs"/>
@@ -261,6 +265,7 @@
 			<attribute name="configurationsdirs"/>
 			<attribute name="configurationsdirsflat"/>
 			<attribute name="classloadertype"/>
+			<attribute name="basepath"/>
 			var configurationsDirAbs = attributes.get("configurationsdirabs");
 			var configurationNameDefault = attributes.get("configurationnamedefault");
 			var configurationsNames = attributes.get("configurationsnames");
@@ -268,6 +273,7 @@
 			var configurationsDirs = attributes.get("configurationsdirs").split('|');
 			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
 			var classLoaderType = attributes.get("classloadertype");
+			var basePath = attributes.get("basepath");
 			var value = '';
 			value += '\n# Set configurations.directory based on Frank!Runner properties';
 			value += '\nconfigurations.directory=' + configurationsDirAbs.replace(/\\/g, "\\\\");
@@ -297,25 +303,27 @@
 				}
 			}
 			if (configurationsDirsFlat.toString().length() > 0) {
+				if (basePath == '${configurations.base.path}') basePath = '/'; // when set to empty string F!F will use default basePath (which is the configuration name)
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
 					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.directory=' + configurationsDirs[i].substring(0, configurationsDirs[i].length() - configurationsDirsFlat[i].length() - 1).replace(/\\/g, "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.directory=' + configurationsDirs[i].replace(/\\/g, "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.basePath=' + basePath;
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
-		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationnamedefault="${configuration.name.default}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}"/>
+		<configurationsproperties name="configurations.properties" configurationsdirabs="${configurations.dir.abs}" configurationnamedefault="${configuration.name.default}" configurationsnames="${configurations.names}" configurationsnamesds="${ds.properties.configurations.names}" configurationsdirs="${configurations.dirs}" configurationsdirsflat="${configurations.dirs.flat}" classloadertype="${classloader.type}" basepath="${configurations.base.path}"/>
 
 		<property name="projects.dir.abs" location="${projects.dir}"/>
+		<condition property="test.testtool.prefix" value="/" else="src/"><equals arg1="${configurations.base.path}" arg2="adapters"/></condition>
 		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}_${sub.project}/${tests.dir}" relative="true" if:set="sub.project"/>
-		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${modules.dir}/${module.dir}/src/test/testtool" relative="true" if:set="module.dir"/>
+		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${modules.dir}/${module.dir}/${test.testtool.prefix}test/testtool" relative="true" if:set="module.dir"/>
 		<property name="scenariosroot.default" basedir="${projects.dir}" location="${projects.dir}/${project.dir}/${tests.dir}" relative="true"/>
 		<property name="tests.dirset.dir" value="${projects.dir}"/>
 		<property name="tests.dir.abs" location="${tests.dirset.dir}/${project.dir}/${tests.dir}"/>
-		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/>
-		<property name="tests.dirset.includes" value="${project.dir}/${tests.dir},${project.dir}_*/src/test/testtool,${project.dir}/configurations/*/src/test/testtool" if:set="war.pom.xml.available"/>
-		<property name="tests.dirset.includes" value="${tests.dir.rel}"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
+		<property name="tests.dir.rel" basedir="${tests.dirset.dir}" value="${tests.dir.abs}" relative="true"/><!-- the use of tests.dir.rel makes it possible to use ../.. in tests.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
+		<property name="tests.dirset.includes" value="${tests.dir.rel},${project.dir}_*/src/test/testtool,${project.dir}/configurations/*/src/test/testtool,${project.dir}/configurations/*/test/testtool"/>
 		<dirset id="tests.dirs.id" dir="${tests.dirset.dir}" includes="${tests.dirset.includes}"/>
 		<pathconvert property="tests.dirs" refid="tests.dirs.id" pathsep="|"/>
 		<scriptdef language="javascript" name="testsproperties">
@@ -535,20 +543,23 @@
 		<available property="update.config.xsd.and.available" file="build/frankdoc/FrankConfig-strict.xsd" if:true="${update.config.xsd}"/>
 		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd.and.available}"/>
 		<scriptdef language="javascript" name="multicopyconfigxsd"><!-- configs can be divided over serveral modules/projects, hence a copy to configurations.dir only is not enough) -->
-			<attribute name="dirs"/>
-			var dirs = attributes.get("dirs").split('|');
-			for (var i = 0; i &lt; dirs.length; i++) {
-				if (dirs[i].length > 0) {
+			<attribute name="configurationsdirs"/>
+			<attribute name="basepath"/>
+			var configurationsDirs = attributes.get("configurationsdirs").split('|'); // paths that include a specific config name at the end
+			var configurationsDir = "/.."; // go one up to reach the configurations.dir holding one or more specific configs
+			if (attributes.get("basepath") == 'adapters') configurationsDir = '/'; // keep reference to xsd in config xml working with ../FrankConfig.xsd like with other setups and rutime deployments (otherwise with the extra adapters ../../FrankConfig.xsd would be needed to reach the configurations.dir) 
+			for (var i = 0; i &lt; configurationsDirs.length; i++) {
+				if (configurationsDirs[i].length > 0) {
 					var task = project.createTask("antcall");
 					task.setTarget("copy.config.xsd");
 					var param = task.createParam();
 					param.setName("dir");
-					param.setValue(dirs[i] + "/..");
+					param.setValue(configurationsDirs[i] + configurationsDir);
 					task.perform();
 				}
 			}
 		</scriptdef>
-		<multicopyconfigxsd dirs="${configurations.dirs}" if:true="${update.config.xsd}"/>
+		<multicopyconfigxsd configurationsdirs="${configurations.dirs}" basepath="${configurations.base.path}" if:true="${update.config.xsd}"/>
 		<antcall target="copy.config.xsd" if:true="${update.config.xsd}"><param name="dir" value="${projects.dir}/${project.dir}/${classes.dir}/.."/><param name="dir2check" value="${projects.dir}/${project.dir}/${classes.dir}"/></antcall>
 		<dirset id="project.dirs.id" dir="${configurations.dirset.dir}" includes="${project.dir},${project.dir}_*" if:true="${update.config.xsd.and.available}"/>
 		<pathconvert property="project.dirs" refid="project.dirs.id" pathsep="|" if:true="${update.config.xsd.and.available}"/>
@@ -938,6 +949,8 @@ fi</echo><!-- When a proxy replaces the content of the zip with an html page say
 		<echo message="modules.dir: ${modules.dir}" if:set="debug.true"/>
 		<echo message="module.dir: ${module.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
+		<echo message="war.dir: ${war.dir}" if:set="debug.true"/>
+		<echo message="application.war.pom.xml.available: ${application.war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>

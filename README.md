@@ -19,6 +19,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
 - [Module per config](#module-per-config)
+- [Module per config flattened](#module-per-config-flattened)
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
@@ -238,8 +239,7 @@ to use them can be found in the
 
 In case your application comprises several Frank!Configurations and you would
 like to have a project per configuration (e.g. to give each configuration it's
-own CI/CD pipeline) the following setup is possible and is automatically
-detected by the Frank!Runner based on the presence of the war/pom.xml:
+own CI/CD pipeline) the following setup is possible:
 
 ```
 |--projects
@@ -312,9 +312,8 @@ This way every (configuration) project can be started and tested by it's own.
 # Module per config
 
 In case your application comprises several Frank!Configurations and you would
-like to have a Maven module per configuration the following setup is possible
-and is automatically detected by the Frank!Runner based on the presence of the
-war/pom.xml (see Frank2Example5 also):
+like to have a Maven module per configuration you can setup your project as
+follows:
 
 ```
 |--projects
@@ -363,24 +362,26 @@ war/pom.xml (see Frank2Example5 also):
       |--restart.sh
 ```
 
+The ear and war folders are optional and can also be placed inside a folder
+named application that is on the same level as folder configurations.
+
 The build.xml files for the modules need to have to following content (see
 section [Installation](#installation) for the content of the build.xml that
-should be added to the root of the project) (you can rename target restart to
+can be added to the root of the project) (you can rename target restart to
 restart-&lt;projectname&gt;-&lt;modulename&gt; to have better overview on the
 Last Tasks list of the Task Explorer):
 
 ```
 <project default="restart">
 	<target name="restart">
-		<basename property="project.dir" file="${basedir}"/>
+		<basename property="project.dir" file="${basedir}/../.."/>
 		<basename property="module.dir" file="${basedir}"/>
-		<condition property="exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
-		<condition property="arg" value="../../restart.sh" else=""><os family="unix"/></condition>
+		<condition property="exe" value="../../../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="arg" value="../../../frank-runner/restart.sh" else=""><os family="unix"/></condition>
 		<exec executable="${exe}" vmlauncher="false" failonerror="true">
 			<arg value="${arg}"/>
-			<arg value="-Dprojects.dir=${basedir}/.."/>
 			<arg value="-Dproject.dir=${project.dir}"/>
-			<arg value="-Dmodule.dir=&quot;${module.dir}&quot;"/>
+			<arg value="-Dmodule.dir=${module.dir}"/>
 		</exec>
 	</target>
 </project>
@@ -400,6 +401,48 @@ configurations.names is not specified and defaults to only the configuration of
 one module).
 
 See Frank2Example5 for example pom.xml files for the modules and the parent.
+
+
+# Module per config flattened
+
+When your modules contain an adapters folder this is automatically detected by
+the Frank!Runner and the following setup is then expected (with the Maven
+standard directory structure being flattened):
+
+```
+|--projects
+   |--frank-runner
+   |--frank2application
+      |--application
+      |  |--...
+      |--configurations
+      |  |--Example1
+      |  |  |--adaters
+      |  |  |  |--Configuration.xml
+      |  |  |  |--...
+      |  |  |--test
+      |  |  |  |-...
+      |  |  |--build.xml
+      |  |  |--pom.xml
+      |  |  |--restart.bat
+      |  |  |--restart.sh
+      |  |  |--...
+      |  |--Example2
+      |  |  |--...
+      |  |--...
+      |--build.xml
+      |--pom.xml
+      |--restart.bat
+      |--restart.sh
+```
+
+Please be aware that the pom.xml files for the configurations need to tell
+Maven to package the files from folder adapters instead of from the Maven
+default folder src/main/resources. This can be configured in a parent pom to
+configure it for all modules in the same file.
+
+See [Module per config](#module-per-config) for information on how to start the
+modules and for more information about the application, ear and war folder.
 
 
 
