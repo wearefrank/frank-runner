@@ -11,8 +11,9 @@ ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
 URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
 DIR=build/jdk8u292-b10
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=${ZIP/linux/mac}
-	URL=${URL/linux/mac}
+	ZIP=OpenJDK8U-jdk_x64_mac_hotspot_8u292b10.tar.gz
+	URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_mac_hotspot_8u292b10.tar.gz
+	DIR=build/jdk8u292-b10/Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
@@ -57,6 +58,10 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
+JDK_DIR=build/jdk8u292-b10
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	JDK_DIR=build/jdk8u292-b10/Contents/Home
+fi
+export JAVA_HOME="${FR_DIR}${JDK_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs "$@"
