@@ -4,8 +4,8 @@ FR_DIR="`pwd`/${BASH_SOURCE%/*}/"
 if [[ ! -d "${FR_DIR}download/" ]]; then
 	mkdir "${FR_DIR}download/"
 fi
-if [[ ! -d "${FR_DIR}build/tmp/build/" ]]; then
-	mkdir -p "${FR_DIR}build/tmp/build"
+if [[ ! -d "${FR_DIR}build/tmp/" ]]; then
+	mkdir -p "${FR_DIR}build/tmp"
 fi
 ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
 URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz
@@ -27,13 +27,15 @@ if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
 fi
 if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp"
 	retVal=$?
 	if [[ $retVal -ne 0 ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
 		exit $retVal
 	fi
-	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
+	DIR_TO_MOVE=${DIR/build\/}
+	DIR_TO_MOVE=${DIR_TO_MOVE/\/*}
+	mv "${FR_DIR}build/tmp/${DIR_TO_MOVE}" "${FR_DIR}build/${DIR_TO_MOVE}"
 fi
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
@@ -50,13 +52,15 @@ if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
 fi
 if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "${FR_DIR}download/${ZIP}" -C "${FR_DIR}build/tmp"
 	retVal=$?
 	if [[ $retVal -ne 0 ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
 		exit $retVal
 	fi
-	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
+	DIR_TO_MOVE=${DIR/build\/}
+	DIR_TO_MOVE=${DIR_TO_MOVE/\/*}
+	mv "${FR_DIR}build/tmp/${DIR_TO_MOVE}" "${FR_DIR}build/${DIR_TO_MOVE}"
 fi
 JDK_DIR=build/jdk8u292-b10
 if [[ "$OSTYPE" == "darwin"* ]]; then

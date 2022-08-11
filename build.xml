@@ -854,8 +854,8 @@ FR_DIR="`pwd`/$${BASH_SOURCE%/*}/"
 if [[ ! -d "$${FR_DIR}download/" ]]; then
 	mkdir "$${FR_DIR}download/"
 fi
-if [[ ! -d "$${FR_DIR}build/tmp/build/" ]]; then
-	mkdir -p "$${FR_DIR}build/tmp/build"
+if [[ ! -d "$${FR_DIR}build/tmp/" ]]; then
+	mkdir -p "$${FR_DIR}build/tmp"
 fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip.lin}"/><param name="zip.mac" value="${jdk.zip.mac}"/><param name="url" value="${jdk.url.lin}"/><param name="url.mac" value="${jdk.url.mac}"/><param name="dir" value="${jdk.dir}"/><param name="dir.mac" value="${jdk.dir.mac}"/></antcall>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
@@ -897,11 +897,11 @@ if not exist "%~dp0download\${zip}" (
 if not exist "%~dp0${dir.windows}\" (
 	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %DOWNLOAD_HELP%
+		echo Please %DOWNLOAD_HELP%<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		goto error
 	)
 	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
-)</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
+)</echo>
 	</target>
 
 	<target name="generate.sh.download.unzip">
@@ -926,14 +926,16 @@ if [[ ! -f "$${FR_DIR}download/$${ZIP}" ]]; then
 	mv "$${FR_DIR}download/$${ZIP}.tmp" "$${FR_DIR}/download/$${ZIP}"
 fi
 if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp"
 	retVal=$$?
 	if [[ $$retVal -ne 0 ]]; then
-		echo "Please $${DOWNLOAD_HELP}"
+		echo "Please $${DOWNLOAD_HELP}"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		exit $$retVal
 	fi
-	mv "$${FR_DIR}build/tmp/$${DIR}" "$${FR_DIR}$${DIR}"
-fi</echo><!-- When a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it, hence an error occurs when unzipping and the user also needs instruction to download manually when unzipping fails -->
+	DIR_TO_MOVE=$${DIR/build\/}<!-- remove build/ -->
+	DIR_TO_MOVE=$${DIR_TO_MOVE/\/*}<!-- remove subdirs e.g. Contents/Home in case of jdk.dir.mac -->
+	mv "$${FR_DIR}build/tmp/$${DIR_TO_MOVE}" "$${FR_DIR}build/$${DIR_TO_MOVE}"
+fi</echo>
 	</target>
 
 	<target name="splash">
