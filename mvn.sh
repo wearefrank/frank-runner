@@ -57,9 +57,5 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}" "${FR_DIR}${DIR}"
 fi
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10/Contents/Home"
-else
-	export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
-fi
+export JAVA_HOME="${FR_DIR}build/jdk8u292-b10"
 "${FR_DIR}build/apache-maven-3.8.4/bin/mvn" "$@"
