@@ -376,12 +376,15 @@
 		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<property name="jdk.untar.fileset.dir" value="${jdk.sub.mac}" if:true="${os.mac}"/>
 		<property name="jdk.untar.fileset.dir" value="."/>
-		<untar src="build/${jdk.tar}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}">
-			<fileset dir="${jdk.untar.fileset.dir}">
+		<untar src="build/${jdk.tar}" dest="${jdk.dir}" unless:set="jdk.dir.available" unless:true="${os.windows}">
+			<patternset>
+				<include name="**/${jdk.sub.mac}/**" if:true="${os.mac}"/>
 				<exclude name="**/demo"/>
 				<exclude name="**/sample"/>
 				<exclude name="**/src.zip"/>
-			</fileset>
+			</patternset>
+			<cutdirsmapper dirs="1" unless:true="${os.mac}"/>
+			<cutdirsmapper dirs="3" if:true="${os.mac}"/>
 		</untar>
 		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
