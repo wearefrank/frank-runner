@@ -392,7 +392,7 @@ configuration of this specific module. It is also possible to start other
 configurations by adding the following:
 
 ```
-	<arg value="-Dconfigurations.names=&quot;${module.name},OtherModuleName,OtherConfigurationName&quot;"/>
+	<arg value="-Dconfigurations.names=&quot;${module.dir},OtherModuleName,OtherConfigurationName&quot;"/>
 ```
 
 When a Configuration.xml is detected in war/src/main/resources it is
