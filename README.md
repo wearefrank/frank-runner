@@ -31,7 +31,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [VSCode](#vscode)
 - [Command line](#command-line)
 - [Scripting](#scripting)
-
+- [Troubleshooting](#troubleshooting)
 
 # Installation
 
@@ -657,12 +657,12 @@ in [Frank2Example4](#frank2example4).
 You may need to add your organistion's Root CA for Ant and Maven to be able to
 download files from behind a Secure Web Gateway like Zscaler and/or to download
 files from your organization's internal repository (e.g. Artifactory). To do so
-simply create a folder cacerts in the frank-runner folder and (re)start a
+simply create a folder `cacerts` in the `frank-runner` folder, put your certificate there and (re)start a
 Frank!Runner build.xml. Frank!Runner will detect added and removed files from
-the cacerts folder and reinstall all files in cacerts in the downloaded and
+the `cacerts` folder and reinstall all files in `cacerts` in the downloaded and
 unzipped JDK used by the Frank!Runner. Also when the Frank!Runner's JDK version
 is changed and a new JDK is downloaded Frank!Runner will install the Root CA's
-in the cacerts folder in the newly downloaded and unzipped JDK.
+in the `cacerts` folder in the newly downloaded and unzipped JDK.
 
 
 # Eclipse
@@ -894,3 +894,7 @@ script. To shutdown Tomcat, call stop:
 ```
 path\to\frank-runner\stop.bat
 ```
+
+# Troubleshooting
+
+If something goes wrong using the Frank!Runner, the issue may be fixed by emptying the `download` and the `build` directory. This data is not refreshed every time the Frank!Runner starts. This behavior is useful to reduce the start-up time of the Frank!Runner, but occasionally the saved data causes trouble.
