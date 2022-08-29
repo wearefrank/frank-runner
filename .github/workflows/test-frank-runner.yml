@@ -21,21 +21,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: build
         key: ${{ runner.os }}-frank-runner-build
         restore-keys: |
           ${{ runner.os }}-frank-runner-build
     - name: Cache Frank!Runner dependencies - download
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: download
         key: ${{ runner.os }}-frank-runner-download
         restore-keys: |
           ${{ runner.os }}-frank-runner-download
     - name: Cache Maven downloads
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository/
         key: ${{ runner.os }}-maven
@@ -112,21 +112,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: build
         key: ${{ runner.os }}-frank-runner-build
         restore-keys: |
           ${{ runner.os }}-frank-runner-build
     - name: Cache Frank!Runner dependencies - download
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: download
         key: ${{ runner.os }}-frank-runner-download
         restore-keys: |
           ${{ runner.os }}-frank-runner-download
     - name: Cache Maven downloads
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository/
         key: ${{ runner.os }}-maven
