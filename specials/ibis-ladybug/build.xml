@@ -31,7 +31,7 @@
 		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
 			<or>
-				<resourcecontains resource="${pom.xml}" substring="&lt;version&gt;${ladybug.pom.xml.project.version}&lt;/version&gt;"/>
+				<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
 				<and>
 					<equals arg1="${test.with.test.webapp}" arg2="false"/>
 					<equals arg1="${test.with.iaf}" arg2="false"/>
