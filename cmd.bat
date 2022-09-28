@@ -44,7 +44,12 @@ if not exist "%~dp0build\apache-ant-1.10.10\" (
 	move "%~dp0build\tmp\build\apache-ant-1.10.10" "%~dp0build\apache-ant-1.10.10"
 )
 endlocal
-set JAVA_HOME=%~dp0build\jdk8u292-b10
+set JDK_8_DIR=%~dp0%build\jdk8u292-b10
+set JDK_11_DIR=%~dp0%build\jdk-11.0.11+9
+if not exist "%JDK_11_DIR%" (
+	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs
+)
+set JAVA_HOME=%JDK_8_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
 set PATH=%~dp0build\jdk8u292-b10\bin;%~dp0build\apache-ant-1.10.10\bin;%~dp0build\apache-maven-3.8.4\bin;%PATH%
 C:\Windows\System32\cmd.exe

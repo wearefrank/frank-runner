@@ -67,43 +67,49 @@
 		<condition property="os.windows"><os family="windows"/></condition>
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
-		<!--
-		Work in progress on JDK 11, to do:
-		- Wait for F!F to support Java 11
-		- Different location of cacerts
-		- Test on Linux and Mac
-		- Fall back to JDK 8 to be able to run older F!F versions?
-		- Remove or change property jdk11
-		- Change jdk.version(.u/b) to major minor patch
-		-->
-		<property name="jdk11" value="false"/>
-		<property name="jdk.version" value="8" unless:true="${jdk11}"/>
-		<property name="jdk.version.u" value="292" unless:true="${jdk11}"/>
-		<property name="jdk.version.b" value="10" unless:true="${jdk11}"/>
-		<property name="jdk.version" value="11"/>
-		<property name="jdk.version.u" value="0"/>
-		<property name="jdk.version.b" value="11"/>
-		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.zip" unless:true="${jdk11}"/>
-		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
-		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_hotspot_${jdk.version}u${jdk.version.u}b${jdk.version.b}.tar" unless:true="${jdk11}"/>
-		<property name="jdk.zip.win" value="OpenJDK${jdk.version}U-jdk_x64_windows_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.zip"/>
-		<property name="jdk.tar.lin" value="OpenJDK${jdk.version}U-jdk_x64_linux_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
-		<property name="jdk.tar.mac" value="OpenJDK${jdk.version}U-jdk_x64_mac_openj9_${jdk.version}.${jdk.version.u}.${jdk.version.b}_9_openj9-0.26.0.tar"/>
-		<property name="jdk.zip.lin" value="${jdk.tar.lin}.gz"/>
-		<property name="jdk.zip.mac" value="${jdk.tar.mac}.gz"/>
-		<property name="jdk.zip" value="${jdk.zip.win}" if:true="${os.windows}"/>
-		<property name="jdk.tar" value="${jdk.tar.lin}" if:true="${os.linux}"/>
-		<property name="jdk.zip" value="${jdk.zip.lin}" if:true="${os.linux}"/>
-		<property name="jdk.tar" value="${jdk.tar.mac}" if:true="${os.mac}"/>
-		<property name="jdk.zip" value="${jdk.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.win}" unless:true="${jdk11}"/>
-		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.lin}" unless:true="${jdk11}"/>
-		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}/${jdk.zip.mac}" unless:true="${jdk11}"/>
-		<property name="jdk.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.win}"/>
-		<property name="jdk.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.lin}"/>
-		<property name="jdk.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.version}-binaries/releases/download/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}%2B9_openj9-0.26.0/${jdk.zip.mac}"/>
-		<property name="jdk.dir" value="build/jdk${jdk.version}u${jdk.version.u}-b${jdk.version.b}" unless:true="${jdk11}"/>
-		<property name="jdk.dir" value="build/jdk-${jdk.version}.${jdk.version.u}.${jdk.version.b}+9"/>
+
+		<property name="jdk.8.version.major" value="8"/>
+		<property name="jdk.8.version.minor" value="292"/>
+		<property name="jdk.8.version.patch" value="10"/>
+		<property name="jdk.8.dir" value="build/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}"/>
+		<property name="jdk.8.zip.win" value="OpenJDK${jdk.8.version.major}U-jdk_x64_windows_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.zip"/>
+		<property name="jdk.8.tar.lin" value="OpenJDK${jdk.8.version.major}U-jdk_x64_linux_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.tar"/>
+		<property name="jdk.8.tar.mac" value="OpenJDK${jdk.8.version.major}U-jdk_x64_mac_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.tar"/>
+		<property name="jdk.8.zip.lin" value="${jdk.8.tar.lin}.gz"/>
+		<property name="jdk.8.zip.mac" value="${jdk.8.tar.mac}.gz"/>
+		<property name="jdk.8.zip" value="${jdk.8.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.8.tar" value="${jdk.8.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.8.zip" value="${jdk.8.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.8.tar" value="${jdk.8.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.8.zip" value="${jdk.8.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.8.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.win}"/>
+		<property name="jdk.8.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.lin}"/>
+		<property name="jdk.8.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.mac}"/>
+		<property name="jdk.11.version.major" value="11"/>
+		<property name="jdk.11.version.minor" value="0"/>
+		<property name="jdk.11.version.patch" value="11"/>
+		<property name="jdk.11.dir" value="build/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}+9"/>
+		<property name="jdk.11.zip.win" value="OpenJDK${jdk.11.version.major}U-jdk_x64_windows_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.zip"/>
+		<property name="jdk.11.tar.lin" value="OpenJDK${jdk.11.version.major}U-jdk_x64_linux_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.11.tar.mac" value="OpenJDK${jdk.11.version.major}U-jdk_x64_mac_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.11.zip.lin" value="${jdk.11.tar.lin}.gz"/>
+		<property name="jdk.11.zip.mac" value="${jdk.11.tar.mac}.gz"/>
+		<property name="jdk.11.zip" value="${jdk.11.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.11.tar" value="${jdk.11.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.11.zip" value="${jdk.11.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.11.tar" value="${jdk.11.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.11.zip" value="${jdk.11.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.11.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.win}"/>
+		<property name="jdk.11.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.lin}"/>
+		<property name="jdk.11.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.mac}"/>
+		<property name="jdk.8" value="true"/><!-- TODO: initialize based on jdk.version -->
+		<property name="jdk.11" value="false"/>
+		<property name="jdk.dir" value="${jdk.8.dir}" if:true="${jdk.8}"/>
+		<property name="jdk.zip" value="${jdk.8.zip}" if:true="${jdk.8}"/>
+		<property name="jdk.tar" value="${jdk.8.tar}" if:true="${jdk.8}"/>
+		<property name="jdk.dir" value="${jdk.11.dir}" if:true="${jdk.11}"/>
+		<property name="jdk.zip" value="${jdk.11.zip}" if:true="${jdk.11}"/>
+		<property name="jdk.tar" value="${jdk.11.tar}" if:true="${jdk.11}"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
@@ -165,7 +171,8 @@
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
 
-		<antcall target="cacerts"/><!-- install cacerts here when jdk is unzipped by bat or sh -->
+		<property name="jdk.8.cacerts.dir" value="jre/lib/security"/>
+		<antcall target="cacerts"><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall><!-- install cacerts here when jdk is unzipped by bat or sh -->
 
 		<property name="update.strategy" value="latest" unless:true="${maven}"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
@@ -196,8 +203,8 @@
 		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
 		<property name="frankflow.dir" value="${tomcat.dir}/webapps/frank-flow"/>
 
-		<available property="jdk.zip.available" file="download/${jdk.zip}"/>
-		<available property="jdk.dir.available" file="${jdk.dir}"/>
+		<available property="jdk.8.zip.available" file="download/${jdk.8.zip}"/>
+		<available property="jdk.11.zip.available" file="download/${jdk.11.zip}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}" if:true="${os.windows}"/>
 		<available property="ant.zip.available" file="download/${ant.gz}" unless:true="${os.windows}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
@@ -348,6 +355,8 @@
 		<testsproperties name="tests.properties" projectsdirabs="${projects.dir.abs}" scenariosrootdefault="${scenariosroot.default}" testsdirs="${tests.dirs}"/>
 
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="jdk.8.dir.windows"><propertyresource name="jdk.8.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -365,30 +374,8 @@
 
 	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
-			<patternset>
-				<exclude name="**/demo"/>
-				<exclude name="**/sample"/>
-				<exclude name="**/src.zip"/>
-			</patternset>
-		</unzip>
-		<mkdir dir="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<property name="jdk.untar.fileset.dir" value="${jdk.sub.mac}" if:true="${os.mac}"/>
-		<property name="jdk.untar.fileset.dir" value="."/>
-		<untar src="build/${jdk.tar}" dest="${jdk.dir}" unless:set="jdk.dir.available" unless:true="${os.windows}">
-			<patternset>
-				<include name="**/${jdk.sub.mac}/**" if:true="${os.mac}"/>
-				<exclude name="**/demo"/>
-				<exclude name="**/sample"/>
-				<exclude name="**/src.zip"/>
-			</patternset>
-			<cutdirsmapper dirs="1" unless:true="${os.mac}"/>
-			<cutdirsmapper dirs="3" if:true="${os.mac}"/>
-		</untar>
-		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<antcall target="cacerts"/>
+		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall>
+		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
 		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -684,10 +671,13 @@
 		<antcall target="run"/>
 	</target>
 
-	<target name="get.java" unless="${jdk.zip.available}">
-		<get src="${jdk.url.win}" dest="download/${jdk.zip}" verbose="on" if:true="${os.windows}"/>
-		<get src="${jdk.url.lin}" dest="download/${jdk.zip}" verbose="on" if:true="${os.linux}"/>
-		<get src="${jdk.url.mac}" dest="download/${jdk.zip}" verbose="on" if:true="${os.mac}"/>
+	<target name="get.java">
+		<get src="${jdk.8.url.win}" dest="download/${jdk.8.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.8.zip.available}"/>
+		<get src="${jdk.8.url.lin}" dest="download/${jdk.8.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.8.zip.available}"/>
+		<get src="${jdk.8.url.mac}" dest="download/${jdk.8.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.8.zip.available}"/>
+		<get src="${jdk.11.url.win}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.11.zip.available}"/>
+		<get src="${jdk.11.url.lin}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.11.zip.available}"/>
+		<get src="${jdk.11.url.mac}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.11.zip.available}"/>
 	</target>
 
 	<target name="get.ant" unless="${ant.zip.available}">
@@ -744,25 +734,54 @@
 		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
 	</target>
 
+	<target name="jdk">
+		<available property="jdk.dir.available" file="${jdk.dir}"/>
+		<unzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
+			<patternset>
+				<exclude name="**/demo"/>
+				<exclude name="**/sample"/>
+				<exclude name="**/src.zip"/>
+			</patternset>
+		</unzip>
+		<mkdir dir="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<gunzip src="download/${jdk.zip}" dest="build" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<property name="jdk.untar.fileset.dir" value="${jdk.sub.mac}" if:true="${os.mac}"/>
+		<property name="jdk.untar.fileset.dir" value="."/>
+		<untar src="build/${jdk.tar}" dest="${jdk.dir}" unless:set="jdk.dir.available" unless:true="${os.windows}">
+			<patternset>
+				<include name="**/${jdk.sub.mac}/**" if:true="${os.mac}"/>
+				<exclude name="**/demo"/>
+				<exclude name="**/sample"/>
+				<exclude name="**/src.zip"/>
+			</patternset>
+			<cutdirsmapper dirs="1" unless:true="${os.mac}"/>
+			<cutdirsmapper dirs="3" if:true="${os.mac}"/>
+		</untar>
+		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<antcall target="cacerts"/>
+	</target>
+
 	<target name="cacerts">
+		<property name="cacerts.dir" value="lib/security"/>
 		<condition property="copy.cacerts">
 			<and>
-				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
-				<not><resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists></not><!-- the copy from cacerts-orig to cacerts later on will make the timestamp of cacerts newer and copied again on next run, hence this condition to prevent that -->
+				<resourceexists><file file="${jdk.dir}/${cacerts.dir}/cacerts"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+				<not><resourceexists><file file="${jdk.dir}/${cacerts.dir}/cacerts-orig"/></resourceexists></not><!-- the copy from cacerts-orig to cacerts later on will make the timestamp of cacerts newer and copied again on next run, hence this condition to prevent that -->
 			</and>
 		</condition>
-		<copy file="${jdk.dir}/jre/lib/security/cacerts" tofile="${jdk.dir}/jre/lib/security/cacerts-orig" if:set="copy.cacerts"/>
+		<copy file="${jdk.dir}/${cacerts.dir}/cacerts" tofile="${jdk.dir}/${cacerts.dir}/cacerts-orig" if:set="copy.cacerts"/>
 		<pathconvert property="cacerts"><fileset dir="." includes="cacerts/*"/><flattenmapper/></pathconvert>
-		<pathconvert property="cacerts.jdk"><fileset dir="." includes="${jdk.dir}/jre/lib/security/cacerts-custom/*"/><flattenmapper/></pathconvert><!-- whole path in includes prevents error when jdk dir not present -->
+		<pathconvert property="cacerts.jdk"><fileset dir="." includes="${jdk.dir}/${cacerts.dir}/cacerts-custom/*"/><flattenmapper/></pathconvert><!-- whole path in includes prevents error when jdk dir not present -->
 		<condition property="cacerts.changed">
 			<and>
 				<not><equals arg1="${cacerts}" arg2="${cacerts.jdk}"/></not>
-				<resourceexists><file file="${jdk.dir}/jre/lib/security/cacerts-orig"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
+				<resourceexists><file file="${jdk.dir}/${cacerts.dir}/cacerts-orig"/></resourceexists><!-- when upgrading jdk, the new jdk folder doesn't exist yet when this target is called from the init target -->
 			</and>
 		</condition>
-		<copy file="${jdk.dir}/jre/lib/security/cacerts-orig" tofile="${jdk.dir}/jre/lib/security/cacerts" overwrite="true" if:set="cacerts.changed"/>
-		<delete dir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"/>
-		<apply executable="${jdk.dir}/jre/bin/keytool" relative="true" vmlauncher="false" failonerror="true" if:set="cacerts.changed">
+		<copy file="${jdk.dir}/${cacerts.dir}/cacerts-orig" tofile="${jdk.dir}/${cacerts.dir}/cacerts" overwrite="true" if:set="cacerts.changed"/>
+		<delete dir="${jdk.dir}/${cacerts.dir}/cacerts-custom" if:set="cacerts.changed"/>
+		<apply executable="${jdk.dir}/bin/keytool" relative="true" vmlauncher="false" failonerror="true" if:set="cacerts.changed">
 			<arg value="-noprompt"/>
 			<arg value="-storepass"/>
 			<arg value="changeit"/>
@@ -770,7 +789,7 @@
 			<arg value="-alias"/>
 			<targetfile/>
 			<arg value="-keystore"/>
-			<arg value="${jdk.dir}/jre/lib/security/cacerts"/>
+			<arg value="${jdk.dir}/${cacerts.dir}/cacerts"/>
 			<arg value="-file"/>
 			<srcfile/>
 			<fileset dir="." includes="cacerts/*"/>
@@ -779,7 +798,7 @@
 				<regexpmapper  from="(.*)\.(.*)" to="\1"/>
 			</chainedmapper>
 		</apply>
-		<copy todir="${jdk.dir}/jre/lib/security/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
+		<copy todir="${jdk.dir}/${cacerts.dir}/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
 	</target>
 
 	<target name="copy.config.xsd">
@@ -814,18 +833,23 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.zip.win}"/><param name="url" value="${jdk.url.win}"/><param name="dir.windows" value="${jdk.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.8.zip.win}"/><param name="url" value="${jdk.8.url.win}"/><param name="dir.windows" value="${jdk.8.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.zip.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
-endlocal
-set JAVA_HOME=%~dp0${jdk.dir.windows}</echo>
+endlocal<!-- without this env.bat doesn't work -->
+set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
+set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
+if not exist "%JDK_11_DIR%" (
+	call "%~dp0${ant.dir.windows}\bin\ant" -emacs
+)
+set JAVA_HOME=%JDK_8_DIR%</echo>
 <echo file="${filename}.bat" append="true" unless:set="mvn">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 <!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
 <echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
-<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 <echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
 <echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
@@ -861,17 +885,22 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.zip.lin}"/><param name="zip.mac" value="${jdk.zip.mac}"/><param name="url" value="${jdk.url.lin}"/><param name="url.mac" value="${jdk.url.mac}"/><param name="dir" value="${jdk.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/></antcall>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.gz}"/><param name="url" value="${maven.gz.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
-export JAVA_HOME="$${FR_DIR}${jdk.dir}"</echo>
+set JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
+set JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
+if [[ ! -d "$${JDK_11_DIR}" ]]; then
+	${ant.dir}/bin/ant" -emacs
+)
+export JAVA_HOME="$${JDK_8_DIR}"</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 <!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
 <echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir=$${JDK_8_DIR} -Dfr.jdk.11.dir=$${JDK_11_DIR} -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
 <echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
 <echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
