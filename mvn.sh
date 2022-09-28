@@ -63,7 +63,7 @@ fi
 set JDK_8_DIR="${FR_DIR}build/jdk8u292-b10"
 set JDK_11_DIR="${FR_DIR}build/jdk-11.0.11+9"
 if [[ ! -d "${JDK_11_DIR}" ]]; then
-	build/apache-ant-1.10.10/bin/ant" -emacs
+	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs
 fi
 export JAVA_HOME="${JDK_8_DIR}"
 "${FR_DIR}build/apache-maven-3.8.4/bin/mvn" "$@"
