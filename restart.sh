@@ -64,7 +64,7 @@ set JDK_8_DIR="${FR_DIR}build/jdk8u292-b10"
 set JDK_11_DIR="${FR_DIR}build/jdk-11.0.11+9"
 if [[ ! -d "${JDK_11_DIR}" ]]; then
 	build/apache-ant-1.10.10/bin/ant" -emacs
-)
+fi
 export JAVA_HOME="${JDK_8_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir=${JDK_8_DIR} -Dfr.jdk.11.dir=${JDK_11_DIR} -emacs -buildfile "${FR_DIR}build.xml" "$@" restart

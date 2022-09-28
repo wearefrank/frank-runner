@@ -893,7 +893,7 @@ set JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 set JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
 	${ant.dir}/bin/ant" -emacs
-)
+fi
 export JAVA_HOME="$${JDK_8_DIR}"</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
