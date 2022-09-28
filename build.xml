@@ -889,8 +889,8 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.gz}"/><param name="url" value="${maven.gz.url}"/><param name="dir" value="${maven.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
-set JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
-set JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
+JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
+JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
 	"$${FR_DIR}${ant.dir}/bin/ant" -emacs
 fi
@@ -900,7 +900,7 @@ export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems wi
 <!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
 <echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir=$${JDK_8_DIR} -Dfr.jdk.11.dir=$${JDK_11_DIR} -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 <echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
 <echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
 <echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
