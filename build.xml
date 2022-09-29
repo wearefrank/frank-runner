@@ -841,7 +841,7 @@ endlocal<!-- without this env.bat doesn't work -->
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 if not exist "%JDK_11_DIR%" (
-	call "%~dp0${ant.dir.windows}\bin\ant" -emacs
+	call "%~dp0${ant.dir.windows}\bin\ant" -emacs -buildfile "%~dp0build.xml"
 )
 set JAVA_HOME=%JDK_8_DIR%</echo>
 <echo file="${filename}.bat" append="true" unless:set="mvn">
@@ -892,7 +892,7 @@ fi</echo>
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
-	"$${FR_DIR}${ant.dir}/bin/ant" -emacs
+	"$${FR_DIR}${ant.dir}/bin/ant" -emacs -buildfile "$${FR_DIR}build.xml"
 fi
 export JAVA_HOME="$${JDK_8_DIR}"</echo>
 <echo file="${filename}.sh" append="true" unless:set="mvn">

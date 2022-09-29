@@ -47,7 +47,7 @@ endlocal
 set JDK_8_DIR=%~dp0%build\jdk8u292-b10
 set JDK_11_DIR=%~dp0%build\jdk-11.0.11+9
 if not exist "%JDK_11_DIR%" (
-	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs
+	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs -buildfile "%~dp0build.xml"
 )
 set JAVA_HOME=%JDK_8_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
