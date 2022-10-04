@@ -838,10 +838,11 @@ if not exist "%~dp0build\tmp\build\" (
 		<echo file="${filename}.bat" append="true">
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}</echo>
-		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
 if not exist "%JDK_11_DIR%" (
 	set RUN_INSTALL=true
-)
+)</echo>
+		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
 if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
 )</echo>
@@ -849,7 +850,7 @@ if not exist "%~dp0${maven.dir.windows}" (
 set JAVA_HOME=%JDK_8_DIR%
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
-		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0${ant.dir.windows}\bin\ant" -emacs -buildfile "%~dp0build.xml" install
 )</echo>
@@ -894,15 +895,16 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"</echo>
-		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
 	RUN_INSTALL="true"
-fi
+fi</echo>
+		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
 if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
@@ -910,7 +912,7 @@ fi</echo>
 export JAVA_HOME="$${JDK_8_DIR}"
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
-		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"$${FR_DIR}${ant.dir}/bin/ant" -emacs -buildfile "$${FR_DIR}build.xml" install
 fi</echo>
