@@ -871,10 +871,7 @@ And on Linux or Mac run:
 source path/to/frank-runner/env.sh
 ```
 
-After this you should be able to run java, ant and mvn in this window. Please
-note that in case you use a Root CA certficate or Maven you have to run another
-Frank!Runner script at least once to install the Root CA certficate in the JDK
-folder and to download Maven.
+After this you should be able to run java, ant and mvn in this window.
 
 
 # Scripting

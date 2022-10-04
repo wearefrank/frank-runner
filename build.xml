@@ -171,8 +171,8 @@
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
 
-		<property name="jdk.8.cacerts.dir" value="jre/lib/security"/>
-		<antcall target="cacerts"><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall><!-- install cacerts here when jdk is unzipped by bat or sh -->
+		<property name="jdk.8.cacerts.dir" value="jre/lib/security"/><!-- default cacerts.dir for cacerts task is lib/security -->
+		<antcall target="cacerts"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
 		<property name="update.strategy" value="latest" unless:true="${maven}"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
@@ -372,7 +372,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="build" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall>
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -460,7 +460,7 @@
 		<chmod dir="${eclipse.dir}/plugins/" includes="**/jre/bin/*" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<copy todir="${eclipse.dir}" file="download/${lombok.jar}" unless:set="eclipse.dir.available" if:true="${eclipse}"/>
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">-javaagent:${lombok.jar}&#13;&#10;</concat>
-		<antcall target="cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149"/></antcall>
+		<antcall target="cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149"/><param name="cacerts.dir" value="jre/lib/security"/></antcall>
 		<!-- winmerge -->
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
@@ -617,7 +617,7 @@
 		</java>
 	</target>
 
-	<target name="start" depends="build">
+	<target name="start" depends="install">
 		<!-- with exec in windows a new window will be opened -->
 		<condition property="use.exec"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<!-- with java in windows no new window will be opened -->
@@ -626,7 +626,7 @@
 		<antcall target="splash"/>
 	</target>
 
-	<target name="run" depends="build">
+	<target name="run" depends="install">
 		<antcall target="splash"/>
 		<echo message=" "/><!-- space instead of empty for eclipse -->
 		<echo message=" "/>
@@ -641,10 +641,10 @@
 		<antcall target="tomcat" if:true="${use.java}"><param name="action" value="start"/></antcall>
 	</target>
 
-	<!-- don't add depends="build" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
+	<!-- don't add depends="install" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
 		<condition property="catalina.bat.present"><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></condition><!-- not present when build.xml is running for the first time or tomcat.version has changed -->
-		<antcall target="build" unless:set="catalina.bat.present"/>
+		<antcall target="install" unless:set="catalina.bat.present"/>
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<condition property="use.exec" if:set="tomcat.running"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running"><equals arg1="${use}" arg2="java"/></condition>
@@ -833,32 +833,38 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.8.zip.win}"/><param name="url" value="${jdk.8.url.win}"/><param name="dir.windows" value="${jdk.8.dir.windows}"/></antcall>
-		<antcall target="generate.bat.download.unzip" unless:set="mvn"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
-		<antcall target="generate.bat.download.unzip" if:set="mvn"><param name="zip" value="${maven.zip}"/><param name="url" value="${maven.zip.url}"/><param name="dir.windows" value="${maven.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.8.zip.win}"/><param name="url" value="${jdk.8.url.win}"/><param name="dir.windows" value="${jdk.8.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
-endlocal<!-- without this env.bat doesn't work -->
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
-set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
+set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}</echo>
+		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
 if not exist "%JDK_11_DIR%" (
-	call "%~dp0${ant.dir.windows}\bin\ant" -emacs -buildfile "%~dp0build.xml" build
+	set RUN_INSTALL=true
 )
-set JAVA_HOME=%JDK_8_DIR%</echo>
-<echo file="${filename}.bat" append="true" unless:set="mvn">
+if not exist "%~dp0${maven.dir.windows}" (
+	set RUN_INSTALL=true
+)</echo>
+		<echo file="${filename}.bat" append="true">
+set JAVA_HOME=%JDK_8_DIR%
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
-<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
-<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
+		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
+		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
+if "%RUN_INSTALL%" == "true" (
+	call "%~dp0${ant.dir.windows}\bin\ant" -emacs -buildfile "%~dp0build.xml" install
+)</echo>
+		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
-<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
-<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
-<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
-<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
-<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> ${filename}</echo>
-<echo file="${filename}.bat" append="true" if:set="env.or.cmd">
+		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
+		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
+		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
+		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> ${filename}</echo>
+		<echo file="${filename}.bat" append="true" if:set="env.or.cmd">
 set PATH=%~dp0${jdk.dir.windows}\bin;%~dp0${ant.dir.windows}\bin;%~dp0${maven.dir.windows}\bin;%PATH%</echo>
-<echo file="${filename}.bat" append="true" if:set="cmd">
-C:\Windows\System32\cmd.exe</echo><!-- complete path to prevent cmd.bar from recursively call itself -->
-<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
+		<echo file="${filename}.bat" append="true" if:set="cmd">
+C:\Windows\System32\cmd.exe</echo><!-- complete path to prevent cmd.bar from recursively calling itself -->
+		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
@@ -866,6 +872,9 @@ set arg0=%0
 if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
 exit /b %errorlevel%<!-- this will make failonerror="true" work when the bat file is called from ant with the exec task -->
 :end
+</echo>
+		<echo file="${filename}.bat" append="true" if:set="env">
+endlocal &amp; SET JAVA_HOME=%JAVA_HOME% &amp; SET ANT_HOME=%ANT_HOME% &amp; SET PATH=%PATH%<!-- https://stackoverflow.com/questions/3262287/make-an-environment-variable-survive-endlocal -->
 </echo>
 	</target>
 
@@ -885,27 +894,34 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/></antcall>
-		<antcall target="generate.sh.download.unzip" unless:set="mvn"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
-		<antcall target="generate.sh.download.unzip" if:set="mvn"><param name="zip" value="${maven.gz}"/><param name="url" value="${maven.gz.url}"/><param name="dir" value="${maven.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
-JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
+JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"</echo>
+		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
-	"$${FR_DIR}${ant.dir}/bin/ant" -emacs -buildfile "$${FR_DIR}build.xml" build
+	RUN_INSTALL="true"
 fi
-export JAVA_HOME="$${JDK_8_DIR}"</echo>
-<echo file="${filename}.sh" append="true" unless:set="mvn">
+if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
+	RUN_INSTALL="true"
+fi</echo>
+		<echo file="${filename}.sh" append="true">
+export JAVA_HOME="$${JDK_8_DIR}"
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
-<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
-<echo file="${filename}.sh" append="true" unless:set="env">
+		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
+		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
+if [[ "$RUN_INSTALL" == "true" ]]; then
+	"$${FR_DIR}${ant.dir}/bin/ant" -emacs -buildfile "$${FR_DIR}build.xml" install
+fi</echo>
+		<echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
-<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
-<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
-<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
-<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
-<echo file="${filename}.sh" append="true" if:set="env">
+		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
+		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
+		<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
+		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
+		<echo file="${filename}.sh" append="true" if:set="env">
 export PATH="$${FR_DIR}$${JDK_DIR}/bin:$${FR_DIR}${ant.dir}/bin:$${FR_DIR}${maven.dir}/bin:$${PATH}"
 </echo>
 		<chmod file="${filename}.sh" perm="+x"/>
@@ -929,7 +945,8 @@ if not exist "%~dp0${dir.windows}\" (
 		echo Please %DOWNLOAD_HELP%<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		goto error
 	)
-	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"
+	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"</echo><echo file="${filename}.bat" append="true" if:true="${run.install}">
+	RUN_INSTALL="true"<!-- install cacerts when present --></echo><echo file="${filename}.bat" append="true">
 )</echo>
 	</target>
 
@@ -962,7 +979,8 @@ if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then
 		echo "Please $${DOWNLOAD_HELP}"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		exit $$retVal
 	fi
-	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"
+	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
+	RUN_INSTALL="true"<!-- install cacerts when present --></echo><echo file="${filename}.sh" append="true">
 fi</echo>
 	</target>
 

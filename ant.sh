@@ -63,8 +63,11 @@ fi
 JDK_8_DIR="${FR_DIR}build/jdk8u292-b10"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.11+9"
 if [[ ! -d "${JDK_11_DIR}" ]]; then
-	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" build
+	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_8_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
+if [[ "$RUN_INSTALL" == "true" ]]; then
+	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
+fi
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -emacs "$@"

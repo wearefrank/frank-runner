@@ -35,6 +35,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	RUN_INSTALL="true"
 fi
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
@@ -63,8 +64,14 @@ fi
 JDK_8_DIR="${FR_DIR}build/jdk8u292-b10"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.11+9"
 if [[ ! -d "${JDK_11_DIR}" ]]; then
-	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" build
+	RUN_INSTALL="true"
+fi
+if [[ ! -d "${FR_DIR}build/apache-maven-3.8.4" ]]; then
+	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_8_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
+if [[ "$RUN_INSTALL" == "true" ]]; then
+	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
+fi
 export PATH="${FR_DIR}${JDK_DIR}/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.8.4/bin:${PATH}"
