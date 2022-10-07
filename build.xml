@@ -862,7 +862,7 @@ call "%~dp0</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
 		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> ${filename}</echo>
 		<echo file="${filename}.bat" append="true" if:set="env.or.cmd">
-set PATH=%~dp0${jdk.dir.windows}\bin;%~dp0${ant.dir.windows}\bin;%~dp0${maven.dir.windows}\bin;%PATH%</echo>
+set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0${maven.dir.windows}\bin;%PATH%</echo>
 		<echo file="${filename}.bat" append="true" if:set="cmd">
 C:\Windows\System32\cmd.exe</echo><!-- complete path to prevent cmd.bar from recursively calling itself -->
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
@@ -924,7 +924,7 @@ fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
 		<echo file="${filename}.sh" append="true" if:set="env">
-export PATH="$${FR_DIR}$${JDK_DIR}/bin:$${FR_DIR}${ant.dir}/bin:$${FR_DIR}${maven.dir}/bin:$${PATH}"
+export PATH="$${JAVA_HOME}/bin:$${ANT_HOME}/bin:$${FR_DIR}${maven.dir}/bin:$${PATH}"
 </echo>
 		<chmod file="${filename}.sh" perm="+x"/>
 	</target>

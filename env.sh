@@ -74,4 +74,4 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-export PATH="${FR_DIR}${JDK_DIR}/bin:${FR_DIR}build/apache-ant-1.10.10/bin:${FR_DIR}build/apache-maven-3.8.4/bin:${PATH}"
+export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.8.4/bin:${PATH}"

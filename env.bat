@@ -57,5 +57,5 @@ set ANT_HOME=%~dp0build\apache-ant-1.10.10
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs -buildfile "%~dp0build.xml" install
 )
-set PATH=%~dp0build\jdk8u292-b10\bin;%~dp0build\apache-ant-1.10.10\bin;%~dp0build\apache-maven-3.8.4\bin;%PATH%
+set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0build\apache-maven-3.8.4\bin;%PATH%
 endlocal & SET JAVA_HOME=%JAVA_HOME% & SET ANT_HOME=%ANT_HOME% & SET PATH=%PATH%
