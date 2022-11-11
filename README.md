@@ -19,7 +19,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Project structure and customisation](#project-structure-and-customisation)
 - [Project per config](#project-per-config)
 - [Module per config](#module-per-config)
-- [Module per config flattened](#module-per-config-flattened)
+- [Module per config flattened (a.k.a. monorepo)](#module-per-config-flattened-(aka-monorepo))
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
