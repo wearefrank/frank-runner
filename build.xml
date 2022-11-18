@@ -85,6 +85,7 @@
 		<property name="jdk.8.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.win}"/>
 		<property name="jdk.8.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.lin}"/>
 		<property name="jdk.8.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.mac}"/>
+
 		<property name="jdk.11.version.major" value="11"/>
 		<property name="jdk.11.version.minor" value="0"/>
 		<property name="jdk.11.version.patch" value="11"/>
@@ -102,14 +103,38 @@
 		<property name="jdk.11.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.win}"/>
 		<property name="jdk.11.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.lin}"/>
 		<property name="jdk.11.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.mac}"/>
+
+		<property name="jdk.17.version.major" value="17"/>
+		<property name="jdk.17.version.minor" value="0"/>
+		<property name="jdk.17.version.patch" value="5"/>
+		<property name="jdk.17.version.patch.sub" value="8"/>
+		<property name="jdk.17.dir" value="build/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.patch.sub}"/>
+		<property name="jdk.17.zip.win" value="OpenJDK${jdk.17.version.major}U-jdk_x64_windows_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.zip"/>
+		<property name="jdk.17.tar.lin" value="OpenJDK${jdk.17.version.major}U-jdk_x64_linux_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.tar"/>
+		<property name="jdk.17.tar.mac" value="OpenJDK${jdk.17.version.major}U-jdk_x64_mac_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.tar"/>
+		<property name="jdk.17.zip.lin" value="${jdk.17.tar.lin}.gz"/>
+		<property name="jdk.17.zip.mac" value="${jdk.17.tar.mac}.gz"/>
+		<property name="jdk.17.zip" value="${jdk.17.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.17.tar" value="${jdk.17.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.17.zip" value="${jdk.17.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.17.tar" value="${jdk.17.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.17.zip" value="${jdk.17.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.17.url.win" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.win}"/>
+		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.lin}"/>
+		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.mac}"/>
+
 		<property name="jdk.8" value="true"/><!-- TODO: initialize based on jdk.version -->
 		<property name="jdk.11" value="false"/>
+		<property name="jdk.17" value="false"/>
 		<property name="jdk.dir" value="${jdk.8.dir}" if:true="${jdk.8}"/>
 		<property name="jdk.zip" value="${jdk.8.zip}" if:true="${jdk.8}"/>
 		<property name="jdk.tar" value="${jdk.8.tar}" if:true="${jdk.8}"/>
 		<property name="jdk.dir" value="${jdk.11.dir}" if:true="${jdk.11}"/>
 		<property name="jdk.zip" value="${jdk.11.zip}" if:true="${jdk.11}"/>
 		<property name="jdk.tar" value="${jdk.11.tar}" if:true="${jdk.11}"/>
+		<property name="jdk.dir" value="${jdk.17.dir}" if:true="${jdk.17}"/>
+		<property name="jdk.zip" value="${jdk.17.zip}" if:true="${jdk.17}"/>
+		<property name="jdk.tar" value="${jdk.17.tar}" if:true="${jdk.17}"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
@@ -206,6 +231,7 @@
 
 		<available property="jdk.8.zip.available" file="download/${jdk.8.zip}"/>
 		<available property="jdk.11.zip.available" file="download/${jdk.11.zip}"/>
+		<available property="jdk.17.zip.available" file="download/${jdk.17.zip}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}" if:true="${os.windows}"/>
 		<available property="ant.zip.available" file="download/${ant.gz}" unless:true="${os.windows}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
@@ -358,6 +384,7 @@
 		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.8.dir.windows"><propertyresource name="jdk.8.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -377,6 +404,7 @@
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall>
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
+		<antcall target="jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
 		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -680,6 +708,9 @@
 		<get src="${jdk.11.url.win}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.11.zip.available}"/>
 		<get src="${jdk.11.url.lin}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.11.zip.available}"/>
 		<get src="${jdk.11.url.mac}" dest="download/${jdk.11.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.11.zip.available}"/>
+		<get src="${jdk.17.url.win}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.17.zip.available}"/>
+		<get src="${jdk.17.url.lin}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.17.zip.available}"/>
+		<get src="${jdk.17.url.mac}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.17.zip.available}"/>
 	</target>
 
 	<target name="get.ant" unless="${ant.zip.available}">
@@ -839,9 +870,13 @@ if not exist "%~dp0build\tmp\build\" (
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
-set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}</echo>
+set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
+set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}</echo>
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
 if not exist "%JDK_11_DIR%" (
+	set RUN_INSTALL=true
+)
+if not exist "%JDK_17_DIR%" (
 	set RUN_INSTALL=true
 )</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
@@ -858,7 +893,7 @@ if "%RUN_INSTALL%" == "true" (
 )</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
-		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -Dfr.jdk.17.dir=%JDK_17_DIR% -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
@@ -906,9 +941,13 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
-JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"</echo>
+JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
+JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
+	RUN_INSTALL="true"
+fi
+if [[ ! -d "$${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
@@ -925,7 +964,7 @@ if [[ "$RUN_INSTALL" == "true" ]]; then
 fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -Dfr.jdk.17.dir="$${JDK_17_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
