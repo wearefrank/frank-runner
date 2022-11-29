@@ -573,12 +573,10 @@
 				</or>
 			</and>
 		</condition>
-		<condition property="move.config.strict.xsd">
+		<condition property="move.config.strict.xsd"><!-- somewhere in 2022 FrankConfig.xsd was added (before that we needed to use FrankConfig-strict.xsd) -->
 			<and>
 				<istrue value="${update.config.xsd.and.available}"/>
-				<not>
-					<available file="build/frankdoc/FrankConfig.xsd"/>
-				</not>
+				<not><available file="build/frankdoc/FrankConfig.xsd"/></not>
 			</and>
 		</condition>
 		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${move.config.strict.xsd}"/>
