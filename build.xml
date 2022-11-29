@@ -555,15 +555,33 @@
 			</or>
 		</condition>
 		<delete file="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/><!-- prevent available task after unjar to detect xsd from previous ff version when current ff version doesn't have one -->
+		<delete file="build/frankdoc/FrankConfig-strict.xsd" if:true="${update.config.xsd}" />
 		<unjar dest="build/frankdoc" if:true="${update.config.xsd}">
 			<fileset dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"></fileset>
 			<patternset>
 				<include name="xml/xsd/FrankConfig-strict.xsd"/>
+				<include name="xml/xsd/FrankConfig.xsd"/>
 			</patternset>
 			<flattenmapper/>
 		</unjar>
-		<available property="update.config.xsd.and.available" file="build/frankdoc/FrankConfig-strict.xsd" if:true="${update.config.xsd}"/>
-		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd.and.available}"/>
+		<condition property="update.config.xsd.and.available">
+			<and>
+				<istrue value="${update.config.xsd}"/>
+				<or>
+				    <available file="build/frankdoc/FrankConfig.xsd"/>
+				    <available file="build/frankdoc/FrankConfig-strict.xsd"/>
+				</or>
+			</and>
+		</condition>
+		<condition property="move.config.strict.xsd">
+			<and>
+				<istrue value="${update.config.xsd.and.available}"/>
+				<not>
+					<available file="build/frankdoc/FrankConfig.xsd"/>
+				</not>
+			</and>
+		</condition>
+		<move file="build/frankdoc/FrankConfig-strict.xsd" tofile="build/frankdoc/FrankConfig.xsd" if:true="${move.config.strict.xsd}"/>
 		<scriptdef language="javascript" name="multicopyconfigxsd"><!-- configs can be divided over serveral modules/projects, hence a copy to configurations.dir only is not enough) -->
 			<attribute name="configurationsdirs"/>
 			<attribute name="basepath"/>
