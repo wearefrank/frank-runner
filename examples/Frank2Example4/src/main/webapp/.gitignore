@@ -1,5 +1,3 @@
-META-INF/maven
-META-INF/MANIFEST.MF
 /iaf/
 /images/
 /js/
@@ -7,6 +5,7 @@ META-INF/MANIFEST.MF
 /larva/
 /META-INF/maven/
 /META-INF/MANIFEST.MF
+/testtool/
 /WEB-INF/
 /body.css
 /favicon.ico
