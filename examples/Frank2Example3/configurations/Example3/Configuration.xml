@@ -9,8 +9,8 @@
 		</Receiver>
 		<Pipeline firstPipe="Send">
 			<SenderPipe name="Send">
-				<IbisLocalSender javaListener="02 JavaListener"/>
 				<JdbcMessageLog slotId="${instance.name}/TestMessageLog"/>
+				<IbisLocalSender javaListener="02 JavaListener"/>
 			</SenderPipe>
 		</Pipeline>
 	</Adapter>
