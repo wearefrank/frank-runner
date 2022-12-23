@@ -8,6 +8,7 @@
 		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
+		<property name="maven.skip.copyright" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
 		<property name="test.with.test.webapp" value="true"/>
 		<property name="test.with.iaf" value="false"/>
