@@ -15,7 +15,7 @@
 			<!-- This listener is used by the scheduler and IbisLocalSender in adapter HelloWorlds  -->
 			<JavaListener name="HelloWorld"/>
 		</Receiver>
-		<Pipeline firstPipe="HelloWorld">
+		<Pipeline>
 			<ReplacerPipe
 				name="HelloWorld"
 				getInputFromSessionKey="message"

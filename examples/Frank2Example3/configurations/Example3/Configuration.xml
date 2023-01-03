@@ -7,7 +7,7 @@
 		<Receiver name="01 JavaReceiver">
 			<JavaListener name="01 JavaListener"/>
 		</Receiver>
-		<Pipeline firstPipe="Send">
+		<Pipeline>
 			<SenderPipe name="Send">
 				<JdbcMessageLog slotId="${instance.name}/TestMessageLog"/>
 				<IbisLocalSender javaListener="02 JavaListener"/>
@@ -19,7 +19,7 @@
 		<Receiver name="02 JavaReceiver">
 			<JavaListener name="02 JavaListener"/>
 		</Receiver>
-		<Pipeline firstPipe="Send">
+		<Pipeline>
 			<SenderPipe name="Send">
 				<MessageStoreSender
 					slotId="${instance.name}/TestMessageStore"
@@ -42,7 +42,7 @@
 				statusValueInProcess="I"
 			/>
 		</Receiver>
-		<Pipeline firstPipe="Send">
+		<Pipeline>
 			<SenderPipe name="Send">
 				<IbisLocalSender
 					javaListener="04 JavaListener"
@@ -56,7 +56,7 @@
 		<Receiver name="04 JavaReceiver">
 			<JavaListener name="04 JavaListener"/>
 		</Receiver>
-		<Pipeline firstPipe="Echo">
+		<Pipeline>
 			<EchoPipe name="Echo"/>
 		</Pipeline>
 	</Adapter>

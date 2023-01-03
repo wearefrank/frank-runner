@@ -31,7 +31,7 @@
 				flow:y="100"
 			/>
 		</Receiver>
-		<Pipeline firstPipe="Remove namespaces">
+		<Pipeline>
 			<SoapInputValidator
 				name="ValidateInput"
 				schemaLocation="urn:hello-lines HelloLines/xsd/Lines.xsd"
