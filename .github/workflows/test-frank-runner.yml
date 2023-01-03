@@ -136,7 +136,7 @@ jobs:
     - name: Force using the latest F!F version
       if: ${{ github.event.inputs.forceLatestFF }}
       shell: cmd
-      run: rmdir /S /Q download\metadata
+      run: if exist download\metadata rmdir /S /Q download\metadata
 
     - name: Configure another port
       run: echo "tomcat.port=8091" > examples\${{ matrix.example }}\frank-runner.properties
