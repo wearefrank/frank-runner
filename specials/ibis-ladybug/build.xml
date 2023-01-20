@@ -91,6 +91,8 @@
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
 			<arg value="-Dmaven.skip.copyright=true" if:true="${maven.skip.copyright}"/>
+			<arg value="-Dinject.replace.from=nl.nn.testtool"/><!-- Disable replacement of javax.inject and revert replacements of javax.inject possibly done by a previous run -->
+			<arg value="-Dinject.replace.to=javax.inject"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
