@@ -242,19 +242,16 @@
 		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
 		<available property="eclipse.zip.available" file="download/${eclipse.zip}"/>
 		<available property="eclipse.dir.available" file="${eclipse.dir}"/>
-		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
-		<available property="lombok.dir.available" file="${lombok.dir}"/>
 		<available property="winmerge.zip.available" file="download/${winmerge.zip}"/>
 		<available property="winmerge.dir.available" file="${winmerge.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
-		<available property="ff.dir.available" file="${ff.dir}"/>
 		<available property="frankflow.war.available" file="download/${frankflow.war}"/>
-		<available property="frankflow.dir.available" file="${frankflow.dir}"/>
 		<available property="jms.jar.available" file="download/${jms.jar}"/>
 		<available property="h2v1.jar.available" file="download/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
 		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
+		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
 
 		<property name="larva.windiff.command" value="${basedir}/${winmerge.dir}/WinMerge/WinMergeU.exe"/><!-- defined here and not at the beginning of this file where most properties are defined as it depends on ${winmerge.dir} -->
 		<propertyset id="system.properties.set">
@@ -540,6 +537,7 @@
 			<classpath>
 				<fileset dir="${webapp.dir}/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
+				<fileset dir="download"><include name="${lombok.jar}"/></fileset>
 			</classpath>
 		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
