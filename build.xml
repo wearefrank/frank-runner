@@ -984,9 +984,9 @@ fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
 		<echo file="${filename}.sh" append="true" if:set="env">
 export PATH="$${JAVA_HOME}/bin:$${ANT_HOME}/bin:$${FR_DIR}${maven.dir}/bin:$${PATH}"
-echo JAVA  : $${JAVA_HOME}
-echo ANT   : $${ANT_HOME}
-echo MAVEN : $${FR_DIR}${maven.dir}
+echo "JAVA : $${JAVA_HOME}"
+echo "ANT  : $${ANT_HOME}"
+echo "MAVEN: $${FR_DIR}${maven.dir}"
 </echo>
 		<chmod file="${filename}.sh" perm="+x"/>
 	</target>

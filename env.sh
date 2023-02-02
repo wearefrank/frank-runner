@@ -79,8 +79,6 @@ if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
 export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.8.4/bin:${PATH}"
-echo ---------------------------
-echo Java version  : 8.292.10
-echo Ant version   : 1.10.10
-echo Maven version : 3.8.4
-echo ---------------------------
+echo "JAVA : ${JAVA_HOME}"
+echo "ANT  : ${ANT_HOME}"
+echo "MAVEN: ${FR_DIR}build/apache-maven-3.8.4"
