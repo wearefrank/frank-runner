@@ -913,14 +913,13 @@ call "%~dp0</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
 		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> ${filename}</echo>
 		<echo file="${filename}.bat" append="true" if:set="env.or.cmd">
-set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0${maven.dir.windows}\bin;%PATH%
-echo ---------------------------
-echo Java version  : ${jdk.8.version.major}.${jdk.8.version.minor}.${jdk.8.version.patch}
-echo Ant version   : ${ant.version.}
-echo Maven version : ${maven.version}
-echo ---------------------------</echo>
+set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0${maven.dir.windows}\bin;%PATH%</echo>
+		<echo file="${filename}.bat" append="true" if:set="env">
+echo JAVA : %JAVA_HOME%
+echo ANT  : %ANT_HOME%
+echo MAVEN: %~dp0${maven.dir.windows}</echo>
 		<echo file="${filename}.bat" append="true" if:set="cmd">
-C:\Windows\System32\cmd.exe</echo><!-- complete path to prevent cmd.bat from recursively calling itself -->
+C:\Windows\System32\cmd.exe /k "echo JAVA : %JAVA_HOME%&amp; echo ANT  : %ANT_HOME%&amp; echo MAVEN: %~dp0${maven.dir.windows}"</echo><!-- complete path to prevent cmd.bat from recursively calling itself -->
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 if %errorlevel% equ 0 goto end
 :error
@@ -985,11 +984,9 @@ fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> ${filename}</echo>
 		<echo file="${filename}.sh" append="true" if:set="env">
 export PATH="$${JAVA_HOME}/bin:$${ANT_HOME}/bin:$${FR_DIR}${maven.dir}/bin:$${PATH}"
-echo ---------------------------
-echo Java version  : ${jdk.8.version.major}.${jdk.8.version.minor}.${jdk.8.version.patch}
-echo Ant version   : ${ant.version.}
-echo Maven version : ${maven.version}
-echo ---------------------------
+echo JAVA  : $${JAVA_HOME}
+echo ANT   : $${ANT_HOME}
+echo MAVEN : $${FR_DIR}${maven.dir}
 </echo>
 		<chmod file="${filename}.sh" perm="+x"/>
 	</target>
