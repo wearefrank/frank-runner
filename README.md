@@ -113,7 +113,7 @@ project for Linux and Mac:
 
 ```
 #!/bin/bash
-../../ant.sh
+../frank-runner/ant.sh
 ```
 
 ## Customizations of build.xml
