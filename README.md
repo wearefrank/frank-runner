@@ -35,11 +35,15 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 
 # Installation
 
-## Clone or download the Frank!Runner
+## Clone the Frank!Runner
 
-Clone or download this Frank!Runner project into the projects folder that
-contains your Frank project(s) (make the frank-runner folder a sibling of your
-project folder).
+Clone this Frank!Runner project into the projects folder that contains your
+Frank project(s) (make the frank-runner folder a sibling of your project
+folder).
+
+```
+git clone https://github.com/ibissource/frank-runner.git
+```
 
 You can now run Frank!Runner build.xml files in projects that already have them
 (like the example projects in [frank-runner/examples](#examples)).
@@ -64,6 +68,17 @@ The secure port is also enabled:
 https://localhost
 
 https://localhost/frank-flow
+
+## Download the Frank!Runner
+
+It is also possible to download this Frank!Runner project as a ZIP from GitHub
+and unzip it. This might be easier for evaluation purposes but be aware that:
+
+- On Mac an Linux use chmod +x *.sh to be able to run the .sh files
+- Rename frank-runner-master to frank-runner for Frank project to find the
+  Frank!Runner (not needed to run the examples frank-runner/examples)
+- You need to download again to get a newer Frank!Runner version (with git only
+  a git pull is needed update your Frank!Runner to the latest version)
 
 ## Small build.xml for every project
 
