@@ -175,7 +175,7 @@ jobs:
       if: always()
       with:
         name: Windows-${{ matrix.example}}-logs
-        path: build\*\logs\*.log
+        path: build\*\logs
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
       shell: cmd
