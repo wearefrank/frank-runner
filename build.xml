@@ -1170,7 +1170,8 @@ fi</echo>
 					j = jars[i].indexOf('.jar', k);
 				}
 			}
-			if (names.indexOf(name) != -1) {
+			// Ignore annotations-2.18.1.jar and annotations-13.0.jar that have different groupId's
+			if (names.indexOf(name) != -1 &amp;&amp; name != 'annotations') {
 				if (doubleJars.length() == 0) {
 					doubleJars = name;
 				} else {
