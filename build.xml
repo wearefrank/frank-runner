@@ -885,9 +885,9 @@ if not exist "%~dp0build\tmp\build\" (
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.8.zip.win}"/><param name="url" value="${jdk.8.url.win}"/><param name="dir.windows" value="${jdk.8.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
-set JDK_8_DIR="%~dp0%${jdk.8.dir.windows}"
-set JDK_11_DIR="%~dp0%${jdk.11.dir.windows}"
-set JDK_17_DIR="%~dp0%${jdk.17.dir.windows}"</echo>
+set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
+set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
+set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}</echo>
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
 if not exist "%JDK_11_DIR%" (
 	set RUN_INSTALL=true
@@ -997,10 +997,10 @@ echo "MAVEN: $${FR_DIR}${maven.dir}"
 		<echo file="${filename}.bat" append="true">
 set DOWNLOAD_HELP=download ${url} manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\${zip}" (
-	echo In case of errors %DOWNLOAD_HELP%
+	echo "In case of errors %DOWNLOAD_HELP%"
 	curl -f -o "%~dp0download\${zip}.tmp" -L ${url}<!-- -f will set errorlevel and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %DOWNLOAD_HELP%
+		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
 	move "%~dp0download\${zip}.tmp" "%~dp0download\${zip}"
@@ -1008,7 +1008,7 @@ if not exist "%~dp0download\${zip}" (
 if not exist "%~dp0${dir.windows}\" (
 	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\${zip}" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (<!-- cannot use %errorlevel% in a block statement: https://stackoverflow.com/questions/35164750/windows-batch-errorlevel-with-if -->
-		echo Please %DOWNLOAD_HELP%<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
+		echo "Please %DOWNLOAD_HELP%"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		goto error
 	)
 	move "%~dp0build\tmp\${dir.windows}" "%~dp0${dir.windows}"</echo><echo file="${filename}.bat" append="true" if:true="${run.install}">
