@@ -43,9 +43,9 @@ if not exist "%~dp0build\apache-ant-1.10.10\" (
 	)
 	move "%~dp0build\tmp\build\apache-ant-1.10.10" "%~dp0build\apache-ant-1.10.10"
 )
-set JDK_8_DIR=%~dp0%build\jdk8u292-b10
-set JDK_11_DIR=%~dp0%build\jdk-11.0.11+9
-set JDK_17_DIR=%~dp0%build\jdk-17.0.5+8
+set JDK_8_DIR="%~dp0%build\jdk8u292-b10"
+set JDK_11_DIR="%~dp0%build\jdk-11.0.11+9"
+set JDK_17_DIR="%~dp0%build\jdk-17.0.5+8"
 if not exist "%JDK_11_DIR%" (
 	set RUN_INSTALL=true
 )
@@ -57,7 +57,7 @@ set ANT_HOME=%~dp0build\apache-ant-1.10.10
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs -buildfile "%~dp0build.xml" install
 )
-call "%~dp0build\apache-ant-1.10.10\bin\ant" -Dfr.jdk.8.dir=%JDK_8_DIR% -Dfr.jdk.11.dir=%JDK_11_DIR% -Dfr.jdk.17.dir=%JDK_17_DIR% -emacs %*
+call "%~dp0build\apache-ant-1.10.10\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -emacs %*
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
