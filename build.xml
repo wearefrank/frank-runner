@@ -187,7 +187,7 @@
 		<property name="h2v2.version" value="2.2.220"/>
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
-		<property name="h2v2.dir" value="${basedir}/build/h2/v2"/>
+		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
 		<property name="jms.version" value="1.1.1"/>
 		<property name="jms.jar" value="geronimo-jms_1.1_spec-${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms.version}/${jms.jar}"/>
