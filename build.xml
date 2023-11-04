@@ -124,18 +124,6 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.mac}"/>
 
-		<property name="jdk.8" value="true"/><!-- TODO: initialize based on jdk.version -->
-		<property name="jdk.11" value="false"/>
-		<property name="jdk.17" value="false"/>
-		<property name="jdk.dir" value="${jdk.8.dir}" if:true="${jdk.8}"/>
-		<property name="jdk.zip" value="${jdk.8.zip}" if:true="${jdk.8}"/>
-		<property name="jdk.tar" value="${jdk.8.tar}" if:true="${jdk.8}"/>
-		<property name="jdk.dir" value="${jdk.11.dir}" if:true="${jdk.11}"/>
-		<property name="jdk.zip" value="${jdk.11.zip}" if:true="${jdk.11}"/>
-		<property name="jdk.tar" value="${jdk.11.tar}" if:true="${jdk.11}"/>
-		<property name="jdk.dir" value="${jdk.17.dir}" if:true="${jdk.17}"/>
-		<property name="jdk.zip" value="${jdk.17.zip}" if:true="${jdk.17}"/>
-		<property name="jdk.tar" value="${jdk.17.tar}" if:true="${jdk.17}"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
@@ -146,7 +134,7 @@
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-		<property name="maven.version" value="3.8.4"/>
+		<property name="maven.version" value="3.9.5"/>
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -379,7 +367,6 @@
 		</scriptdef>
 		<testsproperties name="tests.properties" projectsdirabs="${projects.dir.abs}" scenariosrootdefault="${scenariosroot.default}" testsdirs="${tests.dirs}"/>
 
-		<loadresource property="jdk.dir.windows"><propertyresource name="jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.8.dir.windows"><propertyresource name="jdk.8.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -440,9 +427,11 @@
 		<echo file="${maven.exec.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
 		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
-		<exec executable="${basedir}\${maven.dir.windows}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
-			<env key="JAVA_HOME" value="${basedir}\${jdk.dir.windows}" if:true="${os.windows}"/>
-			<env key="JAVA_HOME" value="${basedir}/${jdk.dir}" unless:true="${os.windows}"/>
+		<property name="maven.jdk.dir" value="${jdk.17.dir}"/><!-- maven 3.9.5 default source and target is 1.8, values can be changed in pom.xml with property <maven.compiler.release>11</maven.compiler.release> -->
+		<property name="maven.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
+		<exec executable="${basedir}\${maven.dir}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
+			<env key="JAVA_HOME" value="${basedir}/${maven.jdk.dir}" unless:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${basedir}\${maven.jdk.dir.windows}" if:true="${os.windows}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
@@ -468,7 +457,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="&lt;!--(\s+.*org.apache.coyote.http11.Http11NioProtocol)" replace="\1"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="-->(\s+.*with HTTP/2)" replace="\1" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/tomcat-users.xml" match="&lt;/tomcat-users>" replace="  &lt;user username=&quot;IbisWebService&quot; password=&quot;IbisWebService&quot; roles=&quot;IbisWebService&quot;/>&#10;  &lt;user username=&quot;IbisObserver&quot; password=&quot;IbisObserver&quot; roles=&quot;IbisObserver&quot;/>&#10;  &lt;user username=&quot;IbisDataAdmin&quot; password=&quot;IbisDataAdmin&quot; roles=&quot;IbisDataAdmin&quot;/>&#10;  &lt;user username=&quot;IbisAdmin&quot; password=&quot;IbisAdmin&quot; roles=&quot;IbisAdmin&quot;/>&#10;  &lt;user username=&quot;IbisTester&quot; password=&quot;IbisTester&quot; roles=&quot;IbisTester&quot;/>&#10;&lt;/tomcat-users>" unless:set="tomcat.dir.available"/>
-		<exec executable="${jdk.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:set="tomcat.dir.available">
+		<exec executable="${jdk.8.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:set="tomcat.dir.available">
 			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
 		</exec>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
@@ -508,8 +497,16 @@
 		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
 		<fail message="The following double jars are found: ${double.jars}&#10;${webapp.dir}/WEB-INF/lib&#10;- When maven=true disable maven.skip.clean=true (when present) at least once&#10;- Check your pom.xml for dependencies already present in the framework war (Maven doesn't add jar files inside a war file to the dependency tree to resolve dependency conflicts (add framework core jar to your pom.xml and/or add maven-war-plugin or ibis-war-plugin (when https://github.com/ibissource/ibis-war-plugin/issues/1 is closed) with excludes like &lt;exclude>WEB-INF/lib/example-*.jar&lt;/exclude>))&#10;- The framework war might contain a duplicate jar which should be reported as a bug (when an artifact changes it's groupid between versions Maven will not detect it to be a duplicate jar when one transitive dependency has the old one and another has the new one so one of them has to be excluded in the framework pom.xml)&#10;- As a workaround use ignore.double.jars=true" if:set="double.jars" unless:true="${ignore.double.jars}"/>
-		<!-- h2 -->
-		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- switch h2 major version based on ff version for both maven (doesn't use ff.version) and non-maven projects -->
+		<!-- ff version dependent properties for both maven (doesn't use ff.version) and non-maven projects -->
+		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
+			<filename regex="core-7\.*"/>
+		</fileset>
+		<pathconvert property="jdk8.fallback" refid="jdk8.fallback.fileset" />
+		<property name="tomcat.jdk.dir" value="${jdk.8.dir}" unless:blank="${jdk8.fallback}"/>
+		<property name="tomcat.jdk.dir.windows" value="${jdk.8.dir.windows}" unless:blank="${jdk8.fallback}"/>
+		<property name="tomcat.jdk.dir" value="${jdk.11.dir}"/>
+		<property name="tomcat.jdk.dir.windows" value="${jdk.11.dir.windows}"/>
+		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
 			<or><filename regex="core-7\.[0-6].*"/><filename regex="core-7\.7-2021.*"/><filename regex="core-7\.7-2022010.*"/><filename regex="core-7\.7-2022011[0-7].*"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
 		</fileset>
 		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
@@ -517,6 +514,7 @@
 		<property name="h2.jar" value="${h2v2.jar}"/>
 		<property name="h2.dir" value="${h2v1.dir}" unless:blank="${h2.fallback}"/>
 		<property name="h2.dir" value="${h2v2.dir}"/>
+		<!-- h2 -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
 		<copy file="download/${h2.jar}" todir="${tomcat.dir}/lib"/>
 		<!-- context.xml -->
@@ -645,10 +643,10 @@
 		<property name="redirect.out" value="true"/>
 		<exec executable="${catalina.exe}" vmlauncher="false" failonerror="true" if:true="${use.exec}">
 			<arg value="${action}"/>
-			<env key="JAVA_HOME" value="${jdk.dir.windows}" if:true="${os.windows}"/>
-			<env key="JAVA_HOME" value="${jdk.dir}" unless:true="${os.windows}"/>
-			<env key="CATALINA_HOME" value="${tomcat.dir.windows}" if:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${tomcat.jdk.dir}" unless:true="${os.windows}"/>
+			<env key="JAVA_HOME" value="${tomcat.jdk.dir.windows}" if:true="${os.windows}"/>
 			<env key="CATALINA_HOME" value="${tomcat.dir}" unless:true="${os.windows}"/>
+			<env key="CATALINA_HOME" value="${tomcat.dir.windows}" if:true="${os.windows}"/>
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
 			<redirector output="${catalina.out}" if:true="${redirect.out}"/>
 		</exec>

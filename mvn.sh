@@ -70,7 +70,7 @@ fi
 if [[ ! -d "${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.8.4" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.5" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_8_DIR}"
@@ -78,4 +78,4 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-"${FR_DIR}build/apache-maven-3.8.4/bin/mvn" "$@"
+"${FR_DIR}build/apache-maven-3.9.5/bin/mvn" "$@"
