@@ -692,7 +692,11 @@
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<condition property="use.exec" if:set="tomcat.running"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running"><equals arg1="${use}" arg2="java"/></condition>
-		<antcall target="tomcat"><param name="action" value="stop"/></antcall>
+		<antcall target="tomcat">
+			<param name="action" value="stop"/>
+			<param name="tomcat.jdk.dir" value="${jdk.17.dir}"/><!-- stop doesn't depend on install which would set tomcat.jdk.dir (based on ff version), hence pass tomcat.jdk.dir as a param (can be any version for stop as long as it's supported by tomcat) -->
+			<param name="tomcat.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
+		</antcall>
 		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
 		<property name="stop.maxwait" value="300"/>
 		<property name="stop.maxwaitunit" value="second"/>
