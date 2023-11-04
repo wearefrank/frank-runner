@@ -69,13 +69,13 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
-		<property name="jdk.8.version.major" value="8"/>
-		<property name="jdk.8.version.minor" value="292"/>
-		<property name="jdk.8.version.patch" value="10"/>
-		<property name="jdk.8.dir" value="build/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}"/>
-		<property name="jdk.8.zip.win" value="OpenJDK${jdk.8.version.major}U-jdk_x64_windows_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.zip"/>
-		<property name="jdk.8.tar.lin" value="OpenJDK${jdk.8.version.major}U-jdk_x64_linux_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.tar"/>
-		<property name="jdk.8.tar.mac" value="OpenJDK${jdk.8.version.major}U-jdk_x64_mac_hotspot_${jdk.8.version.major}u${jdk.8.version.minor}b${jdk.8.version.patch}.tar"/>
+		<property name="jdk.8.version.minor" value="392"/><!-- https://adoptium.net/temurin/archive/?version=8 -->
+		<property name="jdk.8.version.patch" value="b08"/>
+		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
+		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
+		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.zip"/>
+		<property name="jdk.8.tar.lin" value="OpenJDK8U-jdk_x64_linux_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.tar"/>
+		<property name="jdk.8.tar.mac" value="OpenJDK8U-jdk_x64_mac_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.tar"/>
 		<property name="jdk.8.zip.lin" value="${jdk.8.tar.lin}.gz"/>
 		<property name="jdk.8.zip.mac" value="${jdk.8.tar.mac}.gz"/>
 		<property name="jdk.8.zip" value="${jdk.8.zip.win}" if:true="${os.windows}"/>
@@ -83,17 +83,18 @@
 		<property name="jdk.8.zip" value="${jdk.8.zip.lin}" if:true="${os.linux}"/>
 		<property name="jdk.8.tar" value="${jdk.8.tar.mac}" if:true="${os.mac}"/>
 		<property name="jdk.8.zip" value="${jdk.8.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.8.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.win}"/>
-		<property name="jdk.8.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.lin}"/>
-		<property name="jdk.8.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.8.version.major}-binaries/releases/download/jdk${jdk.8.version.major}u${jdk.8.version.minor}-b${jdk.8.version.patch}/${jdk.8.zip.mac}"/>
+		<property name="jdk.8.url.win" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.win}"/>
+		<property name="jdk.8.url.lin" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.lin}"/>
+		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
-		<property name="jdk.11.version.major" value="11"/>
-		<property name="jdk.11.version.minor" value="0"/>
-		<property name="jdk.11.version.patch" value="11"/>
-		<property name="jdk.11.dir" value="build/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}+9"/>
-		<property name="jdk.11.zip.win" value="OpenJDK${jdk.11.version.major}U-jdk_x64_windows_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.zip"/>
-		<property name="jdk.11.tar.lin" value="OpenJDK${jdk.11.version.major}U-jdk_x64_linux_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.tar"/>
-		<property name="jdk.11.tar.mac" value="OpenJDK${jdk.11.version.major}U-jdk_x64_mac_openj9_${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}_9_openj9-0.26.0.tar"/>
+		<property name="jdk.11.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=11 -->
+		<property name="jdk.11.version.patch" value="21"/>
+		<property name="jdk.11.version.plus" value="9"/>
+		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
+		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
+		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.zip"/>
+		<property name="jdk.11.tar.lin" value="OpenJDK11U-jdk_x64_linux_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
+		<property name="jdk.11.tar.mac" value="OpenJDK11U-jdk_x64_mac_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
 		<property name="jdk.11.zip.lin" value="${jdk.11.tar.lin}.gz"/>
 		<property name="jdk.11.zip.mac" value="${jdk.11.tar.mac}.gz"/>
 		<property name="jdk.11.zip" value="${jdk.11.zip.win}" if:true="${os.windows}"/>
@@ -101,18 +102,18 @@
 		<property name="jdk.11.zip" value="${jdk.11.zip.lin}" if:true="${os.linux}"/>
 		<property name="jdk.11.tar" value="${jdk.11.tar.mac}" if:true="${os.mac}"/>
 		<property name="jdk.11.zip" value="${jdk.11.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.11.url.win" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.win}"/>
-		<property name="jdk.11.url.lin" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.lin}"/>
-		<property name="jdk.11.url.mac" value="https://github.com/AdoptOpenJDK/openjdk${jdk.11.version.major}-binaries/releases/download/jdk-${jdk.11.version.major}.${jdk.11.version.minor}.${jdk.11.version.patch}%2B9_openj9-0.26.0/${jdk.11.zip.mac}"/>
+		<property name="jdk.11.url.win" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.win}"/>
+		<property name="jdk.11.url.lin" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.lin}"/>
+		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
-		<property name="jdk.17.version.major" value="17"/>
-		<property name="jdk.17.version.minor" value="0"/>
-		<property name="jdk.17.version.patch" value="5"/>
-		<property name="jdk.17.version.patch.sub" value="8"/>
-		<property name="jdk.17.dir" value="build/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.patch.sub}"/>
-		<property name="jdk.17.zip.win" value="OpenJDK${jdk.17.version.major}U-jdk_x64_windows_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.zip"/>
-		<property name="jdk.17.tar.lin" value="OpenJDK${jdk.17.version.major}U-jdk_x64_linux_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.tar"/>
-		<property name="jdk.17.tar.mac" value="OpenJDK${jdk.17.version.major}U-jdk_x64_mac_hotspot_${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.patch.sub}.tar"/>
+		<property name="jdk.17.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=11 -->
+		<property name="jdk.17.version.patch" value="8"/>
+		<property name="jdk.17.version.plus" value="7"/>
+		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
+		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
+		<property name="jdk.17.zip.win" value="OpenJDK17U-jdk_x64_windows_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.zip"/>
+		<property name="jdk.17.tar.lin" value="OpenJDK17U-jdk_x64_linux_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.tar"/>
+		<property name="jdk.17.tar.mac" value="OpenJDK17U-jdk_x64_mac_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.tar"/>
 		<property name="jdk.17.zip.lin" value="${jdk.17.tar.lin}.gz"/>
 		<property name="jdk.17.zip.mac" value="${jdk.17.tar.mac}.gz"/>
 		<property name="jdk.17.zip" value="${jdk.17.zip.win}" if:true="${os.windows}"/>
@@ -120,9 +121,9 @@
 		<property name="jdk.17.zip" value="${jdk.17.zip.lin}" if:true="${os.linux}"/>
 		<property name="jdk.17.tar" value="${jdk.17.tar.mac}" if:true="${os.mac}"/>
 		<property name="jdk.17.zip" value="${jdk.17.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.17.url.win" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.win}"/>
-		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.lin}"/>
-		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin${jdk.17.version.major}-binaries/releases/download/jdk-${jdk.17.version.major}.${jdk.17.version.minor}.${jdk.17.version.patch}%2B${jdk.17.version.patch.sub}/${jdk.17.zip.mac}"/>
+		<property name="jdk.17.url.win" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.win}"/>
+		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
+		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
