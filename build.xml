@@ -445,7 +445,7 @@
 		</exec>
 		<!-- tomcat -->
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<chmod dir="${tomcat.dir}/bin" perm="+x" includes="*.sh" unless:set="tomcat.dir.available"/>
+		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:set="tomcat.dir.available"/>
 		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
@@ -809,7 +809,7 @@
 			<cutdirsmapper dirs="3" if:true="${os.mac}"/>
 		</untar>
 		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<chmod dir="${jdk.dir}/bin" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod dir="${jdk.dir}/bin" includes="*" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<antcall target="cacerts"/>
 	</target>
 
