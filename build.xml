@@ -651,8 +651,10 @@
 			<env key="JAVA_OPTS" value="-Xmx${maxmemory}"/>
 			<redirector output="${catalina.out}" if:true="${redirect.out}"/>
 		</exec>
+		<property name="tomcat.java.jvm" value="${tomcat.jdk.dir}/bin/java" unless:true="${os.windows}"/>
+		<property name="tomcat.java.jvm" value="${tomcat.jdk.dir.windows}/bin/java" if:true="${os.windows}"/>
 		<property name="spawn" value="true"/>
-		<java classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
+		<java jvm="${tomcat.java.jvm}" classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
 			<arg value="${action}"/>
 			<classpath>
