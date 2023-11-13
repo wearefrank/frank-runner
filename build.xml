@@ -712,9 +712,11 @@
 		<echo message="${stop.end} Done" if:set="tomcat.running" unless:true="${tomcat.skip.waitfor}"/>
 	</target>
 
-	<target name="restart">
+	<target name="restart" depends="init">
 		<antcall target="stop"/>
-		<antcall target="start"/>
+		<property name="restart.start" value="run" unless:true="${os.windows}"/><!-- show startup output and make it work when executed by vscode task explorer (which seems to kill the tomcat start command when the script calling it is ready) -->
+		<property name="restart.start" value="start" if:true="${os.windows}"/><!-- on windows tomcat will open a new window which will show startup output and will not be killed by vscode task explorer when the script starting it is ready-->
+		<antcall target="${restart.start}"/>
 	</target>
 
 	<target name="rerun">
