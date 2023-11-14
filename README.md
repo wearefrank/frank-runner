@@ -745,6 +745,10 @@ C:/path/to/frank-runner/ant.bat
 Backslashes will also work except when your VSCode is configured to use a bash
 shell.
 
+Remove \*\*/examples/\*\* from the "Task Explorer: Exclude" list or change it
+to something like \*\*/examplesDISABLE/\*\* to be able to see the examples of
+the Frank!Runner in the Task Explorer.
+
 Disable the "Enable Ansicon For Ant" option. Now you can use Task Explorer to
 either run the build.xml or the restart.bat in your project.
 
