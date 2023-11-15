@@ -77,7 +77,7 @@ fi
 if [[ ! -d "${FR_DIR}build/apache-maven-3.9.5" ]]; then
 	RUN_INSTALL="true"
 fi
-export JAVA_HOME="${JDK_8_DIR}"
+export JAVA_HOME="${JDK_17_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install

@@ -906,8 +906,11 @@ if not exist "%JDK_17_DIR%" (
 if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
 )</echo>
+		<echo file="${filename}.bat" append="true" unless:set="mvn">
+set JAVA_HOME=%JDK_8_DIR%</echo>
+		<echo file="${filename}.bat" append="true" if:set="mvn">
+set JAVA_HOME=%JDK_17_DIR%</echo>
 		<echo file="${filename}.bat" append="true">
-set JAVA_HOME=%JDK_8_DIR%
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
@@ -980,8 +983,11 @@ fi</echo>
 if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
+		<echo file="${filename}.sh" append="true" unless:set="mvn">
+export JAVA_HOME="$${JDK_8_DIR}"</echo>
+		<echo file="${filename}.sh" append="true" if:set="mvn">
+export JAVA_HOME="$${JDK_17_DIR}"</echo>
 		<echo file="${filename}.sh" append="true">
-export JAVA_HOME="$${JDK_8_DIR}"
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">

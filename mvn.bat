@@ -56,7 +56,7 @@ if not exist "%JDK_17_DIR%" (
 if not exist "%~dp0build\apache-maven-3.9.5" (
 	set RUN_INSTALL=true
 )
-set JAVA_HOME=%JDK_8_DIR%
+set JAVA_HOME=%JDK_17_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs -buildfile "%~dp0build.xml" install
