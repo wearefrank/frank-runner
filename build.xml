@@ -135,7 +135,9 @@
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-		<property name="maven.version" value="3.9.5"/>
+		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
+		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
+		<property name="maven.version" value="3.9.5"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -427,12 +429,10 @@
 		<echo file="${maven.exec.dir}/.gitignore" message="&#10;" append="true" if:true="${project.gitignore.add.newline}"/>
 		<echo file="${maven.exec.dir}/.gitignore" message="${project.gitignore}" append="true" if:true="${project.gitignore.add}"/>
 		<delete includeEmptyDirs="true" verbose="${maven.verbose}" unless:true="${webapp.clean.skip}" if:true="${maven}"><fileset dir="${webapp.dir}" includes="${webapp.clean}" defaultexcludes="false"/></delete><!-- maven clean war:inplace doesn't clean the webapp (see also: https://stackoverflow.com/questions/12497081/maven-war-inplace-clean-classes-and-lib-folder) -->
-		<condition property="mvn.ext" value=".cmd" else=""><os family="windows"/></condition>
-		<property name="maven.jdk.dir" value="${jdk.17.dir}"/><!-- maven 3.9.5 default source and target is 1.8, values can be changed in pom.xml with property <maven.compiler.release>11</maven.compiler.release> -->
-		<property name="maven.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
-		<exec executable="${basedir}\${maven.dir}\bin\mvn${mvn.ext}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
-			<env key="JAVA_HOME" value="${basedir}/${maven.jdk.dir}" unless:true="${os.windows}"/>
-			<env key="JAVA_HOME" value="${basedir}\${maven.jdk.dir.windows}" if:true="${os.windows}"/>
+		<condition property="mvn.exe" value="${basedir}\mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="${basedir}/mvn.sh" else=""><os family="unix"/></condition>
+		<exec executable="${mvn.exe}" dir="${maven.exec.dir}" vmlauncher="false" failonerror="true" if:true="${maven}">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 			<arg value="${maven.args}" if:set="maven.args"/>
@@ -909,6 +909,8 @@ if not exist "%~dp0${maven.dir.windows}" (
 		<echo file="${filename}.bat" append="true" unless:set="mvn">
 set JAVA_HOME=%JDK_8_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn">
+rem ${maven.remark.line1}
+rem ${maven.remark.line2}
 set JAVA_HOME=%JDK_17_DIR%</echo>
 		<echo file="${filename}.bat" append="true">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
@@ -986,6 +988,8 @@ fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="mvn">
 export JAVA_HOME="$${JDK_8_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
+# ${maven.remark.line1}
+# ${maven.remark.line2}
 export JAVA_HOME="$${JDK_17_DIR}"</echo>
 		<echo file="${filename}.sh" append="true">
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->

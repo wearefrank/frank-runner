@@ -31,7 +31,7 @@
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
-		<exec dir="../../../iaf" executable="${mvn.exe}" vmlauncher="false" failonerror="true">
+		<exec executable="${mvn.exe}" dir="../../../iaf" vmlauncher="false" failonerror="true">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
@@ -56,14 +56,10 @@
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.skip.clean=${maven.skip.clean}"/>
 			<arg value="-Dmaven.verbose=${maven.verbose}"/>
-			<!-- Folder target already present in iaf/.gitginore -->
-			<arg value="-Dproject.gitignore.skip=true"/>
-			<!-- Don't gitignore resources in webapp except javax.xml.stream.XMLInputFactory because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) (javax.xml.stream.XMLInputFactory is copied from src/main/resources) -->
-			<arg value="-Dwebapp.gitignore=WEB-INF/classes/META-INF/services/**"/>
-			<!-- Don't clean resources in webapp except lib folder                           because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->
-			<arg value="-Dwebapp.clean=WEB-INF/lib/**"/>
-			<!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
-			<arg value="-Dconfigurations.dir=${configurations.dir}"/>
+			<arg value="-Dproject.gitignore.skip=true"/><!-- Folder target already present in iaf/.gitginore -->
+			<arg value="-Dwebapp.gitignore=WEB-INF/classes/META-INF/services/**"/><!-- Don't gitignore resources in webapp except javax.xml.stream.XMLInputFactory because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) (javax.xml.stream.XMLInputFactory is copied from src/main/resources) -->
+			<arg value="-Dwebapp.clean=WEB-INF/lib/**"/><!-- Don't clean resources in webapp except lib folder because this is the iaf-webapp artifact that should contain those resources (which are stored in git, in the src/main/webapp folder) -->
+			<arg value="-Dconfigurations.dir=${configurations.dir}"/><!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
 			<arg value="-Dtests.dir=${tests.dir}"/>
 		</exec>
 	</target>
