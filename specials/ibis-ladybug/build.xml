@@ -27,7 +27,7 @@
 		<fail message="Folder iaf not found, please clone https://github.com/ibissource/iaf.git" if:set="iaf.not.present"/>
 
 		<echo message="ibis-ladybug: Check skip-replace-inject.txt present"/>
-		<condition property="skip.replace.inject.not.present"><not><resourceexists><file file="../../../ibis-ladybug/skip-replace-inject.txt"/></resourceexists></not></condition>
+		<condition property="skip.replace.inject.not.present" unless:true="${skip.replace.check}"><not><resourceexists><file file="../../../ibis-ladybug/skip-replace-inject.txt"/></resourceexists></not></condition><!-- frontend ci/cd will set skip.replace.check=true -->
 		<fail message="File ibis-ladybug/skip-replace-inject.txt not found, create it to prevent replacements in your local java files (git restore replacements which have already been done (possibly because your IDE has already executed maven))" if:set="skip.replace.inject.not.present"/>
 
 		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
