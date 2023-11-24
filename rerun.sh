@@ -11,13 +11,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz
-URL=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz
-DIR=build/jdk8u392-b08
+ZIP=OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz
+URL=https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz
+DIR=build/jdk-11.0.21+9
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK8U-jdk_x64_mac_hotspot_8u392b08.tar.gz
-	URL=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u392b08.tar.gz
+	ZIP=OpenJDK11U-jdk_x64_mac_hotspot_11.0.21_9.tar.gz
+	URL=https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.21_9.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -67,6 +67,6 @@ fi
 JDK_8_DIR="${FR_DIR}build/jdk8u392-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.8+7"
-export JAVA_HOME="${JDK_8_DIR}"
+export JAVA_HOME="${JDK_11_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" rerun

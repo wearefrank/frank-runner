@@ -7,23 +7,23 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
-set DOWNLOAD_HELP=download https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip" (
+set DOWNLOAD_HELP=download https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip.tmp" -L https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip
+	curl -f -o "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip.tmp" -L https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip.tmp" "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip"
+	move "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip.tmp" "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip"
 )
-if not exist "%~dp0build\jdk8u392-b08\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK8U-jdk_x64_windows_hotspot_8u392b08.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\jdk-11.0.21+9\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\jdk8u392-b08" "%~dp0build\jdk8u392-b08"
+	move "%~dp0build\tmp\build\jdk-11.0.21+9" "%~dp0build\jdk-11.0.21+9"
 )
 set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\apache-ant-1.10.10-bin.zip" (
@@ -46,7 +46,7 @@ if not exist "%~dp0build\apache-ant-1.10.10\" (
 set JDK_8_DIR=%~dp0%build\jdk8u392-b08
 set JDK_11_DIR=%~dp0%build\jdk-11.0.21+9
 set JDK_17_DIR=%~dp0%build\jdk-17.0.8+7
-set JAVA_HOME=%JDK_8_DIR%
+set JAVA_HOME=%JDK_11_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
 call "%~dp0build\apache-ant-1.10.10\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -emacs -buildfile "%~dp0build.xml" %* restart
 if %errorlevel% equ 0 goto end

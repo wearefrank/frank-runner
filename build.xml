@@ -537,7 +537,9 @@
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
-		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${webapp.dir}/WEB-INF/classes" includeantruntime="false" if:set="java.dir.available" unless:true="${maven}">
+		<property name="javac.release" value="8" unless:blank="${jdk8.fallback}"/>
+		<property name="javac.release" value="11"/>
+		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${webapp.dir}/WEB-INF/classes" release="${javac.release}" includeantruntime="false" if:set="java.dir.available" unless:true="${maven}">
 			<classpath>
 				<fileset dir="${webapp.dir}/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
@@ -892,14 +894,14 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.8.zip.win}"/><param name="url" value="${jdk.8.url.win}"/><param name="dir.windows" value="${jdk.8.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.11.zip.win}"/><param name="url" value="${jdk.11.url.win}"/><param name="dir.windows" value="${jdk.11.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}</echo>
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
-if not exist "%JDK_11_DIR%" (
+if not exist "%JDK_8_DIR%" (
 	set RUN_INSTALL=true
 )
 if not exist "%JDK_17_DIR%" (
@@ -910,7 +912,7 @@ if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
 )</echo>
 		<echo file="${filename}.bat" append="true" unless:set="mvn">
-set JAVA_HOME=%JDK_8_DIR%</echo>
+set JAVA_HOME=%JDK_11_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn">
 rem ${maven.remark.line1}
 rem ${maven.remark.line2}
@@ -971,14 +973,14 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.8.zip.lin}"/><param name="zip.mac" value="${jdk.8.zip.mac}"/><param name="url" value="${jdk.8.url.lin}"/><param name="url.mac" value="${jdk.8.url.mac}"/><param name="dir" value="${jdk.8.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.11.zip.lin}"/><param name="zip.mac" value="${jdk.11.zip.mac}"/><param name="url" value="${jdk.11.url.lin}"/><param name="url.mac" value="${jdk.11.url.mac}"/><param name="dir" value="${jdk.11.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
-if [[ ! -d "$${JDK_11_DIR}" ]]; then
+if [[ ! -d "$${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
 if [[ ! -d "$${JDK_17_DIR}" ]]; then
@@ -989,7 +991,7 @@ if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="mvn">
-export JAVA_HOME="$${JDK_8_DIR}"</echo>
+export JAVA_HOME="$${JDK_11_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
 # ${maven.remark.line1}
 # ${maven.remark.line2}
