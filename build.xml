@@ -106,7 +106,7 @@
 		<property name="jdk.11.url.lin" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.lin}"/>
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
-		<property name="jdk.17.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=11 -->
+		<property name="jdk.17.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=17 -->
 		<property name="jdk.17.version.patch" value="8"/>
 		<property name="jdk.17.version.plus" value="7"/>
 		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
@@ -125,7 +125,9 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
+		<property name="fr.jdk.dir" value="${jdk.11.dir}"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
+
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
@@ -192,7 +194,7 @@
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
 
-		<antcall target="cacerts"><param name="jdk.dir" value="${jdk.11.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
+		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
 		<property name="update.strategy" value="latest" unless:true="${maven}"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
@@ -898,10 +900,18 @@ if not exist "%~dp0build\tmp\build\" (
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}</echo>
-		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
+		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.8">
 if not exist "%JDK_8_DIR%" (
 	set RUN_INSTALL=true
-)
+)</echo>
+		<condition property="fr.use.jdk.11"><equals arg1="${fr.jdk.dir}" arg2="${jdk.11.dir}"/></condition>
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.11">
+if not exist "%JDK_11_DIR%" (
+	set RUN_INSTALL=true
+)</echo>
+		<condition property="fr.use.jdk.17"><equals arg1="${fr.jdk.dir}" arg2="${jdk.17.dir}"/></condition>
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.17">
 if not exist "%JDK_17_DIR%" (
 	set RUN_INSTALL=true
 )</echo>
@@ -909,8 +919,12 @@ if not exist "%JDK_17_DIR%" (
 if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
 )</echo>
-		<echo file="${filename}.bat" append="true" unless:set="mvn">
+		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.8" unless:set="mvn">
+set JAVA_HOME=%JDK_8_DIR%</echo>
+		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.11" unless:set="mvn">
 set JAVA_HOME=%JDK_11_DIR%</echo>
+		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
+set JAVA_HOME=%JDK_17_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn">
 rem ${maven.remark.line1}
 rem ${maven.remark.line2}
@@ -977,10 +991,18 @@ fi</echo>
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"</echo>
-		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
+		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.8">
 if [[ ! -d "$${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
-fi
+fi</echo>
+		<condition property="fr.use.jdk.11"><equals arg1="${fr.jdk.dir}" arg2="${jdk.11.dir}"/></condition>
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.11">
+if [[ ! -d "$${JDK_11_DIR}" ]]; then
+	RUN_INSTALL="true"
+fi</echo>
+		<condition property="fr.use.jdk.17"><equals arg1="${fr.jdk.dir}" arg2="${jdk.17.dir}"/></condition>
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.17">
 if [[ ! -d "$${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
@@ -988,8 +1010,12 @@ fi</echo>
 if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
-		<echo file="${filename}.sh" append="true" unless:set="mvn">
+		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.8" unless:set="mvn">
+export JAVA_HOME="$${JDK_8_DIR}"</echo>
+		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.11" unless:set="mvn">
 export JAVA_HOME="$${JDK_11_DIR}"</echo>
+		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
+export JAVA_HOME="$${JDK_17_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
 # ${maven.remark.line1}
 # ${maven.remark.line2}
