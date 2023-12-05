@@ -192,8 +192,7 @@
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
 
-		<property name="jdk.8.cacerts.dir" value="jre/lib/security"/><!-- default cacerts.dir for cacerts task is lib/security -->
-		<antcall target="cacerts"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
+		<antcall target="cacerts"><param name="jdk.dir" value="${jdk.11.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
 		<property name="update.strategy" value="latest" unless:true="${maven}"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
@@ -393,7 +392,7 @@
 
 	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
 		<!-- jdk -->
-		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="${jdk.8.cacerts.dir}"/></antcall>
+		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
 		<!-- ant -->
