@@ -68,10 +68,14 @@ fi
 JDK_8_DIR="${FR_DIR}build/jdk8u392-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.8+7"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.1+12"
 if [[ ! -d "${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
 if [[ ! -d "${JDK_17_DIR}" ]]; then
+	RUN_INSTALL="true"
+fi
+if [[ ! -d "${JDK_21_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
 if [[ ! -d "${FR_DIR}build/apache-maven-3.9.5" ]]; then

@@ -125,7 +125,27 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
+		<property name="jdk.21.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=21 -->
+		<property name="jdk.21.version.patch" value="1"/>
+		<property name="jdk.21.version.plus" value="12"/>
+		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
+		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
+		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
+		<property name="jdk.21.tar.lin" value="OpenJDK21U-jdk_x64_linux_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.tar"/>
+		<property name="jdk.21.tar.mac" value="OpenJDK21U-jdk_x64_mac_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.tar"/>
+		<property name="jdk.21.zip.lin" value="${jdk.21.tar.lin}.gz"/>
+		<property name="jdk.21.zip.mac" value="${jdk.21.tar.mac}.gz"/>
+		<property name="jdk.21.zip" value="${jdk.21.zip.win}" if:true="${os.windows}"/>
+		<property name="jdk.21.tar" value="${jdk.21.tar.lin}" if:true="${os.linux}"/>
+		<property name="jdk.21.zip" value="${jdk.21.zip.lin}" if:true="${os.linux}"/>
+		<property name="jdk.21.tar" value="${jdk.21.tar.mac}" if:true="${os.mac}"/>
+		<property name="jdk.21.zip" value="${jdk.21.zip.mac}" if:true="${os.mac}"/>
+		<property name="jdk.21.url.win" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.win}"/>
+		<property name="jdk.21.url.lin" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.lin}"/>
+		<property name="jdk.21.url.mac" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.mac}"/>
+
 		<property name="fr.jdk.dir" value="${jdk.11.dir}"/>
+		<property name="mvn.jdk.version" value="21"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
@@ -228,6 +248,7 @@
 		<available property="jdk.8.zip.available" file="download/${jdk.8.zip}"/>
 		<available property="jdk.11.zip.available" file="download/${jdk.11.zip}"/>
 		<available property="jdk.17.zip.available" file="download/${jdk.17.zip}"/>
+		<available property="jdk.21.zip.available" file="download/${jdk.21.zip}"/>
 		<available property="ant.zip.available" file="download/${ant.zip}" if:true="${os.windows}"/>
 		<available property="ant.zip.available" file="download/${ant.gz}" unless:true="${os.windows}"/>
 		<available property="ant.dir.available" file="${ant.dir}"/>
@@ -377,6 +398,7 @@
 		<loadresource property="jdk.8.dir.windows"><propertyresource name="jdk.8.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="jdk.21.dir.windows"><propertyresource name="jdk.21.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -397,6 +419,7 @@
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
+		<antcall target="jdk"><param name="jdk.dir" value="${jdk.21.dir}"/><param name="jdk.zip" value="${jdk.21.zip}"/><param name="jdk.tar" value="${jdk.21.tar}"/></antcall>
 		<!-- ant -->
 		<unzip src="download/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -739,6 +762,9 @@
 		<get src="${jdk.17.url.win}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.17.zip.available}"/>
 		<get src="${jdk.17.url.lin}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.17.zip.available}"/>
 		<get src="${jdk.17.url.mac}" dest="download/${jdk.17.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.17.zip.available}"/>
+		<get src="${jdk.21.url.win}" dest="download/${jdk.21.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.21.zip.available}"/>
+		<get src="${jdk.21.url.lin}" dest="download/${jdk.21.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.21.zip.available}"/>
+		<get src="${jdk.21.url.mac}" dest="download/${jdk.21.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.21.zip.available}"/>
 	</target>
 
 	<target name="get.ant" unless="${ant.zip.available}">
@@ -899,7 +925,8 @@ if not exist "%~dp0build\tmp\build\" (
 		<echo file="${filename}.bat" append="true">
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
-set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}</echo>
+set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
+set JDK_21_DIR=%~dp0%${jdk.21.dir.windows}</echo>
 		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.8">
 if not exist "%JDK_8_DIR%" (
@@ -915,6 +942,11 @@ if not exist "%JDK_11_DIR%" (
 if not exist "%JDK_17_DIR%" (
 	set RUN_INSTALL=true
 )</echo>
+		<condition property="fr.use.jdk.21"><equals arg1="${fr.jdk.dir}" arg2="${jdk.21.dir}"/></condition>
+		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.21">
+if not exist "%JDK_21_DIR%" (
+	set RUN_INSTALL=true
+)</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn.or.env.or.cmd">
 if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
@@ -925,10 +957,12 @@ set JAVA_HOME=%JDK_8_DIR%</echo>
 set JAVA_HOME=%JDK_11_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
 set JAVA_HOME=%JDK_17_DIR%</echo>
+		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.21" unless:set="mvn">
+set JAVA_HOME=%JDK_21_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="mvn">
 rem ${maven.remark.line1}
 rem ${maven.remark.line2}
-set JAVA_HOME=%JDK_17_DIR%</echo>
+set JAVA_HOME=%JDK_${mvn.jdk.version}_DIR%</echo>
 		<echo file="${filename}.bat" append="true">
 set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
@@ -938,7 +972,7 @@ if "%RUN_INSTALL%" == "true" (
 )</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
-		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
@@ -990,7 +1024,8 @@ fi</echo>
 		<echo file="${filename}.sh" append="true">
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
-JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"</echo>
+JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
+JDK_21_DIR="$${FR_DIR}${jdk.12.dir}"</echo>
 		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.8">
 if [[ ! -d "$${JDK_8_DIR}" ]]; then
@@ -1006,6 +1041,11 @@ fi</echo>
 if [[ ! -d "$${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
+		<condition property="fr.use.jdk.21"><equals arg1="${fr.jdk.dir}" arg2="${jdk.21.dir}"/></condition>
+		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.21">
+if [[ ! -d "$${JDK_21_DIR}" ]]; then
+	RUN_INSTALL="true"
+fi</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn.or.env">
 if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
@@ -1016,10 +1056,12 @@ export JAVA_HOME="$${JDK_8_DIR}"</echo>
 export JAVA_HOME="$${JDK_11_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
 export JAVA_HOME="$${JDK_17_DIR}"</echo>
+		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.21" unless:set="mvn">
+export JAVA_HOME="$${JDK_21_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
 # ${maven.remark.line1}
 # ${maven.remark.line2}
-export JAVA_HOME="$${JDK_17_DIR}"</echo>
+export JAVA_HOME="$${JDK_${mvn.jdk.version}_DIR}"</echo>
 		<echo file="${filename}.sh" append="true">
 export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems with ant installed (e.g. when ANT_HOME points to an old ant version that version will be used which might not support all tasks and attributes) -->
 		<!-- MAVEN_HOME isn't needed: https://stackoverflow.com/questions/26609922/maven-home-mvn-home-or-m2-home -->
@@ -1029,7 +1071,7 @@ if [[ "$RUN_INSTALL" == "true" ]]; then
 fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -Dfr.jdk.17.dir="$${JDK_17_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -Dfr.jdk.17.dir="$${JDK_17_DIR}" -Dfr.jdk.21.dir="$${JDK_21_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
