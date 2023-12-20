@@ -1025,7 +1025,7 @@ fi</echo>
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
-JDK_21_DIR="$${FR_DIR}${jdk.12.dir}"</echo>
+JDK_21_DIR="$${FR_DIR}${jdk.21.dir}"</echo>
 		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.8">
 if [[ ! -d "$${JDK_8_DIR}" ]]; then

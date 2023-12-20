@@ -46,9 +46,10 @@ if not exist "%~dp0build\apache-ant-1.10.10\" (
 set JDK_8_DIR=%~dp0%build\jdk8u392-b08
 set JDK_11_DIR=%~dp0%build\jdk-11.0.21+9
 set JDK_17_DIR=%~dp0%build\jdk-17.0.8+7
+set JDK_21_DIR=%~dp0%build\jdk-21.0.1+12
 set JAVA_HOME=%JDK_11_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
-call "%~dp0build\apache-ant-1.10.10\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -emacs -buildfile "%~dp0build.xml" %* start
+call "%~dp0build\apache-ant-1.10.10\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -emacs -buildfile "%~dp0build.xml" %* start
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
