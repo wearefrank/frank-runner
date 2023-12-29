@@ -586,7 +586,7 @@
 		<delete file="build/frankdoc/FrankConfig.xsd" if:true="${update.config.xsd}"/><!-- prevent available task after unjar to detect xsd from previous ff version when current ff version doesn't have one -->
 		<delete file="build/frankdoc/FrankConfig-strict.xsd" if:true="${update.config.xsd}" />
 		<unjar dest="build/frankdoc" if:true="${update.config.xsd}">
-			<fileset dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"></fileset>
+			<fileset dir="${webapp.dir}/WEB-INF/lib" includes="frankframework-core-*.jar,ibis-adapterframework-core-*.jar"></fileset>
 			<patternset>
 				<include name="xml/xsd/FrankConfig-strict.xsd"/>
 				<include name="xml/xsd/FrankConfig.xsd"/>
