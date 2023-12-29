@@ -83,7 +83,7 @@ if [[ ! -d "${FR_DIR}build/apache-maven-3.9.5" ]]; then
 fi
 # Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)
 # For example java 11 can be specified in the pom.xml of your project by adding property <maven.compiler.release>11</maven.compiler.release>
-export JAVA_HOME="${JDK_17_DIR}"
+export JAVA_HOME="${JDK_21_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install

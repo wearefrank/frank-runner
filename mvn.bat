@@ -62,7 +62,7 @@ if not exist "%~dp0build\apache-maven-3.9.5" (
 )
 rem Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)
 rem For example java 11 can be specified in the pom.xml of your project by adding property <maven.compiler.release>11</maven.compiler.release>
-set JAVA_HOME=%JDK_17_DIR%
+set JAVA_HOME=%JDK_21_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.10
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.10\bin\ant" -emacs -buildfile "%~dp0build.xml" install
