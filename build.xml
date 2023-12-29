@@ -170,7 +170,7 @@
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.version.major" value="9"/>
 		<property name="tomcat.version.minor" value="0"/>
-		<property name="tomcat.version.patch" value="83"/><!-- on update: also update jms, ojdbc and mssql -->
+		<property name="tomcat.version.patch" value="84"/><!-- on update: also update jms, ojdbc and mssql -->
 		<property name="tomcat.version" value="${tomcat.version.major}.${tomcat.version.minor}.${tomcat.version.patch}"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-${tomcat.version.major}/v${tomcat.version}/bin/${tomcat.zip}"/>
@@ -224,7 +224,7 @@
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
 		<mkdir dir="download/metadata/frank-flow"/>
-		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<get src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
 		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/maven-metadata.xml" dest="download/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
 		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<move file="download/metadata/frank-flow/maven-metadata-tmp.xml" tofile="download/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
@@ -235,9 +235,11 @@
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 		<property name="frankflow.version" value="${frankflow.metadata.versioning.latest}" if:set="frankflow.metadata.versioning.latest"/>
 
-		<property name="ff.version" value="7.7"/>
-		<property name="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"/>
-		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.version" value="7.8.5"/>
+		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
+		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
+		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
+		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
 
 		<property name="frankflow.version" value="2.27.1-20231017.123547"/>
@@ -489,7 +491,7 @@
 			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
 		</exec>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,frankframework-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
