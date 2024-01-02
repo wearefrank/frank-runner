@@ -113,6 +113,7 @@
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
+			<arg value="-Dladybug.dir=${ladybug.dir}"/>
 		</exec>
 
 		<echo message="ibis-ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>
