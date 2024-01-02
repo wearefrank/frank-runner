@@ -14,26 +14,30 @@
 		<property name="test.with.iaf" value="false"/>
 		<property name="iaf.module" value="webapp"/>
 
-		<echo message="ibis-ladybug: Check ibis-ladybug present"/>
-		<condition property="ibis-ladybug.not.present"><not><resourceexists><file file="../../../ibis-ladybug"/></resourceexists></not></condition>
-		<fail message="Folder ibis-ladybug not found, please clone https://github.com/ibissource/ibis-ladybug.git" if:set="ibis-ladybug.not.present"/>
+		<condition property="ladybug.dir" value="ibis-ladybug" else="ladybug"><available file="../../../ibis-ladybug" type="dir"/></condition>
+		<condition property="ladybug-test-webapp.dir" value="ibis-ladybug-test-webapp" else="ladybug-test-webapp"><available file="../../../ibis-ladybug-test-webapp" type="dir"/></condition>
+		<condition property="ff.dir" value="iaf" else="frankframework"><available file="../../../iaf" type="dir"/></condition>
 
-		<echo message="ibis-ladybug: Check ibis-ladybug-test-webapp present"/>
-		<condition property="ibis-ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../ibis-ladybug-test-webapp"/></resourceexists></not></condition>
-		<fail message="Folder ibis-ladybug-test-webapp not found, please clone https://github.com/ibissource/ibis-ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
+		<echo message="ibis-ladybug: Check ${ladybug.dir} present"/>
+		<condition property="ibis-ladybug.not.present"><not><resourceexists><file file="../../../${ladybug.dir}"/></resourceexists></not></condition>
+		<fail message="Folder ${ladybug.dir} not found, please clone https://github.com/wearefrank/ladybug.git" if:set="ibis-ladybug.not.present"/>
+
+		<echo message="ibis-ladybug: Check ${ladybug-test-webapp.dir} present"/>
+		<condition property="ibis-ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../${ladybug-test-webapp.dir}"/></resourceexists></not></condition>
+		<fail message="Folder ${ladybug-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:set="ibis-ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
 
 		<echo message="ibis-ladybug: Check iaf present"/>
-		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../iaf"/></resourceexists></not></condition>
-		<fail message="Folder iaf not found, please clone https://github.com/ibissource/iaf.git" if:set="iaf.not.present"/>
+		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../${ff.dir}"/></resourceexists></not></condition>
+		<fail message="Folder ${ff.dir} not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
 
 		<echo message="ibis-ladybug: Check skip-replace-inject.txt present"/>
-		<condition property="skip.replace.inject.not.present" unless:true="${skip.replace.check}"><not><resourceexists><file file="../../../ibis-ladybug/skip-replace-inject.txt"/></resourceexists></not></condition><!-- frontend ci/cd will set skip.replace.check=true -->
-		<fail message="File ibis-ladybug/skip-replace-inject.txt not found, create it to prevent replacements in your local java files (git restore replacements which have already been done (possibly because your IDE has already executed maven))" if:set="skip.replace.inject.not.present"/>
+		<condition property="skip.replace.inject.not.present" unless:true="${skip.replace.check}"><not><resourceexists><file file="../../../${ladybug.dir}/skip-replace-inject.txt"/></resourceexists></not></condition><!-- frontend ci/cd will set skip.replace.check=true -->
+		<fail message="File ${ladybug.dir}/skip-replace-inject.txt not found, create it to prevent replacements in your local java files (git restore replacements which have already been done (possibly because your IDE has already executed maven))" if:set="skip.replace.inject.not.present"/>
 
 		<echo message="ibis-ladybug: Check ibis-ladybug version in pom.xml"/>
-		<xmlproperty file="../../../ibis-ladybug/pom.xml" prefix="ladybug.pom.xml"/>
-		<property name="pom.xml" location="${basedir}/../../../ibis-ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
-		<property name="pom.xml" location="${basedir}/../../../iaf/ladybug/pom.xml" if:true="${test.with.iaf}"/>
+		<xmlproperty file="../../../${ladybug.dir}/pom.xml" prefix="ladybug.pom.xml"/>
+		<property name="pom.xml" location="${basedir}/../../../${ladybug-test-webapp.dir}/pom.xml" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
+		<property name="pom.xml" location="${basedir}/../../../${ff.dir}/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
 			<or>
 				<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
@@ -85,7 +89,7 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
-		<exec executable="${mvn.exe}" dir="../../../ibis-ladybug" vmlauncher="false" failonerror="true">
+		<exec executable="${mvn.exe}" dir="../../../${ladybug.dir}" vmlauncher="false" failonerror="true">
 			<env key="PATH" path="${java.library.path}:${git.path}" if:set="git.path" unless:true="${maven.skip.copyright}"/>
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
@@ -103,7 +107,7 @@
 		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
 		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}">
 			<arg value="${restart.arg}"/>
-			<arg value="-Dproject.dir=ibis-ladybug-test-webapp"/>
+			<arg value="-Dproject.dir=${ladybug-test-webapp.dir}"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
