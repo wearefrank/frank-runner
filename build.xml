@@ -1039,8 +1039,8 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
-	rm "${FR_DIR}${ant.dir}/lib/rhino-*.jar"
-	cp "${FR_DIR}${rhino.dir}/lib/rhino-*.jar" "${FR_DIR}${ant.dir}/lib/"
+	rm "${FR_DIR}${ant.dir}/lib/rhino-"*.jar
+	cp "${FR_DIR}${rhino.dir}/lib/rhino-"*.jar "${FR_DIR}${ant.dir}/lib/"
 fi
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"

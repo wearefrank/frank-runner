@@ -89,8 +89,8 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
 fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-1.7.14.jar" ]]; then
-	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-*.jar"
-	cp "${FR_DIR}build/rhino1.7.14/lib/rhino-*.jar" "${FR_DIR}build/apache-ant-1.10.10/lib/"
+	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-"*.jar
+	cp "${FR_DIR}build/rhino1.7.14/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.10/lib/"
 fi
 JDK_8_DIR="${FR_DIR}build/jdk8u392-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
