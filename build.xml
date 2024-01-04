@@ -1041,7 +1041,7 @@ fi</echo>
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	rm "${FR_DIR}${ant.dir}/lib/rhino-*.jar"
 	cp "${FR_DIR}${rhino.dir}/lib/rhino-*.jar" "${FR_DIR}${ant.dir}/lib/"
-)
+fi
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
