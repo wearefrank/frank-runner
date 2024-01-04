@@ -64,10 +64,38 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
 fi
+ZIP=rhino-1.7.14.zip
+URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
+DIR=${dir}
+SUB=
+DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
+if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
+	echo In case of errors ${DOWNLOAD_HELP}
+	curl -f -o "${FR_DIR}download/${ZIP}.tmp" -L ${URL}
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
+fi
+if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
+	unzip "${FR_DIR}download/${ZIP}" -d "${FR_DIR}build/tmp/build"
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+fi
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-1.7.14.jar" ]]; then
+	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-*.jar"
+	cp "${FR_DIR}build/rhino1.7.14/lib/rhino-*.jar" "${FR_DIR}build/apache-ant-1.10.10/lib/"
+)
 JDK_8_DIR="${FR_DIR}build/jdk8u392-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.8+7"
 JDK_21_DIR="${FR_DIR}build/jdk-21.0.1+12"
-export JAVA_HOME="${JDK_11_DIR}"
+export JAVA_HOME="${JDK_21_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" run

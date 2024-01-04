@@ -144,7 +144,7 @@
 		<property name="jdk.21.url.lin" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.lin}"/>
 		<property name="jdk.21.url.mac" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.mac}"/>
 
-		<property name="fr.jdk.dir" value="${jdk.11.dir}"/>
+		<property name="fr.jdk.dir" value="${jdk.21.dir}"/>
 		<property name="mvn.jdk.version" value="21"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
@@ -157,6 +157,13 @@
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
+		<property name="rhino.version.major" value="1"/>
+		<property name="rhino.version.minor" value="7"/>
+		<property name="rhino.version.patch" value="14"/>
+		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
+		<property name="rhino.zip" value="rhino-${rhino.version}.zip"/>
+		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.major}_${rhino.version.minor}_${rhino.version.patch}_Release/${rhino.zip}"/>
+		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
 		<property name="maven.version" value="3.9.5"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
@@ -286,11 +293,11 @@
 		<scriptdef language="javascript" name="systemproperties">
 			<attribute name="name"/>
 			<attribute name="commaseparated"/>
-			var commaSeparated = attributes.get("commaseparated").split(', ');
+			var commaSeparated = new String(attributes.get("commaseparated")).split(', ');
 			var value = '';
 			for (var i = 0; i &lt; commaSeparated.length; i++) {
 				if (!commaSeparated[i].startsWith('ant.')) {
-					value += '\n' + commaSeparated[i].replace(/\\/g, "\\\\");
+					value += '\n' + commaSeparated[i].replace("/\\/g", "\\\\");
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
@@ -317,49 +324,49 @@
 			<attribute name="configurationsdirsflat"/>
 			<attribute name="classloadertype"/>
 			<attribute name="basepath"/>
-			var configurationsDirAbs = attributes.get("configurationsdirabs");
-			var configurationNameDefault = attributes.get("configurationnamedefault");
-			var configurationsNames = attributes.get("configurationsnames");
-			var configurationsNamesDs = attributes.get("configurationsnamesds");
-			var configurationsDirs = attributes.get("configurationsdirs").split('|');
-			var configurationsDirsFlat = attributes.get("configurationsdirsflat").split('|');
-			var classLoaderType = attributes.get("classloadertype");
-			var basePath = attributes.get("basepath");
+			var configurationsDirAbs = new String(attributes.get("configurationsdirabs"));
+			var configurationNameDefault = new String(attributes.get("configurationnamedefault"));
+			var configurationsNames = new String(attributes.get("configurationsnames"));
+			var configurationsNamesDs = new String(attributes.get("configurationsnamesds"));
+			var configurationsDirs = new String(attributes.get("configurationsdirs")).split('|');
+			var configurationsDirsFlat = new String(attributes.get("configurationsdirsflat")).split('|');
+			var classLoaderType = new String(attributes.get("classloadertype"));
+			var basePath = new String(attributes.get("basepath"));
 			var value = '';
 			value += '\n# Set configurations.directory based on Frank!Runner properties';
-			value += '\nconfigurations.directory=' + configurationsDirAbs.replace(/\\/g, "\\\\");
+			value += '\nconfigurations.directory=' + configurationsDirAbs.replace("/\\/g", "\\\\");
 			if (configurationsNames != '${configurations.names}') {
 				value += '\n# Set configurations.names to Frank!Runner property with the same name';
 				if (configurationNameDefault != '${configuration.name.default}') {
 					value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
-					value += '\nconfigurations.names=' + configurationNameDefault.replace(/\\/g, "\\\\") + ',';
+					value += '\nconfigurations.names=' + configurationNameDefault.replace("/\\/g", "\\\\") + ',';
 				} else {
 					value += '\nconfigurations.names=';
 				}
-				value += configurationsNames.replace(/\\/g, "\\\\");
+				value += configurationsNames.replace("/\\/g", "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
 					value += '\n# Set configurations.names to the list of folders in configurations.directory';
 					if (configurationNameDefault != '${configuration.name.default}') {
 						value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
-						value += '\nconfigurations.names=' + configurationNameDefault.replace(/\\/g, "\\\\") + ',';
+						value += '\nconfigurations.names=' + configurationNameDefault.replace("/\\/g", "\\\\") + ',';
 					} else {
 						value += '\nconfigurations.names=';
 					}
-					if (configurationsDirsFlat.toString().length() > 0) {
-						value += configurationsDirsFlat.toString().replace(/\\/g, "\\\\");
+					if (configurationsDirsFlat.toString().length > 0) {
+						value += configurationsDirsFlat.toString().replace("/\\/g", "\\\\");
 					}
 				} else {
 					value += '\n# Don\'t set configurations.names as it is spedified in DeploymentSpecifics.properties';
 				}
 			}
-			if (configurationsDirsFlat.toString().length() > 0) {
+			if (configurationsDirsFlat.toString().length > 0) {
 				if (basePath == '${configurations.base.path}') basePath = '/'; // when set to empty string F!F will use default basePath (which is the configuration name)
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.directory=' + configurationsDirs[i].replace(/\\/g, "\\\\");
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace(/ /g, "\\ ") + '.basePath=' + basePath;
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.classLoaderType='+ classLoaderType;
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.directory=' + configurationsDirs[i].replace("/\\/g", "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.basePath=' + basePath;
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
@@ -382,16 +389,16 @@
 			<attribute name="projectsdirabs"/>
 			<attribute name="scenariosrootdefault"/>
 			<attribute name="testsdirs"/>
-			var projectsDirAbs = attributes.get("projectsdirabs");
-			var scenariosrootDefault = attributes.get("scenariosrootdefault");
-			var testsDirs = attributes.get("testsdirs").split('|');
+			var projectsDirAbs = new String(attributes.get("projectsdirabs"));
+			var scenariosrootDefault = new String(attributes.get("scenariosrootdefault"));
+			var testsDirs = new String(attributes.get("testsdirs")).split('|');
 			var value = '';
 			if (scenariosrootDefault != '${scenariosroot.default}') {
-				value += '\nscenariosroot.default=' + scenariosrootDefault.replace(/\\/g, "\\\\");
+				value += '\nscenariosroot.default=' + scenariosrootDefault.replace("/\\/g", "\\\\");
 			}
 			for (var i = 0; i &lt; testsDirs.length; i++) {
-				value += '\nscenariosroot' + (i + 1) + '.description='+ testsDirs[i].substring(projectsDirAbs.length() + 1).replace(/\\/g, "\\\\");
-				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace(/\\/g, "\\\\");
+				value += '\nscenariosroot' + (i + 1) + '.description='+ testsDirs[i].substring(projectsDirAbs.length + 1).replace("/\\/g", "\\\\");
+				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace("/\\/g", "\\\\");
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
@@ -402,6 +409,7 @@
 		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.21.dir.windows"><propertyresource name="jdk.21.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="rhino.dir.windows"><propertyresource name="rhino.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 
@@ -612,7 +620,7 @@
 		<scriptdef language="javascript" name="multicopyconfigxsd"><!-- configs can be divided over serveral modules/projects, hence a copy to configurations.dir only is not enough) -->
 			<attribute name="configurationsdirs"/>
 			<attribute name="basepath"/>
-			var configurationsDirs = attributes.get("configurationsdirs").split('|'); // paths that include a specific config name at the end
+			var configurationsDirs = new String(attributes.get("configurationsdirs")).split('|'); // paths that include a specific config name at the end
 			var configurationsDir = "/.."; // go one up to reach the configurations.dir holding one or more specific configs
 			if (attributes.get("basepath") == 'adapters') configurationsDir = '/'; // keep reference to xsd in config xml working with ../FrankConfig.xsd like with other setups and rutime deployments (otherwise with the extra adapters ../../FrankConfig.xsd would be needed to reach the configurations.dir) 
 			for (var i = 0; i &lt; configurationsDirs.length; i++) {
@@ -632,7 +640,7 @@
 		<pathconvert property="project.dirs" refid="project.dirs.id" pathsep="|" if:true="${update.config.xsd.and.available}"/>
 		<scriptdef language="javascript" name="multiaddgitignore"><!-- configs can be divided over serveral projects, hence a copy to project.dir only is not enough) -->
 			<attribute name="dirs"/>
-			var dirs = attributes.get("dirs").split('|');
+			var dirs = new String(attributes.get("dirs")).split('|');
 			for (var i = 0; i &lt; dirs.length; i++) {
 				if (dirs[i].length > 0) {
 					var task = project.createTask("antcall");
@@ -924,7 +932,12 @@ if not exist "%~dp0build\tmp\build\" (
 )</echo>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.11.zip.win}"/><param name="url" value="${jdk.11.url.win}"/><param name="dir.windows" value="${jdk.11.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
+if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
+	del "%~dp0${ant.dir.windows}\lib\rhino-*.jar"
+	copy "%~dp0${rhino.dir.windows}\lib\rhino-*.jar" "%~dp0${ant.dir.windows}\lib\"
+)
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
@@ -1023,7 +1036,12 @@ if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.11.zip.lin}"/><param name="zip.mac" value="${jdk.11.zip.mac}"/><param name="url" value="${jdk.11.url.lin}"/><param name="url.mac" value="${jdk.11.url.mac}"/><param name="dir" value="${jdk.11.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
 		<echo file="${filename}.sh" append="true">
+if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
+	rm "${FR_DIR}${ant.dir}/lib/rhino-*.jar"
+	cp "${FR_DIR}${rhino.dir}/lib/rhino-*.jar" "${FR_DIR}${ant.dir}/lib/"
+)
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
@@ -1111,6 +1129,7 @@ if not exist "%~dp0${dir.windows}\" (
 	</target>
 
 	<target name="generate.sh.download.unzip">
+		<condition property="unzip"><contains string="${zip}" substring=".zip"/></condition>
 		<echo file="${filename}.sh" append="true">
 ZIP=${zip}
 URL=${url}
@@ -1132,8 +1151,9 @@ if [[ ! -f "$${FR_DIR}download/$${ZIP}" ]]; then
 	fi
 	mv "$${FR_DIR}download/$${ZIP}.tmp" "$${FR_DIR}/download/$${ZIP}"
 fi
-if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"
+if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then</echo><echo file="${filename}.sh" append="true" unless:set="unzip">
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xzvf "$${FR_DIR}download/$${ZIP}" -C "$${FR_DIR}build/tmp/build"</echo><echo file="${filename}.sh" append="true" if:set="unzip">
+	unzip "$${FR_DIR}download/$${ZIP}" -d "$${FR_DIR}build/tmp/build"</echo><echo file="${filename}.sh" append="true">
 	retVal=$$?
 	if [[ $$retVal -ne 0 ]]; then
 		echo "Please $${DOWNLOAD_HELP}"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
@@ -1259,7 +1279,7 @@ fi</echo>
 
 	<scriptdef language="javascript" name="doublejars">
 		<attribute name="jars"/>
-		var jars = attributes.get("jars").split('|');
+		var jars = new String(attributes.get("jars")).split('|');
 		var doubleJars = '';
 		var names = [];
 		for (var i = 0; i &lt; jars.length; i++) {
@@ -1270,7 +1290,8 @@ fi</echo>
 				// Double jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT.jar
 				// Unique jars: ibis-ladybug-2.2.jar ibis-ladybug-2.2-SNAPSHOT-tests.jar ibis-ladybug-2.2-tests.jar
 				if ((jars[i].charAt(k) &lt; '0' || jars[i].charAt(k) &gt; '9')
-						&amp;&amp; jars[i].substring(k, j) != 'SNAPSHOT') {
+						&amp;&amp; jars[i].substring(k, j) != 'SNAPSHOT'
+						&amp;&amp; jars[i].substring(k, j) != 'CUSTOM') {
 					if (k != 0) {
 						name += '-';
 					}
@@ -1284,7 +1305,7 @@ fi</echo>
 			}
 			// Ignore annotations-2.18.1.jar and annotations-13.0.jar that have different groupId's
 			if (names.indexOf(name) != -1 &amp;&amp; name != 'annotations') {
-				if (doubleJars.length() == 0) {
+				if (doubleJars.length == 0) {
 					doubleJars = name;
 				} else {
 					doubleJars += ', ' + name;
@@ -1292,7 +1313,7 @@ fi</echo>
 			}
 			names.push(name);
 		}
-		if (doubleJars.length() > 0) {
+		if (doubleJars.length > 0) {
 			project.setProperty('double.jars', doubleJars);
 		}
 	</scriptdef>
