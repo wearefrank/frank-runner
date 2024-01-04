@@ -9,6 +9,7 @@
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
 		<property name="maven.skip.copyright" value="${maven.skip.all}"/>
+		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
 		<property name="test.with.test.webapp" value="true"/>
 		<property name="test.with.iaf" value="false"/>
@@ -68,10 +69,12 @@
 		</condition>
 		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
 
+		<condition property="stop.exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="stop.arg" value="../../stop.sh" else=""><os family="unix"/></condition>
+		<condition property="start.exe" value="../../start.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="start.arg" value="../../start.sh" else=""><os family="unix"/></condition>
 		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
-		<condition property="restart.exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
-		<condition property="restart.arg" value="../../restart.sh" else=""><os family="unix"/></condition>
 
 		<echo message="ibis-ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/>
@@ -86,6 +89,13 @@
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+		</exec>
+
+		<echo message="ibis-ladybug: Stop Tomcat to prevent JUnit tests failing because H2 database is locked"/>
+		<exec executable="${stop.exe}" vmlauncher="false" failonerror="true">
+			<arg value="${stop.arg}"/>
+			<arg value="-Dproject.dir=${ff.dir}/webapp"/>
+			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
 		<echo message="ibis-ladybug: Build Ladybug"/>
@@ -105,8 +115,8 @@
 		</exec>
 
 		<echo message="ibis-ladybug: Test with ibis-ladybug-test-webapp" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
-		<exec executable="${restart.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}">
-			<arg value="${restart.arg}"/>
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}">
+			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=${ladybug-test-webapp.dir}"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
