@@ -1036,7 +1036,7 @@ if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.11.zip.lin}"/><param name="zip.mac" value="${jdk.11.zip.mac}"/><param name="url" value="${jdk.11.url.lin}"/><param name="url.mac" value="${jdk.11.url.mac}"/><param name="dir" value="${jdk.11.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	rm "${FR_DIR}${ant.dir}/lib/rhino-*.jar"

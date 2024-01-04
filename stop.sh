@@ -66,7 +66,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 fi
 ZIP=rhino-1.7.14.zip
 URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
-DIR=${dir}
+DIR=build/rhino1.7.14
 SUB=
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
