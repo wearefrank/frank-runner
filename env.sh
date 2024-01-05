@@ -39,6 +39,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
+	fi
 	RUN_INSTALL="true"
 fi
 ZIP=apache-ant-1.10.10-bin.tar.gz
@@ -64,6 +67,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
+	fi
 fi
 ZIP=rhino-1.7.14.zip
 URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
@@ -88,6 +94,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
+	fi
 fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-1.7.14.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-"*.jar

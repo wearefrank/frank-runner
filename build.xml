@@ -1159,7 +1159,10 @@ if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then</echo><echo file="${filename}.sh" appen
 		echo "Please $${DOWNLOAD_HELP}"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		exit $$retVal
 	fi
-	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
+	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"
+	if [[ ! -f "$${FR_DIR}$${DIR}/lib/jspawnhelper" ]]; then
+		chmod +x "$${FR_DIR}$${DIR}/lib/jspawnhelper"<!-- prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
+	fi</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
 	RUN_INSTALL="true"<!-- install cacerts when present --></echo><echo file="${filename}.sh" append="true">
 fi</echo>
 	</target>
