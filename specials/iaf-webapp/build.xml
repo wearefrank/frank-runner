@@ -10,6 +10,7 @@
 		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
 		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
+		<property name="maven.skip.build.frontend" value="${maven.skip.all}"/>
 		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
 		<!-- Run webapp with configurations and tests from another project as it doesn't have it's own -->
@@ -30,6 +31,18 @@
 			<arg value="${stop.arg}"/>
 			<arg value="-Dproject.dir=${ff.dir}/webapp"/>
 			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
+		</exec>
+
+		<echo message="iaf-webapp: Build frontend" unless:true="${maven.skip.build.frontend}"/>
+		<exec executable="../../${mvn.exe}" dir="../../../${ff.dir}/console/frontend" vmlauncher="false" failonerror="true" unless:true="${maven.skip.build.frontend}">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
+			<arg value="install"/>
+			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
+			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
