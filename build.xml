@@ -364,9 +364,9 @@
 				if (basePath == '${configurations.base.path}') basePath = '/'; // when set to empty string F!F will use default basePath (which is the configuration name)
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.directory=' + new java.lang.String(configurationsDirs[i]).replace("\\", "\\\\");
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.basePath=' + basePath;
+					value += '\nconfigurations.' + new java.lang.String(configurationsDirsFlat[i]).replace(" ", "\\ ") + '.classLoaderType='+ classLoaderType;
+					value += '\nconfigurations.' + new java.lang.String(configurationsDirsFlat[i]).replace(" ", "\\ ") + '.directory=' + new java.lang.String(configurationsDirs[i]).replace("\\", "\\\\");
+					value += '\nconfigurations.' + new java.lang.String(configurationsDirsFlat[i]).replace(" ", "\\ ") + '.basePath=' + basePath;
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
