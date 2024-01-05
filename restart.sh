@@ -39,9 +39,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
-		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
-	fi
 fi
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
@@ -66,9 +63,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
-		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
-	fi
 fi
 ZIP=rhino-1.7.14.zip
 URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
@@ -93,9 +87,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
-		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
-	fi
 fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-1.7.14.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-"*.jar
@@ -106,5 +97,7 @@ JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.8+7"
 JDK_21_DIR="${FR_DIR}build/jdk-21.0.1+12"
 export JAVA_HOME="${JDK_21_DIR}"
+chmod +x "${JDK_21_DIR}/lib/jspawnhelper"
+
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" restart
