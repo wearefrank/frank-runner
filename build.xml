@@ -297,7 +297,7 @@
 			var value = '';
 			for (var i = 0; i &lt; commaSeparated.length; i++) {
 				if (!commaSeparated[i].startsWith('ant.')) {
-					value += '\n' + commaSeparated[i].replace("/\\/g", "\\\\");
+					value += '\n' + new java.lang.String(commaSeparated[i]).replace("\\", "\\\\");
 				}
 			}
 			project.setProperty(attributes.get("name"), value);
@@ -334,27 +334,27 @@
 			var basePath = new String(attributes.get("basepath"));
 			var value = '';
 			value += '\n# Set configurations.directory based on Frank!Runner properties';
-			value += '\nconfigurations.directory=' + configurationsDirAbs.replace("/\\/g", "\\\\");
+			value += '\nconfigurations.directory=' + new java.lang.String(configurationsDirAbs).replace("\\", "\\\\");
 			if (configurationsNames != '${configurations.names}') {
 				value += '\n# Set configurations.names to Frank!Runner property with the same name';
 				if (configurationNameDefault != '${configuration.name.default}') {
 					value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
-					value += '\nconfigurations.names=' + configurationNameDefault.replace("/\\/g", "\\\\") + ',';
+					value += '\nconfigurations.names=' + new java.lang.String(configurationNameDefault).replace("\\", "\\\\") + ',';
 				} else {
 					value += '\nconfigurations.names=';
 				}
-				value += configurationsNames.replace("/\\/g", "\\\\");
+				value += new java.lang.String(configurationsNames).replace("\\", "\\\\");
 			} else {
 				if (configurationsNamesDs == '${ds.properties.configurations.names}') {
 					value += '\n# Set configurations.names to the list of folders in configurations.directory';
 					if (configurationNameDefault != '${configuration.name.default}') {
 						value += ' (plus ' + configurationNameDefault + ' because a Configuration.xml is detected in classes.dir)';
-						value += '\nconfigurations.names=' + configurationNameDefault.replace("/\\/g", "\\\\") + ',';
+						value += '\nconfigurations.names=' + new java.lang.String(configurationNameDefault).replace("\\", "\\\\") + ',';
 					} else {
 						value += '\nconfigurations.names=';
 					}
 					if (configurationsDirsFlat.toString().length > 0) {
-						value += configurationsDirsFlat.toString().replace("/\\/g", "\\\\");
+						value += new java.lang.String(configurationsDirsFlat.toString()).replace("\\", "\\\\");
 					}
 				} else {
 					value += '\n# Don\'t set configurations.names as it is spedified in DeploymentSpecifics.properties';
@@ -365,7 +365,7 @@
 				value += '\n# Set .classLoaderType and .directory property for every folder in configurations.directory';
 				for (var i = 0; i &lt; configurationsDirs.length; i++) {
 					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.classLoaderType='+ classLoaderType;
-					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.directory=' + configurationsDirs[i].replace("/\\/g", "\\\\");
+					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.directory=' + new java.lang.String(configurationsDirs[i]).replace("\\", "\\\\");
 					value += '\nconfigurations.' + configurationsDirsFlat[i].replace("/ /g", "\\ ") + '.basePath=' + basePath;
 				}
 			}
@@ -394,11 +394,11 @@
 			var testsDirs = new String(attributes.get("testsdirs")).split('|');
 			var value = '';
 			if (scenariosrootDefault != '${scenariosroot.default}') {
-				value += '\nscenariosroot.default=' + scenariosrootDefault.replace("/\\/g", "\\\\");
+				value += '\nscenariosroot.default=' + new java.lang.String(scenariosrootDefault).replace("\\", "\\\\");
 			}
 			for (var i = 0; i &lt; testsDirs.length; i++) {
-				value += '\nscenariosroot' + (i + 1) + '.description='+ testsDirs[i].substring(projectsDirAbs.length + 1).replace("/\\/g", "\\\\");
-				value += '\nscenariosroot' + (i + 1) + '.directory=' + testsDirs[i].replace("/\\/g", "\\\\");
+				value += '\nscenariosroot' + (i + 1) + '.description='+ new java.lang.String(testsDirs[i].substring(projectsDirAbs.length + 1)).replace("\\", "\\\\");
+				value += '\nscenariosroot' + (i + 1) + '.directory=' + new java.lang.String(testsDirs[i]).replace("\\", "\\\\");
 			}
 			project.setProperty(attributes.get("name"), value);
 		</scriptdef>
