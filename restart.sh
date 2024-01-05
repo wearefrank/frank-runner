@@ -11,13 +11,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz
-URL=https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.21_9.tar.gz
-DIR=build/jdk-11.0.21+9
+ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
+URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
+DIR=build/jdk-21.0.1+12
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK11U-jdk_x64_mac_hotspot_11.0.21_9.tar.gz
-	URL=https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.21_9.tar.gz
+	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.1_12.tar.gz
+	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_mac_hotspot_21.0.1_12.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -39,7 +39,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
 		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
 	fi
 fi
@@ -66,7 +66,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
 		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
 	fi
 fi
@@ -93,7 +93,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		exit $retVal
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
-	if [[ ! -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
+	if [[ -f "${FR_DIR}${DIR}/lib/jspawnhelper" ]]; then
 		chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
 	fi
 fi

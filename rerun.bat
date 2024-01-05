@@ -7,23 +7,23 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
-set DOWNLOAD_HELP=download https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip" (
+set DOWNLOAD_HELP=download https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip.tmp" -L https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21+9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip
+	curl -f -o "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip.tmp" -L https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip.tmp" "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip"
+	move "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip.tmp" "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip"
 )
-if not exist "%~dp0build\jdk-11.0.21+9\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK11U-jdk_x64_windows_hotspot_11.0.21_9.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\jdk-21.0.1+12\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.1_12.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\jdk-11.0.21+9" "%~dp0build\jdk-11.0.21+9"
+	move "%~dp0build\tmp\build\jdk-21.0.1+12" "%~dp0build\jdk-21.0.1+12"
 )
 set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\apache-ant-1.10.10-bin.zip" (

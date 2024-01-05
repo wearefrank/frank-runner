@@ -930,7 +930,7 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.11.zip.win}"/><param name="url" value="${jdk.11.url.win}"/><param name="dir.windows" value="${jdk.11.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${jdk.21.zip.win}"/><param name="url" value="${jdk.21.url.win}"/><param name="dir.windows" value="${jdk.21.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
@@ -1034,7 +1034,7 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.11.zip.lin}"/><param name="zip.mac" value="${jdk.11.zip.mac}"/><param name="url" value="${jdk.11.url.lin}"/><param name="url.mac" value="${jdk.11.url.mac}"/><param name="dir" value="${jdk.11.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${jdk.21.zip.lin}"/><param name="zip.mac" value="${jdk.21.zip.mac}"/><param name="url" value="${jdk.21.url.lin}"/><param name="url.mac" value="${jdk.21.url.mac}"/><param name="dir" value="${jdk.21.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
@@ -1160,7 +1160,7 @@ if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then</echo><echo file="${filename}.sh" appen
 		exit $$retVal
 	fi
 	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"
-	if [[ ! -f "$${FR_DIR}$${DIR}/lib/jspawnhelper" ]]; then
+	if [[ -f "$${FR_DIR}$${DIR}/lib/jspawnhelper" ]]; then
 		chmod +x "$${FR_DIR}$${DIR}/lib/jspawnhelper"<!-- prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 	fi</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
 	RUN_INSTALL="true"<!-- install cacerts when present --></echo><echo file="${filename}.sh" append="true">
