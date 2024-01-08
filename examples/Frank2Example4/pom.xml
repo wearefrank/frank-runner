@@ -17,13 +17,13 @@
 		downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as it
 		starts with an empty local repository on every new run (unless configured to cache the Maven repository)
 		-->
-		<ff.version>[8.0-20231102.180638,)</ff.version>
+		<ff.version>[8.1.0-20231223.223430,)</ff.version>
 	  </properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.ibissource</groupId>
-			<artifactId>ibis-adapterframework-webapp</artifactId>
+			<groupId>org.frankframework</groupId>
+			<artifactId>frankframework-webapp</artifactId>
 			<version>${ff.version}</version>
 			<type>war</type>
 		</dependency>
