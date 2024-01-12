@@ -196,7 +196,7 @@
 		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
 		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
-		<property name="lombok.version" value="1.18.24"/>
+		<property name="lombok.version" value="1.18.30"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<property name="winmerge.version" value="2.16.6"/>
