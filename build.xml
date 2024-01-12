@@ -578,6 +578,7 @@
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 				<fileset dir="download"><include name="${lombok.jar}"/></fileset>
 			</classpath>
+			<compilerarg line="-processor lombok.launch.AnnotationProcessorHider$AnnotationProcessor"/><!-- prevent warning in java 21: ... future release of javac may disable annotation processing ... -->
 		</javac>
 		<available property="classes.dir.available" file="${projects.dir}/${project.dir}/${classes.dir}"/>
 		<copy todir="${webapp.dir}/WEB-INF/classes" if:set="classes.dir.available" unless:true="${maven}">
