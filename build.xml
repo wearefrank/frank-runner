@@ -574,9 +574,9 @@
 		<property name="javac.release" value="11"/>
 		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${webapp.dir}/WEB-INF/classes" release="${javac.release}" includeantruntime="false" if:set="java.dir.available" unless:true="${maven}">
 			<classpath>
+				<fileset dir="download"><include name="${lombok.jar}"/></fileset>
 				<fileset dir="${webapp.dir}/WEB-INF/lib"><include name="*.jar"/></fileset>
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
-				<fileset dir="download"><include name="${lombok.jar}"/></fileset>
 			</classpath>
 			<compilerarg line="-processor lombok.launch.AnnotationProcessorHider$AnnotationProcessor"/><!-- prevent warning in java 21: ... future release of javac may disable annotation processing ... -->
 		</javac>
