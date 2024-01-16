@@ -521,6 +521,7 @@
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
+		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties."/>
 		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties."/>
 		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
