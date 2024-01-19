@@ -535,8 +535,8 @@
 		<copy todir="${webapp.dir}/WEB-INF/lib" if:set="lib.webapp.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.webapp.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
-		<!-- ff version dependent properties for both maven (doesn't use ff.version) and non-maven projects -->
-		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
+		<!-- ff version dependent properties -->
+		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version -->
 			<filename regex="core-7\.*"/>
 		</fileset>
 		<pathconvert property="jdk8.fallback" refid="jdk8.fallback.fileset" />
