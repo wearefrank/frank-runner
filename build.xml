@@ -537,15 +537,21 @@
 		<doublejars jars="${webapp.lib.jars}"/>
 		<!-- ff version dependent properties -->
 		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version -->
-			<filename regex="core-7\.*"/>
+			<filename regex="core-7\."/>
 		</fileset>
 		<pathconvert property="jdk8.fallback" refid="jdk8.fallback.fileset" />
 		<property name="tomcat.jdk.dir" value="${jdk.8.dir}" unless:blank="${jdk8.fallback}"/>
 		<property name="tomcat.jdk.dir.windows" value="${jdk.8.dir.windows}" unless:blank="${jdk8.fallback}"/>
-		<property name="tomcat.jdk.dir" value="${jdk.11.dir}"/>
-		<property name="tomcat.jdk.dir.windows" value="${jdk.11.dir.windows}"/>
+		<fileset id="jdk11.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="frankframework-core-*.jar">
+			<filename regex="core-8\.0"/>
+		</fileset>
+		<pathconvert property="jdk11.fallback" refid="jdk11.fallback.fileset" />
+		<property name="tomcat.jdk.dir" value="${jdk.11.dir}" unless:blank="${jdk11.fallback}"/>
+		<property name="tomcat.jdk.dir.windows" value="${jdk.11.dir.windows}" unless:blank="${jdk11.fallback}"/>
+		<property name="tomcat.jdk.dir" value="${jdk.17.dir}"/>
+		<property name="tomcat.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
 		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
-			<or><filename regex="core-7\.[0-6].*"/><filename regex="core-7\.7-2021.*"/><filename regex="core-7\.7-2022010.*"/><filename regex="core-7\.7-2022011[0-7].*"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
+			<or><filename regex="core-7\.[0-6]"/><filename regex="core-7\.7-2021"/><filename regex="core-7\.7-2022010"/><filename regex="core-7\.7-2022011[0-7]"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
 		</fileset>
 		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
 		<property name="h2.jar" value="${h2v1.jar}" unless:blank="${h2.fallback}"/>
