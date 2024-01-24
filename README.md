@@ -42,7 +42,7 @@ Frank project(s) (make the frank-runner folder a sibling of your project
 folder).
 
 ```
-git clone https://github.com/ibissource/frank-runner.git
+git clone https://github.com/wearefrank/frank-runner.git
 ```
 
 You can now run Frank!Runner build.xml files in projects that already have them
