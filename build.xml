@@ -146,6 +146,7 @@
 
 		<property name="fr.jdk.dir" value="${jdk.21.dir}"/>
 		<property name="mvn.jdk.version" value="21"/>
+		<property name="tomcat.jdk.default.dir" value="${jdk.21.dir}"/>
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
@@ -412,6 +413,7 @@
 		<loadresource property="rhino.dir.windows"><propertyresource name="rhino.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="tomcat.jdk.default.dir.windows"><propertyresource name="tomcat.jdk.default.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 
 		<tstamp><format property="get.build.tstamp" pattern="yyyyMMdd"/></tstamp>
 		<condition property="get.build"><not><resourceexists><file file="download/frank-runner/build-${get.build.tstamp}.txt"/></resourceexists></not></condition>
@@ -548,8 +550,8 @@
 		<pathconvert property="jdk11.fallback" refid="jdk11.fallback.fileset" />
 		<property name="tomcat.jdk.dir" value="${jdk.11.dir}" unless:blank="${jdk11.fallback}"/>
 		<property name="tomcat.jdk.dir.windows" value="${jdk.11.dir.windows}" unless:blank="${jdk11.fallback}"/>
-		<property name="tomcat.jdk.dir" value="${jdk.17.dir}"/>
-		<property name="tomcat.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
+		<property name="tomcat.jdk.dir" value="${tomcat.jdk.default.dir}"/>
+		<property name="tomcat.jdk.dir.windows" value="${tomcat.jdk.default.dir.windows}"/>
 		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
 			<or><filename regex="core-7\.[0-6]"/><filename regex="core-7\.7-2021"/><filename regex="core-7\.7-2022010"/><filename regex="core-7\.7-2022011[0-7]"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
 		</fileset>
