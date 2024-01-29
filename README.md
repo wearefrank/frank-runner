@@ -2,7 +2,7 @@
 
 This project will help you run the
 [Frank!Framework](https://frankframework.org/) and the
-[Frank!Flow](https://github.com/ibissource/frank-flow#frankflow) to develop
+[Frank!Flow](https://github.com/frankframework/frank-flow#frankflow) to develop
 your [Frank! configurations](https://frank-manual.readthedocs.io/en/latest/).
 
 Add a [small build.xml](#small-buildxml-for-every-project) to your project and
@@ -190,11 +190,11 @@ Demonstrates [module per config](#module-per-config).
 # Specials
 
 To run the webapp, example and test modules of 
-https://github.com/ibissource/iaf you can use the build.xml files in the
-specials folder. As with other projects the iaf folder needs to be a sibling
-folder of the frank-runner folder. See also the build-example.properties files
-in these folders that describe several properties that can be set to speed up
-and customize the build.
+https://github.com/frankframework/frankframework you can use the build.xml
+files in the specials folder. As with other projects the iaf folder needs to be
+a sibling folder of the frank-runner folder. See also the
+build-example.properties files in these folders that describe several
+properties that can be set to speed up and customize the build.
 
 
 # Project structure and customisation
@@ -486,7 +486,7 @@ with the latest and greatest features but also a version that did not yet pass
 all quality checks yet. Hence, you might run into a bug in the Frank!Framework.
 Please report any Frank!Framework bugs at:
 
-https://github.com/ibissource/iaf/issues
+https://github.com/frankframework/frankframework/issues
 
 We appreciate your help but in case you would like to use a more reliable
 version and/or like to disable the update mechanism add the following to either
@@ -509,12 +509,13 @@ Or:
 ff.version=7.6-20200306.163142
 ```
 
-Check the following url to see all available Frank!Framework versions:
+Check the following url to find 8.0 and higher versions:
 
-https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/maven-metadata.xml
+https://nexus.frankframework.org/service/rest/repository/browse/public/org/frankframework/frankframework-webapp/
 
-Please note that very old versions might not run correctly with the
-Frank!Runner.
+Previous versions can be found at:
+
+https://nexus.frankframework.org/service/rest/repository/browse/public/org/ibissource/ibis-adapterframework-webapp/
 
 
 # Other properties and software versions
@@ -713,7 +714,7 @@ shortcurt for this executable which you can move to another location.
 When using this Eclipse intallation to contribute to the Frank!Framework the
 steps mentioned in
 
-https://github.com/ibissource/iaf/blob/master/CONTRIBUTING.md#developing-with-eclipse
+https://github.com/frankframework/frankframework/blob/master/CONTRIBUTING.md#developing-with-eclipse
 
 to install Eclipse with Lombok can be skipped. You can also skip setting up a
 Tomcat server in Eclipse when you use [Specials](#specials) to start and stop
@@ -830,7 +831,7 @@ command available (otherwise download it manually or use another Git program to
 clone the project):
 
 ```
-projects> git clone https://github.com/ibissource/frank-runner
+projects> git clone https://github.com/wearefrank/frank-runner
 ```
 
 Change directory to frank-runner:
