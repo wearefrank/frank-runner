@@ -672,12 +672,12 @@ in [Frank2Example4](#frank2example4).
 
 When you are developing a Maven webapplication with the Frank!Framework as dependency, you probably want to access it through http instead of https during development. The Frank!Framework only permits this if `dtap.stage=LOC`.
 
-When you write a webapplication with Maven, your `pom.xml` file defines how the application should be packaged. When you run your Maven project with the Frank!Runner during development, the following applies:
+When you write a webapplication with Maven, your `pom.xml` file defines how the application should be packaged. The Maven build is then typically what you need for production. During local development, the Frank!Runner helps you to deploy your application in Tomcat. The Frank!Runner then configures the following in Tomcat, allowing you to omit it from your `pom.xml`:
 
-* There is no need to add database drivers like h2 to `pom.xml`. The Frank!Runner installs them automatically.
-* There is no need to add depencency `geronimo-jms_1.1_spec` to `pom.xml`. The Frank!Runner deploys it automatically.
-* There is no need to configure a scenarios root directory for Larva. The Frank!Runner automatically configures the absolute path to `src/test/testtool`.
-* There is no need to add properties `log.dir`, `log.level` and `dtap.stage` to `pom.xml`. These properties are set automatically by the Frank!Runner.
+* The Frank!Runner adds a database driver for the h2 database in Tomcat's `lib` folder. The Frank!Runner also adds a `context.xml` to allow access to a h2 database.
+* The Frank!Runner adds `geronimo-jms_1.1_spec.jar` to Tomcat's `lib` folder. This file should not be packaged in your WAR because it should be provided by application servers according to the Jakarta EE standard. Tomcat does not provide this file however and hence this library has to be added.
+* The Frank!Runner configures `catalina.properties` to define a scenarios root directory for Larva. The Frank!Runner configures the absolute path to `src/test/testtool`.
+* The Frank!Runner configures in `cataline.properties` that `dtap.stage=LOC`. This way, you can access your webapp through http during development. If you do not set `dtap.stage` in your packaged application, it is up to the system administrator of the user to configure `dtap.stage`.
 
 # Root CA certificates
 
