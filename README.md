@@ -670,6 +670,14 @@ edit the web application files in src/main/webapp and see the changes in your
 browser without the need to restart your Frank!. A small example can be found
 in [Frank2Example4](#frank2example4).
 
+When you are developing a Maven webapplication with the Frank!Framework as dependency, you probably want to access it through http instead of https during development. The Frank!Framework only permits this if `dtap.stage=LOC`.
+
+When you write a webapplication with Maven, your `pom.xml` file defines how the application should be packaged. When you run your Maven project with the Frank!Runner during development, the following applies:
+
+* There is no need to add database drivers like h2 to `pom.xml`. The Frank!Runner installs them automatically.
+* There is no need to add depencency `geronimo-jms_1.1_spec` to `pom.xml`. The Frank!Runner deploys it automatically.
+* There is no need to configure a scenarios root directory for Larva. The Frank!Runner automatically configures the absolute path to `src/test/testtool`.
+* There is no need to add properties `log.dir`, `log.level` and `dtap.stage` to `pom.xml`. These properties are set automatically by the Frank!Runner.
 
 # Root CA certificates
 
