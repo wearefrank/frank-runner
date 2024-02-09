@@ -11,13 +11,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
-URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
-DIR=build/jdk-21.0.1+12
+ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz
+URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2+13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz
+DIR=build/jdk-21.0.2+13
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.1_12.tar.gz
-	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1+12/OpenJDK21U-jdk_x64_mac_hotspot_21.0.1_12.tar.gz
+	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.2_13.tar.gz
+	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2+13/OpenJDK21U-jdk_x64_mac_hotspot_21.0.2_13.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -38,7 +38,8 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
 		exit $retVal
 	fi
-	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
+	chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
 fi
 ZIP=apache-ant-1.10.10-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.10-bin.tar.gz
@@ -62,7 +63,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
 		exit $retVal
 	fi
-	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
 ZIP=rhino-1.7.14.zip
 URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
@@ -86,7 +87,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 		echo "Please ${DOWNLOAD_HELP}"
 		exit $retVal
 	fi
-	mv "${FR_DIR}build/tmp/${DIR}//${SUB}" "${FR_DIR}${DIR}"
+	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-1.7.14.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.10/lib/rhino-"*.jar
@@ -95,9 +96,8 @@ fi
 JDK_8_DIR="${FR_DIR}build/jdk8u392-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.21+9"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.8+7"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.1+12"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.2+13"
 export JAVA_HOME="${JDK_21_DIR}"
-chmod +x "${JDK_21_DIR}/lib/jspawnhelper"
 
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 "${FR_DIR}build/apache-ant-1.10.10/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" run

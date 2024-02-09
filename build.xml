@@ -126,8 +126,8 @@
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
 		<property name="jdk.21.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=21 -->
-		<property name="jdk.21.version.patch" value="1"/>
-		<property name="jdk.21.version.plus" value="12"/>
+		<property name="jdk.21.version.patch" value="2"/>
+		<property name="jdk.21.version.plus" value="13"/>
 		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
 		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
@@ -153,6 +153,7 @@
 		<property name="fr.jdk.url.win" value="${jdk.21.url.win}"/>
 		<property name="fr.jdk.url.lin" value="${jdk.21.url.lin}"/>
 		<property name="fr.jdk.url.mac" value="${jdk.21.url.mac}"/>
+		<property name="jdk.lib.jspawnhelper" value="lib/jspawnhelper"/><!-- chmod +x to prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
 		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
@@ -415,6 +416,7 @@
 		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.21.dir.windows"><propertyresource name="jdk.21.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="fr.jdk.dir.windows"><propertyresource name="fr.jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="rhino.dir.windows"><propertyresource name="rhino.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -871,7 +873,7 @@
 			<cutdirsmapper dirs="3" if:true="${os.mac}"/>
 		</untar>
 		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<chmod dir="${jdk.dir}/bin" includes="*" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
+		<chmod dir="${jdk.dir}" includes="bin/*,${jdk.lib.jspawnhelper}" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<antcall target="cacerts"/>
 	</target>
 
@@ -1050,7 +1052,7 @@ fi
 if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${fr.jdk.zip.lin}"/><param name="zip.mac" value="${fr.jdk.zip.mac}"/><param name="url" value="${fr.jdk.url.lin}"/><param name="url.mac" value="${fr.jdk.url.mac}"/><param name="dir" value="${fr.jdk.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${fr.jdk.zip.lin}"/><param name="zip.mac" value="${fr.jdk.zip.mac}"/><param name="url" value="${fr.jdk.url.lin}"/><param name="url.mac" value="${fr.jdk.url.mac}"/><param name="dir" value="${fr.jdk.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.chmod.jspawnhelper" value="true"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
@@ -1094,7 +1096,6 @@ export JAVA_HOME="$${JDK_11_DIR}"</echo>
 export JAVA_HOME="$${JDK_17_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.21" unless:set="mvn">
 export JAVA_HOME="$${JDK_21_DIR}"
-chmod +x "$${JDK_21_DIR}/lib/jspawnhelper"<!-- prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 </echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
 # ${maven.remark.line1}
@@ -1177,7 +1178,8 @@ if [[ ! -d "$${FR_DIR}$${DIR}/" ]]; then</echo><echo file="${filename}.sh" appen
 		echo "Please $${DOWNLOAD_HELP}"<!-- when a proxy replaces the content of the zip with an html page saying access is denied curl doesn't notice it and an error occurs when unzipping, hence the user also needs instruction to download manually when unzip fails -->
 		exit $$retVal
 	fi
-	mv "$${FR_DIR}build/tmp/$${DIR}//$${SUB}" "$${FR_DIR}$${DIR}"</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
+	mv "$${FR_DIR}build/tmp/$${DIR}/$${SUB}" "$${FR_DIR}$${DIR}"</echo><echo file="${filename}.sh" append="true" if:true="${run.chmod.jspawnhelper}">
+	chmod +x "$${FR_DIR}$${DIR}/${jdk.lib.jspawnhelper}"</echo><echo file="${filename}.sh" append="true" if:true="${run.install}">
 	RUN_INSTALL="true"<!-- install cacerts when present --></echo><echo file="${filename}.sh" append="true">
 fi</echo>
 	</target>
