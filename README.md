@@ -3,7 +3,7 @@
 This project will help you run the
 [Frank!Framework](https://frankframework.org/) and the
 [Frank!Flow](https://github.com/frankframework/frank-flow#frankflow) to develop
-your [Frank! configurations](https://frank-manual.readthedocs.io/en/latest/).
+your [Frank!Configurations](https://frank-manual.readthedocs.io/en/latest/).
 
 Add a [small build.xml](#small-buildxml-for-every-project) to your project and
 run it using a [small restart.bat](#small-restartbat-for-every-project) /
