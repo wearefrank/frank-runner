@@ -178,10 +178,6 @@ custom menu items at top of the Frank!Console menu. Better example Frank!
 configuration or web application files are appreciated. Please create a pull
 request, an issue or send an email with your improvements.
 
-This example is referenced by the Frank!Manual at the following location:
-
-https://frank-manual.readthedocs.io/en/latest/advancedDevelopment/deployment/usingFrankRunner.html
-
 ## Frank2Example5
 
 Demonstrates [module per config](#module-per-config).
