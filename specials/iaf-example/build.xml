@@ -33,6 +33,7 @@
 		<delete dir="../../../${ff.dir}/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" unless:true="${maven.skip.clean}"/>
 
 		<echo message="iaf-example: Build iaf"/>
+		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frontend" value="/target/frank-runner/frontend" summary="true"/><!-- match with -Dbuild.dir=target/frank-runner from which <id>copy NPM dist to Maven build folder</id> in pom.xml will use -->
 		<exec executable="${mvn.exe}" dir="../../../${ff.dir}" vmlauncher="false" failonerror="true">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
@@ -50,6 +51,7 @@
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
+		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frank-runner/frontend" value="/target/frontend" summary="true"/><!-- reset previous replace -->
 
 		<echo message="iaf-example: Update iaf-example with artifacts from local repo and start Tomcat"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true">
