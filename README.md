@@ -244,7 +244,7 @@ If your project has a `pom.xml`, you can choose whether the Frank!Runner
 should build your project with Maven (the default) or ANT. Set property
 `maven` to `false` to build with ANT.
 
-Your project doesn't need to contain a context.xml in case you want to use H2.
+Your project doesn't need to contain a context.xml in case you want to use an H2 database.
 
 When changing files in the classes folder you need to restart Tomcat. When
 changing files in the configurations folder you need to reload the configuration
