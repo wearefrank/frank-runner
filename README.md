@@ -240,7 +240,7 @@ project to run. In case you need to change the default value for projects.dir
 
 If your project has a `pom.xml`, you can choose whether the Frank!Runner
 should build your project with Maven (by default not, building is then done
- with ANT). Set property `maven` to `true` to build with Maven.
+with ANT). Set property `maven` to `true` to build with Maven.
 
 Your project doesn't need to contain a context.xml in case you want to use an
 H2 database.
