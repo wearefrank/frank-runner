@@ -712,6 +712,7 @@
 		<property name="spawn" value="true"/>
 		<java jvm="${tomcat.java.jvm}" classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
+			<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/><!-- Fixes classloading issue, see https://github.com/wearefrank/frank-runner/pull/86 -->
 			<arg value="${action}"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>

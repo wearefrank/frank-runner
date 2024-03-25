@@ -3,3 +3,5 @@
 /download
 /wip
 build.properties
+/.idea/
+.vscode/
