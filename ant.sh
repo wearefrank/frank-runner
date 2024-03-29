@@ -107,7 +107,6 @@ if [[ ! -d "${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_21_DIR}"
-
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.10"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.10/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install

@@ -712,7 +712,7 @@
 		<property name="spawn" value="true"/>
 		<java jvm="${tomcat.java.jvm}" classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/><!-- Fixes classloading issue, see https://github.com/wearefrank/frank-runner/pull/86 -->
+			<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED" if:blank="${jdk8.fallback}"/><!-- Fixes classloading issue, see https://github.com/wearefrank/frank-runner/pull/86 (this option is not available on JDK 8) -->
 			<arg value="${action}"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
@@ -1096,8 +1096,7 @@ export JAVA_HOME="$${JDK_11_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
 export JAVA_HOME="$${JDK_17_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.21" unless:set="mvn">
-export JAVA_HOME="$${JDK_21_DIR}"
-</echo>
+export JAVA_HOME="$${JDK_21_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="mvn">
 # ${maven.remark.line1}
 # ${maven.remark.line2}
