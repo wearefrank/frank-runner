@@ -174,7 +174,7 @@
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
-		<property name="maven.version" value="3.9.5"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.9.6"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>

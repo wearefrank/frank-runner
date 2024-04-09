@@ -36,6 +36,7 @@
 		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frontend" value="/target/frank-runner/frontend" summary="true"/><!-- match with -Dbuild.dir=target/frank-runner from which <id>copy NPM dist to Maven build folder</id> in pom.xml will use -->
 		<exec executable="${mvn.exe}" dir="../../../${ff.dir}" vmlauncher="false" failonerror="true">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
+			<arg value="-e" />
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
