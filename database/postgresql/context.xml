@@ -1,0 +1,11 @@
+<Context>
+	<Resource
+		name="jdbc/@instance.name.lc@"
+		auth="Container"
+		type="javax.sql.DataSource"
+		username="@instance.name.lc@_user"
+		password="@instance.name.lc@_password"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost:5432/@instance.name.lc@"
+	/>
+</Context>
