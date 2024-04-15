@@ -203,10 +203,10 @@ Here are short descriptions of the options provided in the `specials` folder:
 * `test-startup-times`
 
 In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
-to run the build and start the Frank!Framework (or ladybug-test-webapp
-). In each case, you can write
+to run the build and start the Frank!Framework (or ladybug-test-webapp).
+In each case, you can write
 your own `build.properties` next to the `restart.bat|sh` scripts to customize
-the build process and the exact application you are starting. Please only use
+the build process. Please only use
 properties that appear in the `build-example.properties` files supplied.
 Properties that work for ordinary use of the Frank!Runner may not work with a
 `specials/...` case. The Frank!Framework sources should be in a folder named
