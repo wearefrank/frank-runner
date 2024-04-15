@@ -217,7 +217,7 @@ with a modified locally-built version of the Frank!Framework. Put your
 configuration in `examples/Frank2Example1/configurations`. If you need
 class-level properties or configurations, put it in your `frankframework`
 checkout and not in your Frank!Runner checkout. Use folder
-`frankframework/webapp`.
+`frankframework/webapp/src/main/resources`.
 
 # Project structure and customisation
 
