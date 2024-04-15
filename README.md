@@ -200,7 +200,7 @@ Here are short descriptions of the options provided in the `specials` folder:
 * `specials/iaf-test`: Run the Larva tests of the Frank!Framework.
 * `specials/iaf-example`: Runs the example Frank application included in
   the F!F source code.
-* `test-startup-times`
+* `specials/test-startup-times`
 
 In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
 to run the build and start the Frank!Framework (or ladybug-test-webapp).
