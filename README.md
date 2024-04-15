@@ -185,13 +185,38 @@ Demonstrates [module per config](#module-per-config).
 
 # Specials
 
+The main purpose of the Frank!Runner is to run released code of the
+Frank!Framework - you do that by running `restart.bat` or `restart.sh` in the
+root directory of the Frank!Runner. When you are doing development work on
+Ladybug or the Frank!Framework, you may want to build the Frank!Framework
+locally. You can use the `specials` folder and its children to run your local
+build of the Frank!Framework source code, maybe including some changes of that
+source code.
+
+Here are short descriptions of the options provided in the `specials` folder:
+* `specials/ladybug`: Run ladybug without the Frank!Framework.
+* `specials/iaf-webapp`: Runs locally-built basic F!F, to be combined with
+  your own configuration.
+* `specials/iaf-test`: Run the Larva tests of the Frank!Framework.
+* `specials/iaf-example`: Runs the example Frank application included in
+  the F!F source code.
+* `test-startup-times`
+
 To run the webapp, example and test modules of 
 https://github.com/frankframework/frankframework you can use the build.xml
-files in the specials folder. As with other projects the iaf folder needs to be
-a sibling folder of the frank-runner folder. See also the
-build-example.properties files in these folders that describe several
-properties that can be set to speed up and customize the build.
+files in the specials folder. As with other projects the `iaf` folder needs to be
+a sibling folder of the frank-runner folder. In each case, you can write your
+own `build.properties` in the directory of the `restart.bat|sh` script to
+customize the build process and the exact application you are starting.
+Please only use properties that appear in the `build-example.properties`
+files supplied in these folders. Properties that work for ordinary use of the
+Frank!Runner may not work with a `specials/...` case.
 
+**specials/iaf-webapp:** Use this folder to run your own Frank configuration
+with a modified locally-built version of the Frank!Framework. Put your
+configuration in `examples/Frank2Example1/configurations`. If you need
+class-level properties or configurations, put it in your `frankframework`
+build and not in your Frank!Runner checkout.
 
 # Project structure and customisation
 
