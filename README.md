@@ -217,7 +217,9 @@ Properties that work for ordinary use of the Frank!Runner may not work with a
 
 **specials/iaf-webapp:** Use this folder to run your own Frank configuration
 with a modified locally-built version of the Frank!Framework. Put your
-configuration in `examples/Frank2Example1/configurations`. If you need
+configuration in `examples/Frank2Example1/configurations` or use property
+``configurations.dir`` in ``build.properties`` to configure a different
+location. If you need
 class-level properties or configurations, put it in your `frankframework`
 checkout and not in your Frank!Runner checkout. Use folder
 `frankframework/webapp/src/main/resources`.
