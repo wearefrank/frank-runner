@@ -202,15 +202,15 @@ Here are short descriptions of the options provided in the `specials` folder:
   the F!F source code.
 * `test-startup-times`
 
-To run the webapp, example and test modules of 
-https://github.com/frankframework/frankframework you can use the build.xml
-files in the specials folder. As with other projects the `iaf` folder needs to be
-a sibling folder of the frank-runner folder. In each case, you can write your
-own `build.properties` in the directory of the `restart.bat|sh` script to
-customize the build process and the exact application you are starting.
-Please only use properties that appear in the `build-example.properties`
-files supplied in these folders. Properties that work for ordinary use of the
-Frank!Runner may not work with a `specials/...` case.
+In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
+to run the build and start the Frank!Framework (or ladybug-test-webapp
+). In each case, you can write
+your own `build.properties` next to the `restart.bat|sh` scripts to customize
+the build process and the exact application you are starting. Please only use
+properties that appear in the `build-example.properties` files supplied.
+Properties that work for ordinary use of the Frank!Runner may not work with a
+`specials/...` case. The Frank!Framework sources should be in a folder named
+`iaf` that is a sibling of the Frank!Runner checkout.
 
 **specials/iaf-webapp:** Use this folder to run your own Frank configuration
 with a modified locally-built version of the Frank!Framework. Put your
