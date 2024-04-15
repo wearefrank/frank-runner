@@ -193,7 +193,10 @@ build of the Frank!Framework source code, maybe including some changes of that
 source code.
 
 Here are short descriptions of the options provided in the `specials` folder:
-* `specials/ladybug`: Run ladybug without the Frank!Framework.
+* `specials/ladybug`: Builds a ladybug checkout as well. May be combined with
+  F!F (property ``test.with.iaf=true`` in ``build.properties``) or with
+  a simple test webapp https://github.com/wearefrank/ladybug-test-webapp
+  (property ``test.with.iaf=false`` in ``build.properties``).
 * `specials/iaf-webapp`: Runs locally-built basic F!F, to be combined with
   your own configuration.
 * `specials/iaf-test`: Run the Larva tests of the Frank!Framework.
@@ -202,7 +205,8 @@ Here are short descriptions of the options provided in the `specials` folder:
 * `specials/test-startup-times`
 
 In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
-to run the build and start the Frank!Framework (or ladybug-test-webapp).
+to build the Frank!Framework, ladybug or ladybug-test-webapp and to
+run the Frank!Framework.
 In each case, you can write
 your own `build.properties` next to the `restart.bat|sh` scripts to customize
 the build process. Please only use
