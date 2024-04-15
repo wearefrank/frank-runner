@@ -186,8 +186,7 @@ Demonstrates [module per config](#module-per-config).
 # Specials
 
 The main purpose of the Frank!Runner is to run released code of the
-Frank!Framework - you do that by running `restart.bat` or `restart.sh` in the
-root directory of the Frank!Runner. When you are doing development work on
+Frank!Framework. When you are doing development work on
 Ladybug or the Frank!Framework, you may want to build the Frank!Framework
 locally. You can use the `specials` folder and its children to run your local
 build of the Frank!Framework source code, maybe including some changes of that
