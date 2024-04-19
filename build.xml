@@ -250,7 +250,6 @@
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
 		<property name="frankflow.version" value="${frankflow.metadata.versioning.latest}" if:set="frankflow.metadata.versioning.latest"/>
 
-		<!-- <property name="ff.version" value="7.8.5"/> -->
 		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
