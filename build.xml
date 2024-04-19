@@ -185,7 +185,7 @@
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.version.major" value="9"/>
 		<property name="tomcat.version.minor" value="0"/>
-		<property name="tomcat.version.patch" value="84"/><!-- on update: also update jms, ojdbc and mssql -->
+		<property name="tomcat.version.patch" value="88"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.version" value="${tomcat.version.major}.${tomcat.version.minor}.${tomcat.version.patch}"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-${tomcat.version.major}/v${tomcat.version}/bin/${tomcat.zip}"/>
@@ -219,15 +219,18 @@
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<property name="jms.version" value="1.1.1"/>
+		<property name="jms.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
 		<property name="jms.jar" value="geronimo-jms_1.1_spec-${jms.version}.jar"/>
 		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms.version}/${jms.jar}"/>
-		<property name="ojdbc.version" value="8-19.3.0.0"/>
+		<property name="ojdbc.version" value="8-19.3.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.ojdbc/ojdbc8/versions -->
 		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
-		<property name="mssql.version" value="12.4.2.jre8"/>
+		<property name="mssql.version" value="12.6.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
 		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
+		<property name="pgsql.version" value="42.7.3"/><!-- https://jdbc.postgresql.org/download/ -->
+		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
+		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
 
 		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
@@ -284,6 +287,7 @@
 		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
 		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
 		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
+		<available property="pgsql.jar.available" file="download/${pgsql.jar}"/>
 		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
 
 		<property name="larva.windiff.command" value="${basedir}/${winmerge.dir}/WinMerge/WinMergeU.exe"/><!-- defined here and not at the beginning of this file where most properties are defined as it depends on ${winmerge.dir} -->
@@ -433,7 +437,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -497,6 +501,7 @@
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
+		<copy file="download/${pgsql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.port can be changed -->
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol)" replace="\1${tomcat.secure.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.secure.port can be changed -->
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.secure.port can be changed -->
@@ -844,9 +849,13 @@
 	<target name="get.ojdbc" unless="${ojdbc.jar.available}">
 		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
 	</target>
-	
+
 	<target name="get.mssql" unless="${mssql.jar.available}">
 		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.pgsql" unless="${pgsql.jar.available}">
+		<get src="${pgsql.url}" dest="download/${pgsql.jar}" verbose="on"/>
 	</target>
 
 	<target name="jdk">
