@@ -1274,7 +1274,10 @@ fi</echo>
 		<property name="splash.name" value="${instance.name}"/>
 		<condition property="splash.port" value="" else=":${tomcat.port}"><equals arg1="${tomcat.port}" arg2="80"/></condition>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
-		<echo message="    ${splash.name} on http://localhost${splash.port}/${splash.context}"/>
+		<echo message="    Frank!Framework ${ff.version} running ${splash.name} on http://localhost${splash.port}/${splash.context}"/>
+		<echo message=" "/>
+		<echo message="    Frank!Flow ${frankflow.version} on http://localhost${splash.port}/frank-flow"/>
+		<echo message=" "/>
 		<echo message=" " unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
 		<echo message="    !! Your Frank!Runner is out of date, please pull or download new version !!" unless:set="frank.runner.up.to.date"/>
