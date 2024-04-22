@@ -525,7 +525,7 @@ a build.properties in the frank-runner folder or a frank-runner.properties in
 the root folder of your project:
 
 ```
-update.strategy=none
+update.strategy=stable
 ```
 
 Or specify a specific Frank!Framework version like:
