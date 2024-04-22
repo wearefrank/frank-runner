@@ -185,13 +185,44 @@ Demonstrates [module per config](#module-per-config).
 
 # Specials
 
-To run the webapp, example and test modules of 
-https://github.com/frankframework/frankframework you can use the build.xml
-files in the specials folder. As with other projects the iaf folder needs to be
-a sibling folder of the frank-runner folder. See also the
-build-example.properties files in these folders that describe several
-properties that can be set to speed up and customize the build.
+The main purpose of the Frank!Runner is to run released code of the
+Frank!Framework. When you are doing development work on
+Ladybug or the Frank!Framework, you may want to build the Frank!Framework
+locally. You can use the `specials` folder and its children to run your local
+build of the Frank!Framework source code, maybe including some changes of that
+source code.
 
+Here are short descriptions of the options provided in the `specials` folder:
+* `specials/ladybug`: Builds a ladybug checkout as well. May be combined with
+  F!F (property ``test.with.iaf=true`` in ``build.properties``) or with
+  a simple test webapp https://github.com/wearefrank/ladybug-test-webapp
+  (property ``test.with.iaf=false`` in ``build.properties``).
+* `specials/iaf-webapp`: Runs locally-built basic F!F, to be combined with
+  your own configuration.
+* `specials/iaf-test`: Run the Larva tests of the Frank!Framework.
+* `specials/iaf-example`: Runs the example Frank application included in
+  the F!F source code.
+* `specials/test-startup-times`
+
+In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
+to build the Frank!Framework, ladybug or ladybug-test-webapp and to
+run the Frank!Framework.
+In each case, you can write
+your own `build.properties` next to the `restart.bat|sh` scripts to customize
+the build process. Please only use
+properties that appear in the `build-example.properties` files supplied.
+Properties that work for ordinary use of the Frank!Runner may not work with a
+`specials/...` case. The Frank!Framework sources should be in a folder named
+`frankframework` that is a sibling of the Frank!Runner checkout.
+
+**specials/iaf-webapp:** Use this folder to run your own Frank configuration
+with a modified locally-built version of the Frank!Framework. Put your
+configuration in `examples/Frank2Example1/configurations` or use property
+``configurations.dir`` in ``build.properties`` to configure a different
+location. If you need
+class-level properties or configurations, put it in your `frankframework`
+checkout and not in your Frank!Runner checkout. Use folder
+`frankframework/webapp/src/main/resources`.
 
 # Project structure and customisation
 
