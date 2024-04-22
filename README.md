@@ -274,7 +274,10 @@ should build your project with Maven (by default not, building is then done
 with ANT). Set property `maven` to `true` to build with Maven.
 
 Your project doesn't need to contain a context.xml in case you want to use an
-H2 database.
+H2, Oracle, MSSQL or PostgreSQL database. By default
+frank-runner/database/h2/context.xml will be used when your project doesn't
+contain a context.xml. Use database.type=oracle, mssql or postgresql to use one
+of the other context.xml files provided by the Frank!Runner.
 
 When changing files in the classes folder you need to restart Tomcat. When
 changing files in the configurations folder you need to reload the configuration
