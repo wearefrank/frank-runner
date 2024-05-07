@@ -185,7 +185,7 @@
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.version.major" value="9"/>
 		<property name="tomcat.version.minor" value="0"/>
-		<property name="tomcat.version.patch" value="88"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.version.patch" value="88"/><!-- on update: also update jms, ojdbc, mssql and pgsql --><!-- after version 88 add unless:set="tomcat.dir.available" to <copy file="download/${jta.jar}" todir="${tomcat.dir}/lib"/> -->
 		<property name="tomcat.version" value="${tomcat.version.major}.${tomcat.version.minor}.${tomcat.version.patch}"/>
 		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
 		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-${tomcat.version.major}/v${tomcat.version}/bin/${tomcat.zip}"/>
@@ -211,6 +211,12 @@
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
+		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
+		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
+		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
+		<property name="jms.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
+		<property name="jms.jar" value="geronimo-jms_1.1_spec-${jms.version}.jar"/>
+		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms.version}/${jms.jar}"/>
 		<property name="h2v1.version" value="1.4.200"/>
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
@@ -219,9 +225,6 @@
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<property name="jms.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
-		<property name="jms.jar" value="geronimo-jms_1.1_spec-${jms.version}.jar"/>
-		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms.version}/${jms.jar}"/>
 		<property name="ojdbc.version" value="8-19.3.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.ojdbc/ojdbc8/versions -->
 		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
 		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
@@ -283,6 +286,7 @@
 		<available property="winmerge.dir.available" file="${winmerge.dir}"/>
 		<available property="ff.war.available" file="download/${ff.war}"/>
 		<available property="frankflow.war.available" file="download/${frankflow.war}"/>
+		<available property="jta.jar.available" file="download/${jta.jar}"/>
 		<available property="jms.jar.available" file="download/${jms.jar}"/>
 		<available property="h2v1.jar.available" file="download/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
@@ -438,7 +442,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="download/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="download/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql,get.pgsql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -499,6 +503,7 @@
 		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
 		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:set="tomcat.dir.available"/>
 		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
+		<copy file="download/${jta.jar}" todir="${tomcat.dir}/lib"/>
 		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
 		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
@@ -833,6 +838,10 @@
 
 	<target name="get.frankflow" unless="${frankflow.war.available}">
 		<get src="${frankflow.url}" dest="download/${frankflow.war}" verbose="on"/>
+	</target>
+
+	<target name="get.jta" unless="${jta.jar.available}">
+		<get src="${jta.url}" dest="download/${jta.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.jms" unless="${jms.jar.available}">
