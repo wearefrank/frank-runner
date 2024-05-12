@@ -237,6 +237,7 @@
 
 		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
+		<property name="ff.version" value="8.1.0-RC2-20240508.012135"/><!-- hardcoded (also in Frank2Example4/pomx.xml) until support for Tomcat 10.1 for F!F 8.2 is implemented -->
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
@@ -540,12 +541,12 @@
 		<!-- winmerge -->
 		<unzip src="download/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
-		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
-		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties."/>
-		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties."/>
+		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties.old."/>
+		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties.old."/>
+		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties.old."/>
 		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
-		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
-		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.version}"/></not></condition>
+		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.old.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
+		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.old.version}"/></not></condition>
 		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*" excludes="frank-flow/**/*"/></delete>
 		<delete includeemptydirs="true" if:set="frankflow.version.changed"><fileset dir="${tomcat.dir}/webapps" includes="frank-flow/**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
@@ -556,7 +557,9 @@
 		<pathconvert property="webapp.lib.jars" pathsep="|"><fileset dir="${webapp.dir}/WEB-INF/lib" includes="*.jar"/><flattenmapper/></pathconvert>
 		<doublejars jars="${webapp.lib.jars}"/>
 		<!-- ff version dependent properties -->
-		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version -->
+		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties."/>
+		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
+		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version (now ff.pom.properties.version can probably be used) -->
 			<filename regex="core-7\."/>
 		</fileset>
 		<pathconvert property="jdk8.fallback" refid="jdk8.fallback.fileset" />
@@ -615,7 +618,7 @@
 		<condition property="update.config.xsd">
 			<or>
 				<istrue value="${maven}"/><!-- f!f version could be changed -->
-				<not><equals arg1="${ff.version}" arg2="${ff.pom.properties.version}"/></not><!-- f!f version changed -->
+				<not><equals arg1="${ff.version}" arg2="${ff.pom.properties.old.version}"/></not><!-- f!f version changed -->
 				<not><resourceexists><file file="${configurations.dir}/FrankConfig.xsd"/></resourceexists></not><!-- maybe a new project and f!f version not changed -->
 			</or>
 		</condition>
@@ -1284,7 +1287,7 @@ fi</echo>
 		<property name="splash.name" value="${instance.name}"/>
 		<condition property="splash.port" value="" else=":${tomcat.port}"><equals arg1="${tomcat.port}" arg2="80"/></condition>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
-		<echo message="    Frank!Framework ${ff.version} running ${splash.name} on http://localhost${splash.port}/${splash.context}"/>
+		<echo message="    Frank!Framework ${ff.pom.properties.version} running ${splash.name} on http://localhost${splash.port}/${splash.context}"/><!-- ff.pom.properties.version instead of ff.version for correct value when maven is used -->
 		<echo message=" "/>
 		<echo message="    Frank!Flow ${frankflow.version} on http://localhost${splash.port}/frank-flow"/>
 		<echo message=" "/>
