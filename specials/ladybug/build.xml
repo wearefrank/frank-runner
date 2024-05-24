@@ -41,14 +41,17 @@
 		<property name="pom.xml" location="${basedir}/../../../${ff.dir}/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.ok">
 			<or>
-				<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
+				<or>
+					<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.properties.revision}&lt;/ladybug.version&gt;"/>
+					<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
+				</or>
 				<and>
 					<equals arg1="${test.with.test.webapp}" arg2="false"/>
 					<equals arg1="${test.with.iaf}" arg2="false"/>
 				</and>
 			</or>
 		</condition>
-		<fail message="Check ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ibis-ladybug to ${ladybug.pom.xml.project.version} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
+		<fail message="Check ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ladybug to ${ladybug.pom.xml.project.properties.revision} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
 
 		<echo message="ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
 		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
