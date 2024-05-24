@@ -183,13 +183,18 @@
 		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.version.major" value="9"/>
-		<property name="tomcat.version.minor" value="0"/>
-		<property name="tomcat.version.patch" value="88"/><!-- on update: also update jms, ojdbc, mssql and pgsql --><!-- after version 88 add unless:set="tomcat.dir.available" to <copy file="download/${jta.jar}" todir="${tomcat.dir}/lib"/> -->
-		<property name="tomcat.version" value="${tomcat.version.major}.${tomcat.version.minor}.${tomcat.version.patch}"/>
-		<property name="tomcat.zip" value="apache-tomcat-${tomcat.version}.zip"/>
-		<property name="tomcat.url" value="https://archive.apache.org/dist/tomcat/tomcat-${tomcat.version.major}/v${tomcat.version}/bin/${tomcat.zip}"/>
-		<property name="tomcat.dir" value="build/apache-tomcat-${tomcat.version}"/>
+		<property name="tomcat.9.version.minor" value="0"/>
+		<property name="tomcat.9.version.patch" value="89"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
+		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
+		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
+		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
+		<property name="tomcat.10.version.minor" value="1"/>
+		<property name="tomcat.10.version.patch" value="24"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
+		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
+		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
+		<property name="tomcat.10.dir" value="build/apache-tomcat-${tomcat.10.version}"/>
 		<property name="tomcat.connector.port" value="80" /><!-- for backwards compatibility (tomcat.port introduced 20220318) -->
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
@@ -214,9 +219,12 @@
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
 		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
-		<property name="jms.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
-		<property name="jms.jar" value="geronimo-jms_1.1_spec-${jms.version}.jar"/>
-		<property name="jms.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms.version}/${jms.jar}"/>
+		<property name="jms1.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
+		<property name="jms1.jar" value="geronimo-jms_1.1_spec-${jms1.version}.jar"/>
+		<property name="jms1.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms1.version}/${jms1.jar}"/>
+		<property name="jms3.version" value="3.1.0"/><!-- https://central.sonatype.com/artifact/jakarta.jms/jakarta.jms-api/versions -->
+		<property name="jms3.jar" value="jakarta.jms-api-${jms3.version}.jar"/>
+		<property name="jms3.url" value="https://repo1.maven.org/maven2/jakarta/jms/jakarta.jms-api/${jms3.version}/${jms3.jar}"/>
 		<property name="h2v1.version" value="1.4.200"/>
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
@@ -225,12 +233,18 @@
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<property name="ojdbc.version" value="8-19.3.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.ojdbc/ojdbc8/versions -->
-		<property name="ojdbc.jar" value="ojdbc${ojdbc.version}.jar"/>
-		<property name="ojdbc.url" value="https://repo1.maven.org/maven2/com/oracle/ojdbc/ojdbc8/19.3.0.0/${ojdbc.jar}"/>
-		<property name="mssql.version" value="12.6.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
-		<property name="mssql.jar" value="mssql-jdbc-${mssql.version}.jar"/>
-		<property name="mssql.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql.version}/${mssql.jar}"/>
+		<property name="ojdbc8.version" value="23.4.0.24.05"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
+		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
+		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
+		<property name="ojdbc11.version" value="23.4.0.24.05"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
+		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
+		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
+		<property name="mssql8.version" value="12.6.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
+		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
+		<property name="mssql11.version" value="12.6.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
+		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
 		<property name="pgsql.version" value="42.7.3"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
@@ -262,12 +276,9 @@
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
-		<property name="ff.dir" value="${tomcat.dir}/webapps/${context.path}"/>
-
 		<property name="frankflow.version" value="2.27.1-20231017.123547"/>
 		<property name="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"/>
 		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
-		<property name="frankflow.dir" value="${tomcat.dir}/webapps/frank-flow"/>
 
 		<available property="jdk.8.zip.available" file="download/${jdk.8.zip}"/>
 		<available property="jdk.11.zip.available" file="download/${jdk.11.zip}"/>
@@ -279,8 +290,10 @@
 		<available property="maven.zip.available" file="download/${maven.zip}" if:true="${os.windows}"/>
 		<available property="maven.zip.available" file="download/${maven.gz}" unless:true="${os.windows}"/>
 		<available property="maven.dir.available" file="${maven.dir}"/>
-		<available property="tomcat.zip.available" file="download/${tomcat.zip}"/>
-		<available property="tomcat.dir.available" file="${tomcat.dir}"/>
+		<available property="tomcat.9.zip.available" file="download/${tomcat.9.zip}"/>
+		<available property="tomcat.9.dir.available" file="${tomcat.9.dir}"/>
+		<available property="tomcat.10.zip.available" file="download/${tomcat.10.zip}"/>
+		<available property="tomcat.10.dir.available" file="${tomcat.10.dir}"/>
 		<available property="eclipse.zip.available" file="download/${eclipse.zip}"/>
 		<available property="eclipse.dir.available" file="${eclipse.dir}"/>
 		<available property="winmerge.zip.available" file="download/${winmerge.zip}"/>
@@ -288,11 +301,14 @@
 		<available property="ff.war.available" file="download/${ff.war}"/>
 		<available property="frankflow.war.available" file="download/${frankflow.war}"/>
 		<available property="jta.jar.available" file="download/${jta.jar}"/>
-		<available property="jms.jar.available" file="download/${jms.jar}"/>
+		<available property="jms1.jar.available" file="download/${jms1.jar}"/>
+		<available property="jms3.jar.available" file="download/${jms3.jar}"/>
 		<available property="h2v1.jar.available" file="download/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="download/${h2v2.jar}"/>
-		<available property="ojdbc.jar.available" file="download/${ojdbc.jar}"/>
-		<available property="mssql.jar.available" file="download/${mssql.jar}"/>
+		<available property="ojdbc8.jar.available" file="download/${ojdbc8.jar}"/>
+		<available property="ojdbc11.jar.available" file="download/${ojdbc11.jar}"/>
+		<available property="mssql8.jar.available" file="download/${mssql8.jar}"/>
+		<available property="mssql11.jar.available" file="download/${mssql11.jar}"/>
 		<available property="pgsql.jar.available" file="download/${pgsql.jar}"/>
 		<available property="lombok.jar.available" file="download/${lombok.jar}"/>
 
@@ -429,7 +445,8 @@
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="rhino.dir.windows"><propertyresource name="rhino.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
-		<loadresource property="tomcat.dir.windows"><propertyresource name="tomcat.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="tomcat.9.dir.windows"><propertyresource name="tomcat.9.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="tomcat.10.dir.windows"><propertyresource name="tomcat.10.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.jdk.default.dir.windows"><propertyresource name="tomcat.jdk.default.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 
 		<tstamp><format property="get.build.tstamp" pattern="yyyyMMdd"/></tstamp>
@@ -470,7 +487,8 @@
 		<untar src="build/${maven.tar}" dest="build" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<chmod file="${maven.dir}/bin/mvn" perm="+x" unless:set="maven.dir.available" unless:true="${os.windows}"/>
 		<delete file="build/${maven.tar}" unless:set="maven.dir.available" unless:true="${os.windows}"/>
-		<property name="webapp.dir" value="${ff.dir}" unless:true="${maven}"/>
+		<mkdir dir="build/webapps"/>
+		<property name="webapp.dir" value="build/webapps/${context.path}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/${war.dir}/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/MANIFEST.MF&#10;/testtool/&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
@@ -501,32 +519,8 @@
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 		</exec>
 		<!-- tomcat -->
-		<unzip src="download/${tomcat.zip}" dest="build" unless:set="tomcat.dir.available"/>
-		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:set="tomcat.dir.available"/>
-		<delete includeemptydirs="true" unless:set="tomcat.dir.available"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
-		<copy file="download/${jta.jar}" todir="${tomcat.dir}/lib"/>
-		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<copy file="download/${pgsql.jar}" todir="${tomcat.dir}/lib" unless:set="tomcat.dir.available"/>
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.port can be changed -->
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol)" replace="\1${tomcat.secure.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.secure.port can be changed -->
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.secure.port can be changed -->
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="redirectPort=&quot;8443&quot;" replace="redirectPort=&quot;${tomcat.secure.port}&quot;"/><!-- dont'use unless:set="tomcat.dir.available" because tomcat.secure.port can be changed -->
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="&lt;!--(\s+.*org.apache.coyote.http11.Http11NioProtocol)" replace="\1" unless:set="tomcat.dir.available"/>
-		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="-->(\s+.*with HTTP/2)" replace="\1" unless:set="tomcat.dir.available"/>
-		<replaceregexp file="${tomcat.dir}/conf/tomcat-users.xml" match="&lt;/tomcat-users>" replace="  &lt;user username=&quot;IbisWebService&quot; password=&quot;IbisWebService&quot; roles=&quot;IbisWebService&quot;/>&#10;  &lt;user username=&quot;IbisObserver&quot; password=&quot;IbisObserver&quot; roles=&quot;IbisObserver&quot;/>&#10;  &lt;user username=&quot;IbisDataAdmin&quot; password=&quot;IbisDataAdmin&quot; roles=&quot;IbisDataAdmin&quot;/>&#10;  &lt;user username=&quot;IbisAdmin&quot; password=&quot;IbisAdmin&quot; roles=&quot;IbisAdmin&quot;/>&#10;  &lt;user username=&quot;IbisTester&quot; password=&quot;IbisTester&quot; roles=&quot;IbisTester&quot;/>&#10;&lt;/tomcat-users>" unless:set="tomcat.dir.available"/>
-		<exec executable="${jdk.8.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:set="tomcat.dir.available">
-			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
-		</exec>
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="true" unless:set="tomcat.dir.available"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,frankframework-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,\" summary="true" unless:set="tomcat.dir.available"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
-		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
-		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
-		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
-		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
-		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
-		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
+		<antcall target="install.tomcat"><param name="tomcat.dir" value="${tomcat.9.dir}"/><param name="tomcat.dir.windows" value="${tomcat.9.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.9.dir.available}"/><param name="tomcat.zip" value="${tomcat.9.zip}"/><param name="jms.jar" value="${jms1.jar}"/><param name="ojdbc.jar" value="${ojdbc8.jar}"/><param name="mssql.jar" value="${mssql8.jar}"/></antcall><!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
+		<antcall target="install.tomcat"><param name="tomcat.dir" value="${tomcat.10.dir}"/><param name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.10.dir.available}"/><param name="tomcat.zip" value="${tomcat.10.zip}"/><param name="jms.jar" value="${jms3.jar}"/><param name="ojdbc.jar" value="${ojdbc11.jar}"/><param name="mssql.jar" value="${mssql11.jar}"/></antcall><!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<!-- eclipse -->
 		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
 		<unzip src="download/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
@@ -543,12 +537,13 @@
 		<!-- webapp -->
 		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties.old."/>
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties.old."/>
+		<property name="frankflow.dir" value="build/webapps/frank-flow"/>
 		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties.old."/>
-		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="${tomcat.dir}/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
+		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="build/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.old.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
 		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.old.version}"/></not></condition>
-		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="${tomcat.dir}/webapps" includes="**/*" excludes="frank-flow/**/*"/></delete>
-		<delete includeemptydirs="true" if:set="frankflow.version.changed"><fileset dir="${tomcat.dir}/webapps" includes="frank-flow/**/*"/></delete>
+		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="build/webapps" includes="**/*" excludes="frank-flow/**/*"/></delete>
+		<delete includeemptydirs="true" if:set="frankflow.version.changed"><fileset dir="build/webapps" includes="frank-flow/**/*"/></delete>
 		<unzip src="download/${ff.war}" dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"/>
 		<unzip src="download/${frankflow.war}" dest="${frankflow.dir}" if:set="frankflow.version.changed"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
@@ -559,6 +554,10 @@
 		<!-- ff version dependent properties -->
 		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties."/>
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
+		<condition property="tomcat.dir" value="${tomcat.9.dir}"><matches string="${ff.pom.properties.version}" pattern="^([567]\.|[8]\.[01]).*$"/></condition><!-- 8.1 is the last version running on Tomcat 9 -->
+		<condition property="tomcat.dir.windows" value="${tomcat.9.dir.windows}"><matches string="${ff.pom.properties.version}" pattern="^([567]\.|[8]\.[01]).*$"/></condition>
+		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
+		<property name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/>
 		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version (now ff.pom.properties.version can probably be used) -->
 			<filename regex="core-7\."/>
 		</fileset>
@@ -587,15 +586,17 @@
 		<!-- context.xml -->
 		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
 		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
-		<property name="context.xml.target" value="${webapp.dir}/META-INF/context.xml" unless:true="${maven}"/>
-		<property name="context.xml.target" value="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" if:true="${maven}"/>
+		<property name="context.xml.target" value="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml"/>
 		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/><!-- xml file could have a different name in previous run or in previous run maven could be true and in current run false -->
 		<delete file="${context.xml.target}"/><!-- in case ${context.xml.source} doesn't point to a file next copy will not clean ${context.xml.target} -->
 		<copy file="${context.xml.source}" tofile="${context.xml.target}"/>
 		<lower from="${instance.name}" to="instance.name.lc"/>
 		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
 		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" summary="true"/>
-		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir}&quot;>" summary="true" if:true="${maven}"/>
+		<property name="webapp.dir.abs" location="${webapp.dir}"/>
+		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="true"/>
+		<property name="frankflow.dir.abs" location="${frankflow.dir}"/>
+		<echo file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" message="&lt;Context docBase=&quot;${frankflow.dir.abs}&quot;/>"/>
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
@@ -760,15 +761,17 @@
 
 	<!-- don't add depends="install" because when tomcat is running resources may be locked which will result in "Unable to delete file" build failures -->
 	<target name="stop" depends="init">
-		<condition property="catalina.bat.present"><resourceexists><file file="${tomcat.dir}/bin/catalina.bat"/></resourceexists></condition><!-- not present when build.xml is running for the first time or tomcat.version has changed -->
+		<condition property="catalina.bat.present"><resourceexists><file file="${tomcat.10.dir}/bin/catalina.bat"/></resourceexists></condition><!-- not present when build.xml is running for the first time or tomcat.version has changed. see comment behind tomcat.dir below about using version 10 -->
 		<antcall target="install" unless:set="catalina.bat.present"/>
 		<condition property="tomcat.running"><or><socket server="localhost" port="${tomcat.port}"/><socket server="localhost" port="${tomcat.server.port}"/></or></condition>
 		<condition property="use.exec" if:set="tomcat.running"><not><equals arg1="${use}" arg2="java"/></not></condition>
 		<condition property="use.java" if:set="tomcat.running"><equals arg1="${use}" arg2="java"/></condition>
 		<antcall target="tomcat">
 			<param name="action" value="stop"/>
-			<param name="tomcat.jdk.dir" value="${jdk.17.dir}"/><!-- stop doesn't depend on install which would set tomcat.jdk.dir (based on ff version), hence pass tomcat.jdk.dir as a param (can be any version for stop as long as it's supported by tomcat) -->
-			<param name="tomcat.jdk.dir.windows" value="${jdk.17.dir.windows}"/>
+			<param name="tomcat.dir" value="${tomcat.10.dir}"/><!-- version 10 can also be used to stop version 9. target stop doesn't depend on install which would set tomcat.dir (based on ff version), hence pass tomcat.dir as a param -->
+			<param name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/>
+			<param name="tomcat.jdk.dir" value="${jdk.21.dir}"/><!-- any version supported by tomcat will be fine. target stop doesn't depend on install which would set tomcat.jdk.dir (based on ff version), hence pass tomcat.jdk.dir as a param -->
+			<param name="tomcat.jdk.dir.windows" value="${jdk.21.dir.windows}"/>
 		</antcall>
 		<tstamp><format property="stop.begin" pattern="HH:mm:ss"/></tstamp>
 		<property name="stop.maxwait" value="300"/>
@@ -819,8 +822,9 @@
 		<get src="${maven.gz.url}" dest="download/${maven.gz}" verbose="on" unless:true="${os.windows}"/>
 	</target>
 
-	<target name="get.tomcat" unless="${tomcat.zip.available}">
-		<get src="${tomcat.url}" dest="download/${tomcat.zip}" verbose="on"/>
+	<target name="get.tomcat">
+		<get src="${tomcat.9.url}" dest="download/${tomcat.9.zip}" verbose="on" unless:true="${tomcat.9.zip.available}"/>
+		<get src="${tomcat.10.url}" dest="download/${tomcat.10.zip}" verbose="on" unless:true="${tomcat.10.zip.available}"/>
 	</target>
 
 	<target name="get.eclipse" unless="${eclipse.zip.available}" if="${eclipse}">
@@ -847,8 +851,9 @@
 		<get src="${jta.url}" dest="download/${jta.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.jms" unless="${jms.jar.available}">
-		<get src="${jms.url}" dest="download/${jms.jar}" verbose="on"/>
+	<target name="get.jms">
+		<get src="${jms1.url}" dest="download/${jms1.jar}" verbose="on" unless:true="${jms1.jar.available}"/>
+		<get src="${jms3.url}" dest="download/${jms3.jar}" verbose="on" unless:true="${jms3.jar.available}"/>
 	</target>
 
 	<target name="get.h2v1" unless="${h2v1.jar.available}">
@@ -859,12 +864,14 @@
 		<get src="${h2v2.url}" dest="download/${h2v2.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.ojdbc" unless="${ojdbc.jar.available}">
-		<get src="${ojdbc.url}" dest="download/${ojdbc.jar}" verbose="on"/>
+	<target name="get.ojdbc">
+		<get src="${ojdbc8.url}" dest="download/${ojdbc8.jar}" verbose="on" unless:true="${ojdbc8.jar.available}"/>
+		<get src="${ojdbc11.url}" dest="download/${ojdbc11.jar}" verbose="on" unless:true="${ojdbc11.jar.available}"/>
 	</target>
 
-	<target name="get.mssql" unless="${mssql.jar.available}">
-		<get src="${mssql.url}" dest="download/${mssql.jar}" verbose="on"/>
+	<target name="get.mssql">
+		<get src="${mssql8.url}" dest="download/${mssql8.jar}" verbose="on" unless:true="${mssql8.jar.available}"/>
+		<get src="${mssql11.url}" dest="download/${mssql11.jar}" verbose="on" unless:true="${mssql11.jar.available}"/>
 	</target>
 
 	<target name="get.pgsql" unless="${pgsql.jar.available}">
@@ -936,6 +943,35 @@
 			</chainedmapper>
 		</apply>
 		<copy todir="${jdk.dir}/${cacerts.dir}/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
+	</target>
+
+	<target name="install.tomcat">
+		<unzip src="download/${tomcat.zip}" dest="build" unless:true="${tomcat.dir.available}"/>
+		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:true="${tomcat.dir.available}"/>
+		<delete includeemptydirs="true" unless:true="${tomcat.dir.available}"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
+		<copy file="download/${jta.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<copy file="download/${jms.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<copy file="download/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<copy file="download/${mssql.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<copy file="download/${pgsql.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.port can be changed -->
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol)" replace="\1${tomcat.secure.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.secure.port can be changed -->
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.secure.port can be changed -->
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="redirectPort=&quot;8443&quot;" replace="redirectPort=&quot;${tomcat.secure.port}&quot;"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.secure.port can be changed -->
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="&lt;!--(\s+.*org.apache.coyote.http11.Http11NioProtocol)" replace="\1" unless:true="${tomcat.dir.available}"/>
+		<replaceregexp file="${tomcat.dir}/conf/server.xml" flags="s" match="(org.apache.coyote.http11.Http11NioProtocol.*?)-->" replace="\1" unless:true="${tomcat.dir.available}"/>
+		<replaceregexp file="${tomcat.dir}/conf/tomcat-users.xml" match="&lt;/tomcat-users>" replace="  &lt;user username=&quot;IbisWebService&quot; password=&quot;IbisWebService&quot; roles=&quot;IbisWebService&quot;/>&#10;  &lt;user username=&quot;IbisObserver&quot; password=&quot;IbisObserver&quot; roles=&quot;IbisObserver&quot;/>&#10;  &lt;user username=&quot;IbisDataAdmin&quot; password=&quot;IbisDataAdmin&quot; roles=&quot;IbisDataAdmin&quot;/>&#10;  &lt;user username=&quot;IbisAdmin&quot; password=&quot;IbisAdmin&quot; roles=&quot;IbisAdmin&quot;/>&#10;  &lt;user username=&quot;IbisTester&quot; password=&quot;IbisTester&quot; roles=&quot;IbisTester&quot;/>&#10;&lt;/tomcat-users>" unless:true="${tomcat.dir.available}"/>
+		<exec executable="${jdk.8.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:true="${tomcat.dir.available}">
+			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
+		</exec>
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="true" unless:true="${tomcat.dir.available}"/><!-- speed up startup time -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,frankframework-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,\" summary="true" unless:true="${tomcat.dir.available}"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
+		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
+		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
+		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
+		<delete><fileset dir="${tomcat.dir}/lib" includes="**-CUSTOM.jar"/></delete>
+		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
+		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 	</target>
 
 	<target name="copy.config.xsd">
