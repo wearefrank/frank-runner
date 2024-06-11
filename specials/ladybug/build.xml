@@ -123,6 +123,7 @@
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
 			<arg value="-Dladybug.dir=${ladybug.dir}"/>
+			<arg value="-Dfrankflow.active=false"/>
 		</exec>
 
 		<echo message="ladybug: Test with iaf-${iaf.module}" if:true="${test.with.iaf}"/>

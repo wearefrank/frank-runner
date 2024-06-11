@@ -597,6 +597,8 @@
 		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="true"/>
 		<property name="frankflow.dir.abs" location="${frankflow.dir}"/>
 		<echo file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" message="&lt;Context docBase=&quot;${frankflow.dir.abs}&quot;/>"/>
+		<property name="frankflow.active" value="true"/>
+		<delete file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" unless:true="${frankflow.active}"/>
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
