@@ -17,8 +17,7 @@
 		downloaded when you have an empty local repository. This will also make the CI/CD pipeline faster as it
 		starts with an empty local repository on every new run (unless configured to cache the Maven repository)
 		-->
-		<ff.version>8.1.0-RC2-20240508.012135</ff.version><!-- fixed version until support for Tomcat 10.1 for F!F 8.2 is implemented -->
-		<!-- <ff.version>[8.1.0-RC2-20240508.012135,)</ff.version> -->
+		<ff.version>[8.2.0-20240614.042327,)</ff.version>
 	  </properties>
 
 	<dependencies>

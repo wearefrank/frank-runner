@@ -251,7 +251,6 @@
 
 		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
-		<property name="ff.version" value="8.1.0-RC2-20240508.012135"/><!-- hardcoded (also in Frank2Example4/pomx.xml) until support for Tomcat 10.1 for F!F 8.2 is implemented -->
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
