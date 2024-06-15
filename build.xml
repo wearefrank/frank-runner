@@ -63,7 +63,7 @@
 		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
 		<property name="context.path" value="ROOT"/>
 		<property name="maxmemory" value="1024M"/>
-		<property name="frank-flow.context-path" value="/"/>
+		<property name="frank-flow.context-path" value="/"/><!-- Frank!Flow 3.0 with F!F 8.2 doesn't need this anymore (2.27.1-20231017.123547 will be used when ff.version is 8.1 or lower) -->
 
 		<condition property="os.windows"><os family="windows"/></condition>
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
@@ -255,30 +255,35 @@
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
-		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not><not><equals arg1="${maven}" arg2="true"/></not></and></condition>
-		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<property name="get.metadata.maxtime" value="10"/>
 		<property name="get.metadata.ignoreerrors" value="true"/>
-		<mkdir dir="download/metadata/frank-flow"/>
+		<mkdir dir="download/metadata/"/>
+
+		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not><not><equals arg1="${maven}" arg2="true"/></not></and></condition>
 		<get src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="download/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
-		<get src="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/maven-metadata.xml" dest="download/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
 		<move file="download/metadata/maven-metadata-tmp.xml" tofile="download/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
-		<move file="download/metadata/frank-flow/maven-metadata-tmp.xml" tofile="download/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="download/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
-		<xmlproperty file="download/metadata/frank-flow/maven-metadata.xml" prefix="frankflow"/>
 		<echo file="download/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
-		<echo file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/>
-		<property name="frankflow.version" value="${frankflow.metadata.versioning.latest}" if:set="frankflow.metadata.versioning.latest"/>
 		<condition property="ff.version" value="8.0.1"><equals arg1="${update.strategy}" arg2="stable"/></condition>
 		<fail message="Property update.strategy has invalid value: ${update.strategy}"><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
-		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
-		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*"/></condition>
+		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
+		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
-		<property name="frankflow.version" value="2.27.1-20231017.123547"/>
-		<property name="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"/>
-		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"/>
+
+		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
+		<mkdir dir="download/metadata/frank-flow"/>
+		<get src="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/maven-metadata.xml" dest="download/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
+		<move file="download/metadata/frank-flow/maven-metadata-tmp.xml" tofile="download/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<xmlproperty file="download/metadata/frank-flow/maven-metadata.xml" prefix="frankflow"/>
+		<echo file="download/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
+		<condition property="frankflow.version" value="2.27.1-20240202.120321"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
+		<property name="frankflow.version" value="${frankflow.metadata.versioning.release}" if:set="frankflow.metadata.versioning.release"/>
+		<condition property="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
+		<condition property="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
+		<property name="frankflow.war" value="frank-flow-${frankflow.version}.war"/>
+		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/${frankflow.version}/${frankflow.war}"/>
 
 		<available property="jdk.8.zip.available" file="download/${jdk.8.zip}"/>
 		<available property="jdk.11.zip.available" file="download/${jdk.11.zip}"/>
@@ -320,7 +325,7 @@
 			<propertyref name="instance.name"/>
 			<propertyref name="ibistesttool.directory"/>
 			<propertyref name="larva.windiff.command"/>
-			<propertyref name="frank-flow.context-path"/>
+			<propertyref name="frank-flow.context-path"/><!-- Frank!Flow 3.0 with F!F 8.2 doesn't need this anymore (2.27.1-20231017.123547 will be used when ff.version is 8.1 or lower) -->
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
@@ -1327,7 +1332,7 @@ fi</echo>
 		<condition property="splash.context" value="" else="${context.path}"><equals arg1="${context.path}" arg2="ROOT"/></condition>
 		<echo message="    Frank!Framework ${ff.pom.properties.version} running ${splash.name} on http://localhost${splash.port}/${splash.context}"/><!-- ff.pom.properties.version instead of ff.version for correct value when maven is used -->
 		<echo message=" "/>
-		<echo message="    Frank!Flow ${frankflow.version} on http://localhost${splash.port}/frank-flow"/>
+		<echo message="    Frank!Flow ${frankflow.version} on http://localhost${splash.port}/frank-flow/"/>
 		<echo message=" "/>
 		<echo message=" " unless:set="frank.runner.up.to.date"/>
 		<echo message="    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" unless:set="frank.runner.up.to.date"/>
