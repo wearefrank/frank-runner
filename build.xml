@@ -1390,7 +1390,8 @@ fi</echo>
 				}
 			}
 			// Ignore annotations-2.18.1.jar and annotations-13.0.jar that have different groupId's
-			if (names.indexOf(name) != -1 &amp;&amp; name != 'annotations') {
+			// Ignore icu4j: https://github.com/frankframework/frankframework/issues/7002
+			if (names.indexOf(name) != -1 &amp;&amp; name != 'annotations' &amp;&amp; name != 'icu4j') {
 				if (doubleJars.length == 0) {
 					doubleJars = name;
 				} else {
