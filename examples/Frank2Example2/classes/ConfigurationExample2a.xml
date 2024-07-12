@@ -7,7 +7,7 @@
 			<ApiListener name="Listener2a" uriPattern="service2a"/>
 		</Receiver>
 		<Pipeline>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!"/>
+			<EchoPipe name="HelloWorld" getInputFromFixedValue="Hello World!"/>
 		</Pipeline>
 	</Adapter>
 </Module>

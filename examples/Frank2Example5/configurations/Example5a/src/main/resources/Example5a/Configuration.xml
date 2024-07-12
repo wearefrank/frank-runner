@@ -6,8 +6,11 @@
 		<Receiver name="Receiver5a">
 			<ApiListener name="Listener5a" uriPattern="service5a"/>
 		</Receiver>
+		<Receiver name="Receiver5a-alt">
+			<JavaListener name="Listener5a-for-larva" serviceName="Listener5a-for-larva" />
+		</Receiver>
 		<Pipeline>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!"/>
+			<EchoPipe name="HelloWorld" getInputFromFixedValue="Hello World!"/>
 		</Pipeline>
 	</Adapter>
 </Configuration>

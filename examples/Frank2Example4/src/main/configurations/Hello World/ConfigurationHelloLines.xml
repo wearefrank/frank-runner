@@ -110,15 +110,15 @@
 				<Param name="exampleMessageAsJson" sessionKey="exampleMessageAsJson"/>
 				<Forward name="success" path="READY" />
 			</XsltPipe>
-			<FixedResultPipe
+			<EchoPipe
 				name="Create example plain text message"
-				returnString="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
+				getInputFromFixedValue="Line One&#10;Line Two&#10;Line Three&#10;Line Four&#10;Line Five"
 				storeResultInSessionKey="exampleMessage"
 				flow:x="100"
 				flow:y="300"
 				>
 				<Forward name="success" path="Transform plain text message to XML"/>
-			</FixedResultPipe>
+			</EchoPipe>
 			<Text2XmlPipe
 				name="Transform plain text message to XML"
 				xmlTag="lines"
