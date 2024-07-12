@@ -7,7 +7,7 @@
 			<ApiListener name="Listener5d" uriPattern="service5d"/>
 		</Receiver>
 		<Pipeline>
-			<FixedResultPipe name="HelloWorld" returnString="Hello World!!!!"/>
+			<EchoPipe name="HelloWorld" getInputFromFixedValue="Hello World!!!!"/>
 		</Pipeline>
 	</Adapter>
 </Configuration>
