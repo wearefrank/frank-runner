@@ -224,6 +224,21 @@ class-level properties or configurations, put it in your `frankframework`
 checkout and not in your Frank!Runner checkout. Use folder
 `frankframework/webapp/src/main/resources`.
 
+There is an additional consideration when running `specials/ladybug` with
+`test.with.iaf=true`. Doing this requires that the `pom.xml` files in the
+frankframework and ladybug checkouts are aligned. The ladybug version
+referenced in `frankframework/ladybug/pom.xml` must be the version of the
+ladybug checkout. If you want to build with the latest ladybug-frontend code,
+you also have to do the Maven build of ladybug-frontend, and the ladybug
+frontend version referenced in `ladybug/pom.xml` must match the version
+defined in `ladybug-frontend/pom.xml`.
+
+In `frank-runner/specials/util`, there is an ANT script to adjust the
+mentioned `pom.xml` files to be aligned. To use it, change directory to
+`frank-runner/specials/util` and execute:
+
+    ../../build/apache-ant-1.10.10/bin/ant -buildfile syncPomVersions.xml bump-ladybug-in-ff
+
 # Project structure and customisation
 
 In case Frank2YourApplication contains a pom.xml it is assumed to be a Maven
