@@ -1,4 +1,4 @@
-<project name="syncPomVersion"
+<project name="syncPomVersions"
     basedir="../../..">
     <target name="bump-ladybug-in-ff" depends="ladybug-backend-takes-frontend,ff-takes-ladybug-backend" />
     <!-- It was tried to do this with xmltask. That had two drawbacks: 
