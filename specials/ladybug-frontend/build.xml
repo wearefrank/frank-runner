@@ -1,0 +1,17 @@
+<project default="run-ladybug-frontend-maven-build" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<target name="run-ladybug-frontend-maven-build">
+		<condition property="ladybug.frontend.not.present"><not><resourceexists><file file="../../../ladybug-frontend"/></resourceexists></not></condition>
+		<fail message="Folder 'ladybug-frontend' not found, please clone https://github.com/wearefrank/ladybug-frontend.git" if:set="ladybug.frontend.not.present"/>
+		<property name="ladybug.frontend.dir" location="../../../ladybug-frontend" />
+		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
+		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
+
+		<echo message="ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
+		<property name="build.echo2" value="false"/>
+		<exec executable="${mvn.exe}" dir="${ladybug.frontend.dir}" vmlauncher="false" failonerror="true">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
+			<arg value="clean" unless:true="${maven.skip.clean}"/>
+			<arg value="install"/>
+		</exec>
+	</target>
+</project>
