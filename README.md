@@ -203,6 +203,8 @@ Here are short descriptions of the options provided in the `specials` folder:
 * `specials/iaf-example`: Runs the example Frank application included in
   the F!F source code.
 * `specials/test-startup-times`
+* `ladybug-frontend`: Runs Maven build of ladybug-frontend but does not launch
+  anything.
 
 In each mentioned subfolder, there is a `restart.bat` and a `restart.sh`
 to build the Frank!Framework, ladybug or ladybug-test-webapp and to
