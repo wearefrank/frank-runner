@@ -1,4 +1,5 @@
 <project default="run-ladybug-frontend-maven-build" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<!-- Target is applied in the CI/CD of ladybug-ff-cypress-test -->
 	<target name="run-ladybug-frontend-maven-build">
 		<condition property="ladybug.frontend.not.present"><not><resourceexists><file file="../../../ladybug-frontend"/></resourceexists></not></condition>
 		<fail message="Folder 'ladybug-frontend' not found, please clone https://github.com/wearefrank/ladybug-frontend.git" if:set="ladybug.frontend.not.present"/>

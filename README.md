@@ -237,9 +237,8 @@ defined in `ladybug-frontend/pom.xml`.
 
 In `frank-runner/specials/util/syncPomVersions`, there is an ANT script to
 adjust the mentioned `pom.xml` files to be aligned. To use it, change
-directory to `frank-runner/specials/util/syncPomVersions` and execute:
-
-    ../../../build/apache-ant-1.10.10/bin/ant bump-ladybug-in-ff
+directory to `frank-runner/specials/util/syncPomVersions` and execute the
+`run.sh` or `run.bat` script.
 
 # Project structure and customisation
 
