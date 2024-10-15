@@ -75,9 +75,9 @@
 		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
 
-		<echo message="ladybug: Build ibis-echo2" if:true="${build.echo2}"/>
+		<echo message="ladybug: Build ladybug-echo2" if:true="${build.echo2}"/>
 		<property name="build.echo2" value="false"/>
-		<exec executable="${mvn.exe}" dir="../../../ibis-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
+		<exec executable="${mvn.exe}" dir="../../../ladybug-echo2" vmlauncher="false" failonerror="true" if:true="${build.echo2}">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
