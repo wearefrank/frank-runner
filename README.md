@@ -23,6 +23,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
+- [Testing with DTAP stage different from LOC](#testing-with-dtap-stage-different-from-loc)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
 - [Web development](#web-development)
