@@ -23,6 +23,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
+- [Testing with DTAP stage different from LOC](#testing-with-dtap-stage-different-from-loc)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
 - [Web development](#web-development)
@@ -608,6 +609,33 @@ E.g. use:
 ```
 tomcat.server.port=8105
 ```
+
+# Testing with DTAP stage different from LOC
+
+Developers are adviced to test their work with `dtap.stage=LOC`, which is set
+automatically by the Frank!Runner. There are situations however in which
+another DTAP stage is needed during local development. The Frank!Framework
+requires users to authenticate themselves when `dtap.stage` is not `LOC`,
+and by default access is only possible through HTTPS in this case.
+Here are example properties you can put in `build.properties` to do
+development testing with `dtap.stage=DEV`:
+
+    dtap.stage=DEV
+    application.security.http.transportGuarantee=none
+    application.security.console.authentication.type=IN_MEMORY
+    application.security.console.authentication.username=ADMIN
+    application.security.console.authentication.password=PASSWORD1234
+
+The line `application.security.http.transportGuarantee=none` tells the
+Frank!Framework that access should be through HTTP instead of HTTPS.
+The line `application.security.console.authentication.type=IN_MEMORY` tells
+the Frank!Framework that it should hold a fixed username and a fixedpassword
+in memory. With these settings, users get a login dialog and they can enter
+with username `ADMIN` and password `PASSWORD1234`.
+
+Please note that the Frank!Runner does not support all the authentication
+options provided by the Frank!Framework. The Frank!Runner is not designed
+to support deployment in a production environment.
 
 # Code completion with FrankConfig.xsd
 
