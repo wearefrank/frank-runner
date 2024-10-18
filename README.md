@@ -640,7 +640,11 @@ Ladybug.
 
 Please note that the Frank!Runner does not support all the authentication
 options provided by the Frank!Framework. The Frank!Runner is not designed
-to support deployment in a production environment.
+to support deployment in a production environment. In addition to
+``IN_MEMORY``, authentication type ``YAML`` is supported. A ``localUsers.yml``
+file added to the classes directory is found by the Frank!Runner. See
+https://frank-manual.readthedocs.io/en/latest/advancedDevelopment/authorization/authorizationMethodsAndRoles.html
+for details.
 
 # Code completion with FrankConfig.xsd
 
