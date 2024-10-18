@@ -625,13 +625,18 @@ development testing with `dtap.stage=DEV`:
     application.security.console.authentication.type=IN_MEMORY
     application.security.console.authentication.username=ADMIN
     application.security.console.authentication.password=PASSWORD1234
+    application.security.testtool.authentication.type=IN_MEMORY
+    application.security.testtool.authentication.username=ADMIN
+    application.security.testtool.authentication.password=PASSWORD1234
 
 The line `application.security.http.transportGuarantee=none` tells the
 Frank!Framework that access should be through HTTP instead of HTTPS.
 The line `application.security.console.authentication.type=IN_MEMORY` tells
 the Frank!Framework that it should hold a fixed username and a fixedpassword
 in memory. With these settings, users get a login dialog and they can enter
-with username `ADMIN` and password `PASSWORD1234`.
+with username `ADMIN` and password `PASSWORD1234`. The lines starting with
+``application.security.testtool.authentication`` are to restrict access to
+Ladybug.
 
 Please note that the Frank!Runner does not support all the authentication
 options provided by the Frank!Framework. The Frank!Runner is not designed
