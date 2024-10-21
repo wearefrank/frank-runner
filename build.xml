@@ -330,6 +330,9 @@
 			<propertyref name="application.security.console.authentication.type" />
 			<propertyref name="application.security.console.authentication.username" />
 			<propertyref name="application.security.console.authentication.password" />
+			<propertyref name="application.security.testtool.authentication.type" />
+			<propertyref name="application.security.testtool.authentication.username" />
+			<propertyref name="application.security.testtool.authentication.password" />
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
