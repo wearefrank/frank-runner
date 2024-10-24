@@ -326,6 +326,9 @@
 			<propertyref name="ibistesttool.directory"/>
 			<propertyref name="larva.windiff.command"/>
 			<propertyref name="frank-flow.context-path"/><!-- Frank!Flow 3.0 with F!F 8.2 doesn't need this anymore (2.27.1-20231017.123547 will be used when ff.version is 8.1 or lower) -->
+			<!-- Supports testing with custom Ladybug Spring configurations -->
+			<propertyref name="ibistesttool.custom"/>
+			<!-- Supports tests with authorization -->
 			<propertyref name="application.security.http.transportGuarantee" />
 			<propertyref name="application.security.console.authentication.type" />
 			<propertyref name="application.security.console.authentication.username" />
