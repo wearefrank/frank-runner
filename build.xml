@@ -200,8 +200,8 @@
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="eclipse.version" value="2022-09"/><!-- on update: also update eclipse.jre.dir and lombok -->
-		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.4.v20220903-1038/jre"/>
+		<property name="eclipse.version" value="2024-09"/><!-- on update: also update eclipse.jre.dir and lombok -->
+		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.4.v20240802-1551/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
@@ -210,7 +210,7 @@
 		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
 		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
-		<property name="lombok.version" value="1.18.30"/>
+		<property name="lombok.version" value="1.18.34"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<property name="winmerge.version" value="2.16.6"/>
