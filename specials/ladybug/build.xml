@@ -11,12 +11,15 @@
 		<property name="maven.skip.copyright" value="${maven.skip.all}"/>
 		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
-		<property name="test.with.test.webapp" value="true"/>
-		<property name="test.with.iaf" value="false"/>
+		<property name="test.with" value="ladybug-test-webapp"/>
+		<condition property="test.with.test.webapp"><equals arg1="${test.with}" arg2="ladybug-test-webapp"/></condition>
+		<condition property="test.with.ff.test.webapp"><equals arg1="${test.with}" arg2="ladybug-ff-test-webapp"/></condition>
+		<condition property="test.with.iaf"><equals arg1="${test.with}" arg2="iaf-webapp"/></condition>
 		<property name="iaf.module" value="webapp"/>
 
 		<condition property="ladybug.dir" value="ibis-ladybug" else="ladybug"><available file="../../../ibis-ladybug" type="dir"/></condition>
 		<condition property="ladybug-test-webapp.dir" value="ibis-ladybug-test-webapp" else="ladybug-test-webapp"><available file="../../../ibis-ladybug-test-webapp" type="dir"/></condition>
+		<condition property="ladybug-ff-test-webapp.dir" value="ibis-ff-ladybug-test-webapp" else="ladybug-ff-test-webapp"><available file="../../../ibis-ladybug-ff-test-webapp" type="dir"/></condition>
 		<condition property="ff.dir" value="iaf" else="frankframework"><available file="../../../iaf" type="dir"/></condition>
 
 		<echo message="ladybug: Check ${ladybug.dir} present"/>
@@ -25,7 +28,11 @@
 
 		<echo message="ladybug: Check ${ladybug-test-webapp.dir} present"/>
 		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../${ladybug-test-webapp.dir}"/></resourceexists></not></condition>
-		<fail message="Folder ${ladybug-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:set="ladybug-test-webapp.not.present" unless:true="${test.with.iaf}"/>
+		<fail message="Folder ${ladybug-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:true="${ladybug-test-webapp.not.present}"/>
+
+		<echo message="ladybug: Check ${ladybug-ff-test-webapp.dir} present"/>
+		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ff.test.webapp}"><not><resourceexists><file file="../../../${ladybug-ff-test-webapp.dir}"/></resourceexists></not></condition>
+		<fail message="Folder ${ladybug-ff-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
 
 		<echo message="ladybug: Check iaf present"/>
 		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../${ff.dir}"/></resourceexists></not></condition>
@@ -33,40 +40,44 @@
 
 		<echo message="ladybug: Check ladybug version in pom.xml"/>
 		<xmlproperty file="../../../${ladybug.dir}/pom.xml" prefix="ladybug.pom.xml"/>
-		<property name="pom.xml" location="${basedir}/../../../${ladybug-test-webapp.dir}/pom.xml" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
+		<property name="pom.xml" location="${basedir}/../../../${ladybug-test-webapp.dir}/pom.xml" if:true="${test.with.test.webapp}"/>
 		<property name="pom.xml" location="${basedir}/../../../${ff.dir}/ladybug/pom.xml" if:true="${test.with.iaf}"/>
-		<condition property="ladybug.version.ok">
-			<or>
+		<condition property="ladybug.version.not.ok">
+			<and>
 				<or>
-					<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.properties.revision}&lt;/ladybug.version&gt;"/>
-					<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
+					<isset property="test.with.test.webapp"/>
+					<isset property="test.with.iaf"/>
 				</or>
-				<and>
-					<equals arg1="${test.with.test.webapp}" arg2="false"/>
-					<equals arg1="${test.with.iaf}" arg2="false"/>
-				</and>
-			</or>
+				<not>
+					<or>
+						<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.properties.revision}&lt;/ladybug.version&gt;"/>
+						<resourcecontains resource="${pom.xml}" substring="&lt;ladybug.version&gt;${ladybug.pom.xml.project.version}&lt;/ladybug.version&gt;"/>
+					</or>
+				</not>
+			</and>
 		</condition>
-		<fail message="Check ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ladybug to ${ladybug.pom.xml.project.properties.revision} in ${pom.xml} " unless:true="${ladybug.version.ok}"/>
+		<fail message="Check ladybug version failed:&#10;&#10;MANUAL ACTION REQUIRED: Set version of artifact ladybug to ${ladybug.pom.xml.project.properties.revision} in ${pom.xml} " if:true="${ladybug.version.not.ok}"/>
 
 		<echo message="ladybug: Check property maven.projects" if:true="${test.with.iaf}"/>
 		<property name="iaf.module.build.properties" location="${basedir}/../iaf-${iaf.module}/build.properties" if:true="${test.with.iaf}"/>
 		<property file="${iaf.module.build.properties}" prefix="iaf.module.build.properties"/>
-		<condition property="maven.projects.ok">
-			<or>
-				<not><resourceexists><file file="${iaf.module.build.properties}"/></resourceexists></not>
-				<not><isset property="iaf.module.build.properties.maven.projects"/></not>
-				<equals arg1="${iaf.module.build.properties.maven.projects}" arg2=""/>
-				<and>
-					<contains string="${iaf.module.build.properties.maven.projects}" substring="ladybug"/>
-					<or>
-						<contains string="${iaf.module.build.properties.maven.projects}" substring="webapp"/>
-						<equals arg1="${iaf.module}" arg2="webapp"/>
-					</or>
-				</and>
-			</or>
+		<condition property="maven.projects.not.ok" if:true="${test.with.iaf}">
+			<not>
+				<or>
+					<not><resourceexists><file file="${iaf.module.build.properties}"/></resourceexists></not>
+					<not><isset property="iaf.module.build.properties.maven.projects"/></not>
+					<equals arg1="${iaf.module.build.properties.maven.projects}" arg2=""/>
+					<and>
+						<contains string="${iaf.module.build.properties.maven.projects}" substring="ladybug"/>
+						<or>
+							<contains string="${iaf.module.build.properties.maven.projects}" substring="webapp"/>
+							<equals arg1="${iaf.module}" arg2="webapp"/>
+						</or>
+					</and>
+				</or>
+			</not>
 		</condition>
-		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" unless:true="${maven.projects.ok}" if:true="${test.with.iaf}"/>
+		<fail message="Check property maven.projects failed:&#10;&#10;MANUAL ACTION REQUIRED: Property maven.projects in ${iaf.module.build.properties} must be empty or contain ladybug and when iaf.module != webapp it must also contain webapp (currently maven.projects=${iaf.module.build.properties.maven.projects} and iaf.module=${iaf.module}))" if:true="${maven.projects.not.ok}"/>
 
 		<condition property="stop.exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="stop.arg" value="../../stop.sh" else=""><os family="unix"/></condition>
@@ -113,10 +124,23 @@
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
 		</exec>
 
-		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}"/>
-		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}" unless:true="${test.with.iaf}">
+		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.test.webapp}"/>
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}">
 			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=${ladybug-test-webapp.dir}"/>
+			<arg value="-Dmaven=true"/>
+			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
+			<arg value="-Dwebapp.gitignore.skip=true"/>
+			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
+			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
+			<arg value="-Dladybug.dir=${ladybug.dir}"/>
+			<arg value="-Dfrankflow.active=false"/>
+		</exec>
+
+		<echo message="ladybug: Test with ladybug-ff-test-webapp" if:true="${test.with.ff.test.webapp}"/>
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.ff.test.webapp}">
+			<arg value="${start.arg}"/>
+			<arg value="-Dproject.dir=${ladybug-ff-test-webapp.dir}"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
