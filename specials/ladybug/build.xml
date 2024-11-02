@@ -17,31 +17,26 @@
 		<condition property="test.with.iaf"><equals arg1="${test.with}" arg2="iaf-webapp"/></condition>
 		<property name="iaf.module" value="webapp"/>
 
-		<condition property="ladybug.dir" value="ibis-ladybug" else="ladybug"><available file="../../../ibis-ladybug" type="dir"/></condition>
-		<condition property="ladybug-test-webapp.dir" value="ibis-ladybug-test-webapp" else="ladybug-test-webapp"><available file="../../../ibis-ladybug-test-webapp" type="dir"/></condition>
-		<condition property="ladybug-ff-test-webapp.dir" value="ibis-ff-ladybug-test-webapp" else="ladybug-ff-test-webapp"><available file="../../../ibis-ladybug-ff-test-webapp" type="dir"/></condition>
-		<condition property="ff.dir" value="iaf" else="frankframework"><available file="../../../iaf" type="dir"/></condition>
+		<echo message="ladybug: Check ladybug present"/>
+		<condition property="ladybug.not.present"><not><resourceexists><file file="../../../ladybug"/></resourceexists></not></condition>
+		<fail message="Folder ladybug not found, please clone https://github.com/wearefrank/ladybug.git" if:set="ladybug.not.present"/>
 
-		<echo message="ladybug: Check ${ladybug.dir} present"/>
-		<condition property="ladybug.not.present"><not><resourceexists><file file="../../../${ladybug.dir}"/></resourceexists></not></condition>
-		<fail message="Folder ${ladybug.dir} not found, please clone https://github.com/wearefrank/ladybug.git" if:set="ladybug.not.present"/>
+		<echo message="ladybug: Check ladybug-test-webapp present"/>
+		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../ladybug-test-webapp"/></resourceexists></not></condition>
+		<fail message="Folder ladybug-test-webapp not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:true="${ladybug-test-webapp.not.present}"/>
 
-		<echo message="ladybug: Check ${ladybug-test-webapp.dir} present"/>
-		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../${ladybug-test-webapp.dir}"/></resourceexists></not></condition>
-		<fail message="Folder ${ladybug-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:true="${ladybug-test-webapp.not.present}"/>
-
-		<echo message="ladybug: Check ${ladybug-ff-test-webapp.dir} present"/>
-		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ff.test.webapp}"><not><resourceexists><file file="../../../${ladybug-ff-test-webapp.dir}"/></resourceexists></not></condition>
-		<fail message="Folder ${ladybug-ff-test-webapp.dir} not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
+		<echo message="ladybug: Check ladybug-ff-test-webapp present"/>
+		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ff.test.webapp}"><not><resourceexists><file file="../../../ladybug-ff-test-webapp"/></resourceexists></not></condition>
+		<fail message="Folder ladybug-ff-test-webapp not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
 
 		<echo message="ladybug: Check iaf present"/>
-		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../${ff.dir}"/></resourceexists></not></condition>
-		<fail message="Folder ${ff.dir} not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
+		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../frankframework"/></resourceexists></not></condition>
+		<fail message="Folder frankframework not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
 
 		<echo message="ladybug: Check ladybug version in pom.xml"/>
-		<xmlproperty file="../../../${ladybug.dir}/pom.xml" prefix="ladybug.pom.xml"/>
-		<property name="pom.xml" location="${basedir}/../../../${ladybug-test-webapp.dir}/pom.xml" if:true="${test.with.test.webapp}"/>
-		<property name="pom.xml" location="${basedir}/../../../${ff.dir}/ladybug/pom.xml" if:true="${test.with.iaf}"/>
+		<xmlproperty file="../../../ladybug/pom.xml" prefix="ladybug.pom.xml"/>
+		<property name="pom.xml" location="${basedir}/../../../ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}"/>
+		<property name="pom.xml" location="${basedir}/../../../frankframework/ladybug/pom.xml" if:true="${test.with.iaf}"/>
 		<condition property="ladybug.version.not.ok">
 			<and>
 				<or>
@@ -104,12 +99,12 @@
 		<echo message="ladybug: Stop Tomcat to prevent JUnit tests failing because H2 database is locked"/>
 		<exec executable="${stop.exe}" vmlauncher="false" failonerror="true">
 			<arg value="${stop.arg}"/>
-			<arg value="-Dproject.dir=${ff.dir}/webapp"/>
+			<arg value="-Dproject.dir=frankframework/webapp"/>
 			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
 		<echo message="ladybug: Build Ladybug"/>
-		<exec executable="${mvn.exe}" dir="../../../${ladybug.dir}" vmlauncher="false" failonerror="true">
+		<exec executable="${mvn.exe}" dir="../../../ladybug" vmlauncher="false" failonerror="true">
 			<env key="PATH" path="${java.library.path}:${git.path}" if:set="git.path" unless:true="${maven.skip.copyright}"/>
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
@@ -127,26 +122,26 @@
 		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.test.webapp}"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}">
 			<arg value="${start.arg}"/>
-			<arg value="-Dproject.dir=${ladybug-test-webapp.dir}"/>
+			<arg value="-Dproject.dir=ladybug-test-webapp"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
-			<arg value="-Dladybug.dir=${ladybug.dir}"/>
+			<arg value="-Dladybug.dir=ladybug"/>
 			<arg value="-Dfrankflow.active=false"/>
 		</exec>
 
 		<echo message="ladybug: Test with ladybug-ff-test-webapp" if:true="${test.with.ff.test.webapp}"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.ff.test.webapp}">
 			<arg value="${start.arg}"/>
-			<arg value="-Dproject.dir=${ladybug-ff-test-webapp.dir}"/>
+			<arg value="-Dproject.dir=ladybug-ff-test-webapp"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
-			<arg value="-Dladybug.dir=${ladybug.dir}"/>
+			<arg value="-Dladybug.dir=ladybug"/>
 			<arg value="-Dfrankflow.active=false"/>
 		</exec>
 
