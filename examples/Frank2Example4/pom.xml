@@ -34,8 +34,8 @@
 		the versions with the versions specified by the core jar (the webapp doesn't have this effect as it is of type
 		war which is only used as an overlay)
 		<dependency>
-			<groupId>org.ibissource</groupId>
-			<artifactId>ibis-adapterframework-core</artifactId>
+			<groupId>org.frankframework</groupId>
+			<artifactId>frankframework-core</artifactId>
 			<version>${ff.version}</version>
 		</dependency>
 		-->
