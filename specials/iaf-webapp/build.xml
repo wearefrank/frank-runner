@@ -54,8 +54,8 @@
 		</exec>
 		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frank-runner/frontend" value="/target/frontend" summary="true"/><!-- reset previous replace -->
 
-		<echo message="iaf-webapp: Update iaf-webapp with artifacts from local repo and start Tomcat"/>
-		<exec executable="${start.exe}" vmlauncher="false" failonerror="true">
+		<echo message="iaf-webapp: Update iaf-webapp with artifacts from local repo and start Tomcat" unless:true="${skip.start}"/>
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" unless:true="${skip.start}">
 			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=${ff.dir}/webapp"/>
 			<arg value="-Dmaven=true"/>
