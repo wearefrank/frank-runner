@@ -33,6 +33,7 @@
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
+		<delete verbose="${maven.verbose}"><fileset dir="../../../${ff.dir}/webapp/src/main/webapp/WEB-INF/lib"/></delete><!-- jar files present (after ${start.exe} with war:inplace has been executed) will prevent maven from adding newer jar files with the same name (like Ladybug and Frank!Framework SNAPSHOT jar files) to the war file when building webapp. This is especially important when running iaf-example, iaf-test or "Test with ladybug-ff-test-webapp" which depend on the war file (when only running iaf-webapp the ${start.exe} below with war:inplace will rebuild the webapp anyway)) -->
 		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frontend" value="/target/frank-runner/frontend" summary="true"/><!-- match with -Dbuild.dir=target/frank-runner from which <id>copy NPM dist to Maven build folder</id> in pom.xml will use -->
 		<exec executable="${mvn.exe}" dir="../../../${ff.dir}" vmlauncher="false" failonerror="true">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
@@ -41,7 +42,6 @@
 			<arg value="install"/>
 			<arg value="--projects" unless:blank="${maven.projects}"/>
 			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
-			<arg value="--also-make" unless:blank="${maven.projects}"/><!-- also make parent which pom.xml contains common dependencies -->
 			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Pibissource,attachFrankDoc" unless:true="${maven.skip.frankdoc}"/><!-- generate Frank!Doc as some JUnit tests depend on the FrankConfig.xsd which will change in some cases when the Java code is changed. Profile ibissource seems necesssary to download frank-doc-1.1-SNAPSHOT.jar -->
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>

@@ -2,56 +2,18 @@
 	<target name="restart-iaf-example">
 		<property file="../../build.properties"/>
 		<property file="build.properties"/>
-		<property name="maven.projects" value=""/>
-		<property name="maven.skip.all" value="false"/>
+		<!--property file="../iaf-webapp/build.properties"/-->
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
-		<property name="maven.skip.tests" value="${maven.skip.all}"/>
-		<property name="maven.skip.frankdoc" value="${maven.skip.all}"/>
-		<property name="maven.skip.javadoc" value="${maven.skip.all}"/>
-		<property name="maven.skip.recompile.all" value="${maven.skip.all}"/>
-		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
-		<property name="tomcat.skip.waitfor" value="false"/>
 		<property name="maven.verbose" value="false"/>
 
-		<condition property="stop.exe" value="../../stop.bat" else="/bin/bash"><os family="windows"/></condition>
-		<condition property="stop.arg" value="../../stop.sh" else=""><os family="unix"/></condition>
 		<condition property="start.exe" value="../../start.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="start.arg" value="../../start.sh" else=""><os family="unix"/></condition>
-		<condition property="mvn.exe" value="../frank-runner/mvn.bat" else="/bin/bash"><os family="windows"/></condition>
-		<condition property="mvn.arg" value="../frank-runner/mvn.sh" else=""><os family="unix"/></condition>
 
 		<condition property="ff.dir" value="iaf" else="frankframework"><available file="../../../iaf" type="dir"/></condition>
 
-		<echo message="iaf-example: Stop Tomcat to prevent files used by maven being locked"/>
-		<exec executable="${stop.exe}" vmlauncher="false" failonerror="true">
-			<arg value="${stop.arg}"/>
-			<arg value="-Dproject.dir=${ff.dir}/example"/>
-			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
-		</exec>
-
-		<echo message="iaf-example: Clean possible previous builds of webapp with war:inplace as Maven will not do it (${start.exe} will workaround this limitation of Maven but in this file we call it for iaf-example and not for iaf-webapp)" unless:true="${maven.skip.clean}"/>
-		<delete dir="../../../${ff.dir}/webapp/src/main/webapp/WEB-INF/lib" verbose="${maven.verbose}" unless:true="${maven.skip.clean}"/>
-
-		<echo message="iaf-example: Build iaf"/>
-		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frontend" value="/target/frank-runner/frontend" summary="true"/><!-- match with -Dbuild.dir=target/frank-runner from which <id>copy NPM dist to Maven build folder</id> in pom.xml will use -->
-		<exec executable="${mvn.exe}" dir="../../../${ff.dir}" vmlauncher="false" failonerror="true">
-			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
-			<arg value="clean" unless:true="${maven.skip.clean}"/>
-			<arg value="install"/>
-			<arg value="--projects" unless:blank="${maven.projects}"/>
-			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
-			<arg value="--also-make" unless:blank="${maven.projects}"/><!-- also make parent which pom.xml contains common dependencies -->
-			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
-			<arg value="-Pibissource,attachFrankDoc" unless:true="${maven.skip.frankdoc}"/><!-- generate Frank!Doc as some JUnit tests depend on the FrankConfig.xsd which will change in some cases when the Java code is changed. Profile ibissource seems necesssary to download frank-doc-1.1-SNAPSHOT.jar -->
-			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
-			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
-			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
-			<arg value="-Dbuild.dir=target/frank-runner"/><!-- prevent conflicts with Eclipse building to the same target folder -->
-			<arg value="-X" if:true="${maven.verbose}"/>
-			<arg value="--settings" if:set="maven.settings.xml"/>
-			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
-		</exec>
-		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frank-runner/frontend" value="/target/frontend" summary="true"/><!-- reset previous replace -->
+		<ant dir="../iaf-webapp" antfile="build.xml" inheritAll="false">
+			<property name="skip.start" value="true"/>
+		</ant>
 
 		<echo message="iaf-example: Update iaf-example with artifacts from local repo and start Tomcat"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true">
