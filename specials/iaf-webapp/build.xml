@@ -33,7 +33,7 @@
 		</exec>
 
 		<echo message="iaf-webapp: Build iaf"/>
-		<delete verbose="${maven.verbose}"><fileset dir="../../../${ff.dir}/webapp/src/main/webapp/WEB-INF/lib"/></delete><!-- jar files present (after ${start.exe} with war:inplace has been executed) will prevent maven from adding newer jar files with the same name (like Ladybug and Frank!Framework SNAPSHOT jar files) to the war file when building webapp. This is especially important when running iaf-example, iaf-test or "Test with ladybug-ff-test-webapp" which depend on the war file (when only running iaf-webapp the ${start.exe} below with war:inplace will rebuild the webapp anyway)) -->
+		<delete verbose="${maven.verbose}"><fileset dir="../../../${ff.dir}" includes="webapp/src/main/webapp/WEB-INF/lib/*.jar"/></delete><!-- jar files present (because ${start.exe} with war:inplace has been executed) will prevent maven from adding newer jar files with the same name (like Ladybug and Frank!Framework SNAPSHOT jar files) to the war file when building webapp. This is especially important when running iaf-example, iaf-test or "Test with ladybug-ff-test-webapp" which depend on the war file (when only running iaf-webapp the ${start.exe} below with war:inplace will rebuild the webapp anyway)) -->
 		<replace file="../../../${ff.dir}/console/frontend/src/main/frontend/angular.json" token="/target/frontend" value="/target/frank-runner/frontend" summary="true"/><!-- match with -Dbuild.dir=target/frank-runner from which <id>copy NPM dist to Maven build folder</id> in pom.xml will use -->
 		<exec executable="${mvn.exe}" dir="../../../${ff.dir}" vmlauncher="false" failonerror="true">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
