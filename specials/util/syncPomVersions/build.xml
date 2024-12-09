@@ -26,8 +26,6 @@
     <target name="ladybug-ff-test-webapp-takes-ff">
         <xmlproperty file="frankframework/pom.xml" prefix="ff" />
         <xmlproperty file="ladybug-ff-test-webapp/pom.xml" prefix="ladybug.ff.test.webapp" />
-        <echo message="Original ${ladybug.ff.test.webapp.project.properties.ff.version}" />
-        <echo message="Have ${ff.project.properties.revision}" />
         <replace file="ladybug-ff-test-webapp/pom.xml"
             token="&lt;ff.version&gt;${ladybug.ff.test.webapp.project.properties.ff.version}&lt;/ff.version&gt;"
             value="&lt;ff.version&gt;${ff.project.properties.revision}&lt;/ff.version&gt;" />
