@@ -23,6 +23,11 @@
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
 		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
+		<!-- To support CI/CD - with the project.dir we want to manipulate
+		     what code we want to run (Nexus release of FF!, local build of FF!,
+			 or ladybug-ff-test-webapp). Then we need another way to specify
+			 what configurations to run -->
+		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/>
 		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
 		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
