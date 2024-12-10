@@ -23,7 +23,7 @@
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 
 		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
-		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/><!-- Enables CI/CD to choose configurations in frank-runner/build.properties. See https://github.com/wearefrank/ladybug-ff-cypress-test/blob/main/.github/workflows/testing.js.yml -->
+		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/><!-- Enables CI/CD to choose configurations in frank-runner/build.properties. See https://github.com/wearefrank/ladybug-ff-cypress-test/blob/main/.github/workflows/testing.js.yml. Path should be relative to ${project.dir} -->
 		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
 		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
@@ -352,6 +352,8 @@
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
+		<available property="configurations.dir.abs.available" file="configurations.dir.abs" />
+		<fail message="Invalid absolute path for configurations.dir: ${configurations.dir.abs}" unless:set="configurations.dir.abs.available" />
 		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*,${project.dir}/configurations/*"/>
 		<dirset id="configurations.dirs.id" dir="${configurations.dirset.dir}" includes="${configurations.dirset.includes}"/>
