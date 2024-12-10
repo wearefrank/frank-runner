@@ -352,7 +352,7 @@
 
 		<property name="configurations.dirset.dir" value="${projects.dir}"/>
 		<property name="configurations.dir.abs" location="${configurations.dirset.dir}/${project.dir}/${configurations.dir}"/>
-		<available property="configurations.dir.abs.available" file="configurations.dir.abs" />
+		<available property="configurations.dir.abs.available" file="${configurations.dir.abs}" />
 		<fail message="Invalid absolute path for configurations.dir: ${configurations.dir.abs}" unless:set="configurations.dir.abs.available" />
 		<property name="configurations.dir.rel" basedir="${configurations.dirset.dir}" value="${configurations.dir.abs}" relative="true"/><!-- the use of configurations.dir.rel makes it possible to use ../.. in configurations.dir and still have the includes work (.abs removes the ../.. and .rel will make it relative again) -->
 		<property name="configurations.dirset.includes" value="${configurations.dir.rel}/*,${project.dir}_*/src/main/configuration/*,${project.dir}/configurations/*/src/main/resources/*,${project.dir}/configurations/*"/>
