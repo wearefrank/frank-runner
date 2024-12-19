@@ -1,4 +1,4 @@
-<project name="syncPomVersions"
+<project name="syncPomVersions" xmlns:if="ant:if" xmlns:unless="ant:unless"
     basedir="../../../.."
     default="bump-ladybug-in-ff">
     <!-- Targets are applied in the CI/CD of ladybug-ff-cypress-test -->
@@ -25,6 +25,8 @@
             value="&lt;ladybug.version&gt;${ladybug.backend.project.properties.revision}&lt;/ladybug.version&gt;" />
     </target>
     <target name="ladybug-ff-test-webapp-takes-ff">
+        <condition property="ff.pom.available"><available file="frankframework/pom.xml" /></condition>
+        <fail message="File frankframework/pom.xml does not exist" unless:set="ff.pom.available" />
         <xmlproperty file="frankframework/pom.xml" prefix="ff" />
         <xmlproperty file="ladybug-ff-test-webapp/pom.xml" prefix="ladybug.ff.test.webapp" />
         <replace file="ladybug-ff-test-webapp/pom.xml"
