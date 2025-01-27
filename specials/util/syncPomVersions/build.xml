@@ -1,9 +1,10 @@
-<project name="syncPomVersions"
+<project name="syncPomVersions" xmlns:if="ant:if" xmlns:unless="ant:unless"
     basedir="../../../.."
     default="bump-ladybug-in-ff">
-    <!-- Target is applied in the CI/CD of ladybug-ff-cypress-test -->
+    <!-- Targets are applied in the CI/CD of ladybug-ff-cypress-test -->
     <target name="bump-ladybug-in-ff" depends="ladybug-backend-takes-frontend,ff-takes-ladybug-backend" />
     <target name="bump-including-ladybug-ff-test-webapp" depends="ladybug-backend-takes-frontend,ff-takes-ladybug-backend,ladybug-ff-test-webapp-takes-ff" />
+    <target name="bump-only-ladybug-ff-test-webapp" depends="ladybug-ff-test-webapp-takes-ff" />
     <!-- It was tried to do this with xmltask. That had two drawbacks: 
          1. It changes something with surrounding spaces and tabs, causing every line to be changed according to git diff.
          2. This requires the xmltask.jar task to be present, and we have to take care of its license
@@ -24,6 +25,8 @@
             value="&lt;ladybug.version&gt;${ladybug.backend.project.properties.revision}&lt;/ladybug.version&gt;" />
     </target>
     <target name="ladybug-ff-test-webapp-takes-ff">
+        <condition property="ff.pom.available"><available file="frankframework/pom.xml" /></condition>
+        <fail message="File frankframework/pom.xml does not exist" unless:set="ff.pom.available" />
         <xmlproperty file="frankframework/pom.xml" prefix="ff" />
         <xmlproperty file="ladybug-ff-test-webapp/pom.xml" prefix="ladybug.ff.test.webapp" />
         <replace file="ladybug-ff-test-webapp/pom.xml"
