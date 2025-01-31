@@ -82,7 +82,7 @@ jobs:
             core.info('status is OK');
           }
     - name: Store Apache Tomcat log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Linux-${{ matrix.example}}-logs
@@ -171,7 +171,7 @@ jobs:
             core.info('status is OK');
           }
     - name: Store Apache Tomcat log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Windows-${{ matrix.example}}-logs
