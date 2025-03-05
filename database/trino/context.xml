@@ -1,0 +1,11 @@
+<Context>
+    <Resource name="jdbc/@instance.name.lc@"
+              auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="io.trino.jdbc.TrinoDriver"
+              url="jdbc:trino://localhost:8080/catalog/schema"
+              username="trino"
+              password=""
+              maxIdle="10"
+              maxWaitMillis="-1"/>
+</Context>

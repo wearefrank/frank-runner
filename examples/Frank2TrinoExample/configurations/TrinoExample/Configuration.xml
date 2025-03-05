@@ -1,0 +1,19 @@
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
+
+
+	<Adapter name="TrinoQueryAdapter">
+		<Receiver name="Receiver1a">
+			<ApiListener name="Listener1a" uriPattern="service1a"/>
+		</Receiver>
+		<Pipeline>
+			<SenderPipe name="TestPipe">
+				<FixedQuerySender 
+					name="my-fixedquerysender" 
+					queryType="SELECT" 
+					query="SELECT * FROM memory.test_schema.test_data" 
+					outputFormat="JSON">
+				</FixedQuerySender>
+			</SenderPipe>
+		</Pipeline>
+	</Adapter>
+</Configuration>

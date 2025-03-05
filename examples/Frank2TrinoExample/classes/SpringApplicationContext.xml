@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+		xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		default-autowire="byName"
+		xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	">
+
+	<bean id="messageDispatcher" class="org.frankframework.management.bus.MessageDispatcher">
+		<property name="packageName" value="org.frankframework.management.bus" />
+	</bean>
+
+	<context:property-placeholder />
+
+	<import resource="springUnmanagedDeployment.xml"/>
+
+	<bean name="applicationEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster" autowire="byName">
+		<property name="errorHandler">
+			<bean class="org.frankframework.configuration.SpringEventErrorHandler"/>
+		</property>
+	</bean>
+
+	<bean
+		name="lowerCasePropertySourcePostProcessor"
+		class="org.frankframework.configuration.LowerCasePropertySourcePostProcessor"
+		autowire="byName"
+	/>
+
+	<bean id="jndiContextPrefix" factory-bean="jndiContextPrefixFactory" factory-method="getContextPrefix" />
+	<bean id="jndiContextPrefixFactory" class="org.frankframework.core.JndiContextPrefixFactory" />
+
+	<!-- Find DataSources in resources.yml and JNDI -->
+	<bean id="ResourceObjectLocator" class="org.frankframework.jdbc.datasource.ResourceObjectLocator" />
+	<bean id="JndiObjectLocator" class="org.frankframework.jndi.JndiObjectLocator" />
+
+	<bean id="dataSourceFactory" class="org.frankframework.jdbc.datasource.DataSourceFactory" autowire="byType"/>
+	<bean id="connectionFactoryFactory" class="org.frankframework.jndi.JndiConnectionFactoryFactory" autowire="byType" />
+	<bean id="mongoClientFactory" class="org.frankframework.mongodb.JndiMongoClientFactory" autowire="byType" />
+
+	<bean id="jdbcPropertySourceFactory" class="org.frankframework.jdbc.JdbcPropertySourceFactory" />
+
+	<!--bean id="VerifyDatabaseConnectionBean" class="org.frankframework.lifecycle.VerifyDatabaseConnectionBean" />-->
+
+	<bean
+		name="hostnamePropertySourcePostProcessor"
+		class="org.frankframework.configuration.HostnamePropertySourcePostProcessor"
+		autowire="byName"
+	/>
+
+	<bean
+		name="jmsRealmsFactory"
+		class="org.frankframework.jms.JmsRealmFactory"
+		autowire="byName"
+		factory-method="getInstance"
+	/>
+
+	<bean name="flowDiagramManager" class="org.frankframework.util.flow.FlowDiagramManager" lazy-init="true" />
+
+	<bean name="applicationWarnings" class="org.frankframework.configuration.ApplicationWarnings" />
+
+	<bean
+		name="listenerContainer"
+		class="org.frankframework.receivers.PullingListenerContainer"
+		autowire="byName"
+		scope="prototype"
+	/>
+
+	<bean
+		id="schedulerHelper"
+		class="org.frankframework.scheduler.SchedulerHelper"
+		autowire="byName"
+		lazy-init="true"
+	/>
+
+	<bean
+		id="txManagerProxy"
+		class="org.frankframework.jta.SpringTxManagerProxy"
+		>
+		<property name="realTxManager">
+			<ref bean="txManagerReal"/>
+		</property>
+	</bean>
+
+	<alias name="txManagerProxy" alias="txManager"/>
+
+	<bean
+		name="isolatedServiceCaller"
+		class="org.frankframework.senders.IsolatedServiceCaller"
+		autowire="byName"
+		scope="singleton"
+	/>
+
+	<bean
+		name="namedThreadFactory"
+		class="org.frankframework.scheduler.NamedThreadFactory"
+		scope="prototype"
+	>
+		<property name="ThreadGroupName" value="ControlTasks"/>
+	</bean>
+
+	<bean
+		name="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+		scope="singleton"
+	>
+		<property name="threadFactory" ref="namedThreadFactory"/>
+		<property name="queueCapacity" value="0"/>
+		<property name="phase" value="-2147483648"/>
+		<property name="acceptTasksAfterContextClose" value="true"/>
+		<property name="waitForTasksToCompleteOnShutdown" value="true"/>
+		<property name="taskDecorator"><bean class="org.frankframework.threading.ThreadNamingTaskDecorator"/> </property>
+	</bean>
+
+	<bean
+		name="dbmsSupportFactory"
+		class="org.frankframework.dbms.DbmsSupportFactory"
+		scope="singleton"
+		>
+		<property name="dbmsSupportMap">
+			<props>
+				<!-- configure additional DbmsSupport mappings here -->
+				<prop key="DB2/NT">org.frankframework.dbms.Db2DbmsSupport</prop>
+				<prop key="DB2/LINUXX8664">org.frankframework.dbms.Db2DbmsSupport</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>
