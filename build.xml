@@ -186,13 +186,13 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="89"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version.patch" value="102"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<property name="tomcat.10.version.minor" value="1"/>
-		<property name="tomcat.10.version.patch" value="24"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version.patch" value="39"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
