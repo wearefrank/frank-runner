@@ -168,8 +168,10 @@
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="rhino.version.major" value="1"/>
-		<property name="rhino.version.minor" value="8"/>
-		<property name="rhino.version.patch" value="0"/>
+		<!-- March 20 2025 Rhino version not updated. Is used only within the Frank!Runner, not by the FF!.
+		     It seems that the next version, 1.8.0 is no longer free -->
+		<property name="rhino.version.minor" value="7"/>
+		<property name="rhino.version.patch" value="14"/>
 		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
 		<property name="rhino.zip" value="rhino-${rhino.version}.zip"/>
 		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.major}_${rhino.version.minor}_${rhino.version.patch}_Release/${rhino.zip}"/>
@@ -216,7 +218,7 @@
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<property name="winmerge.version" value="2.16.46"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
-		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
+		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/archive/refs/tags/v${winmerge.version}.zip"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
