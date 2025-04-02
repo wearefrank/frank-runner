@@ -65,9 +65,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
-ZIP=rhino-1.7.14.zip
-URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
-DIR=build/rhino1.7.14
+ZIP=rhino-1.7.15.zip
+URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip
+DIR=build/rhino1.7.15
 SUB=
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
@@ -89,9 +89,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
-if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.14.jar" ]]; then
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
-	cp "${FR_DIR}build/rhino1.7.14/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
+	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
 JDK_8_DIR="${FR_DIR}build/jdk8u442-b06"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.26+4"

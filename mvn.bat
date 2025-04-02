@@ -44,27 +44,27 @@ if not exist "%~dp0build\apache-ant-1.10.15\" (
 	)
 	move "%~dp0build\tmp\build\apache-ant-1.10.15" "%~dp0build\apache-ant-1.10.15"
 )
-set DOWNLOAD_HELP=download https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\rhino-1.7.14.zip" (
+set DOWNLOAD_HELP=download https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\rhino-1.7.15.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\rhino-1.7.14.zip.tmp" -L https://github.com/mozilla/rhino/releases/download/Rhino1_7_14_Release/rhino-1.7.14.zip
+	curl -f -o "%~dp0download\rhino-1.7.15.zip.tmp" -L https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\rhino-1.7.14.zip.tmp" "%~dp0download\rhino-1.7.14.zip"
+	move "%~dp0download\rhino-1.7.15.zip.tmp" "%~dp0download\rhino-1.7.15.zip"
 )
-if not exist "%~dp0build\rhino1.7.14\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\rhino-1.7.14.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\rhino1.7.15\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\rhino-1.7.15.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\rhino1.7.14" "%~dp0build\rhino1.7.14"
+	move "%~dp0build\tmp\build\rhino1.7.15" "%~dp0build\rhino1.7.15"
 )
-if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.14.jar" (
+if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.15.jar" (
 	del "%~dp0build\apache-ant-1.10.15\lib\rhino-*.jar"
-	copy "%~dp0build\rhino1.7.14\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.15\lib\"
+	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.15\lib\"
 )
 set JDK_8_DIR=%~dp0%build\jdk8u442-b06
 set JDK_11_DIR=%~dp0%build\jdk-11.0.26+4
