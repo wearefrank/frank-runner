@@ -218,7 +218,7 @@
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<property name="winmerge.version" value="2.16.46"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
-		<property name="winmerge.url" value="https://downloads.sourceforge.net/winmerge/${winmerge.zip}"/>
+		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
