@@ -335,6 +335,7 @@
 			<propertyref name="application.security.testtool.authentication.type" />
 			<propertyref name="application.security.testtool.authentication.username" />
 			<propertyref name="application.security.testtool.authentication.password" />
+			<propertyref name="ibistesttool.maxMessageLength" />
 		</propertyset>
 		<property name="system.properties.comma.separated" value="${toString:system.properties.set}"/>
 		<scriptdef language="javascript" name="systemproperties">
@@ -1302,6 +1303,7 @@ fi</echo>
 		<echo message="larva.windiff.command: ${larva.windiff.command}" if:set="debug.true"/>
 		<echo message="context.path: ${context.path}" if:set="debug.true"/>
 		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
+		<echo message="ibistesttool.maxMessageLength: ${ibistesttool.maxMessageLength}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="update.strategy: ${update.strategy}" if:set="debug.true"/>
 		<echo message="ff.version: ${ff.version}" if:set="debug.true"/>
