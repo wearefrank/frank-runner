@@ -168,8 +168,6 @@
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="rhino.version.major" value="1"/>
-		<!-- March 20 2025 Rhino version not updated. Is used only within the Frank!Runner, not by the FF!.
-		     It seems that the next version, 1.8.0 is no longer free -->
 		<property name="rhino.version.minor" value="7"/>
 		<property name="rhino.version.patch" value="15"/>
 		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
