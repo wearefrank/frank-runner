@@ -71,8 +71,8 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
-		<property name="jdk.8.version.minor" value="392"/><!-- https://adoptium.net/temurin/archive/?version=8 -->
-		<property name="jdk.8.version.patch" value="b08"/>
+		<property name="jdk.8.version.minor" value="442"/><!-- https://adoptium.net/temurin/archive/?version=8 -->
+		<property name="jdk.8.version.patch" value="b06"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
 		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.zip"/>
@@ -90,8 +90,8 @@
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
 		<property name="jdk.11.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=11 -->
-		<property name="jdk.11.version.patch" value="21"/>
-		<property name="jdk.11.version.plus" value="9"/>
+		<property name="jdk.11.version.patch" value="26"/>
+		<property name="jdk.11.version.plus" value="4"/>
 		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
 		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.zip"/>
@@ -109,7 +109,7 @@
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
 		<property name="jdk.17.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=17 -->
-		<property name="jdk.17.version.patch" value="8"/>
+		<property name="jdk.17.version.patch" value="14"/>
 		<property name="jdk.17.version.plus" value="7"/>
 		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
 		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
@@ -128,8 +128,8 @@
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
 		<property name="jdk.21.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=21 -->
-		<property name="jdk.21.version.patch" value="2"/>
-		<property name="jdk.21.version.plus" value="13"/>
+		<property name="jdk.21.version.patch" value="6"/>
+		<property name="jdk.21.version.plus" value="7"/>
 		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
 		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
@@ -158,7 +158,7 @@
 		<property name="jdk.lib.jspawnhelper" value="lib/jspawnhelper"/><!-- chmod +x to prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
-		<property name="ant.version." value="1.10.10"/><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.version." value="1.10.15"/><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
 		<property name="ant.tar" value="${ant.base}.tar"/>
@@ -169,14 +169,14 @@
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<property name="rhino.version.major" value="1"/>
 		<property name="rhino.version.minor" value="7"/>
-		<property name="rhino.version.patch" value="14"/>
+		<property name="rhino.version.patch" value="15"/>
 		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
 		<property name="rhino.zip" value="rhino-${rhino.version}.zip"/>
 		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.major}_${rhino.version.minor}_${rhino.version.patch}_Release/${rhino.zip}"/>
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
-		<property name="maven.version" value="3.9.6"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.9.9"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -201,7 +201,7 @@
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="eclipse.version" value="2024-09"/><!-- on update: also update eclipse.jre.dir and lombok -->
+		<property name="eclipse.version" value="2025-03"/><!-- on update: also update eclipse.jre.dir and lombok -->
 		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.4.v20240802-1551/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
@@ -211,12 +211,12 @@
 		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
 		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
-		<property name="lombok.version" value="1.18.34"/>
+		<property name="lombok.version" value="1.18.36"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
-		<property name="winmerge.version" value="2.16.6"/>
+		<property name="winmerge.version" value="2.16.46"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
-		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/${winmerge.version}/${winmerge.zip}"/>
+		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
@@ -231,23 +231,23 @@
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
 		<property name="h2v1.dir" value="${basedir}/build/h2"/>
-		<property name="h2v2.version" value="2.2.220"/>
+		<property name="h2v2.version" value="2.3.232"/>
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<property name="ojdbc8.version" value="23.4.0.24.05"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
+		<property name="ojdbc8.version" value="23.7.0.25.01"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
-		<property name="ojdbc11.version" value="23.4.0.24.05"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
+		<property name="ojdbc11.version" value="23.7.0.25.01"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
-		<property name="mssql8.version" value="12.6.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql8.version" value="12.10.0.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
-		<property name="mssql11.version" value="12.6.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql11.version" value="12.8.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
-		<property name="pgsql.version" value="42.7.3"/><!-- https://jdbc.postgresql.org/download/ -->
+		<property name="pgsql.version" value="42.7.5"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
 
