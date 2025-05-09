@@ -235,6 +235,10 @@
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
+		<property name="h2v2java8.version" value="2.2.220"/>
+		<property name="h2v2java8.jar" value="h2-${h2v2java8.version}.jar"/>
+		<property name="h2v2java8.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2java8.version}/${h2v2java8.jar}"/>
+		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
 		<property name="ojdbc8.version" value="23.7.0.25.01"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
@@ -312,6 +316,7 @@
 		<available property="jms3.jar.available" file="${download.dir}/${jms3.jar}"/>
 		<available property="h2v1.jar.available" file="${download.dir}/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="${download.dir}/${h2v2.jar}"/>
+		<available property="h2v2java8.jar.available" file="${download.dir}/${h2v2java8.jar}"/>
 		<available property="ojdbc8.jar.available" file="${download.dir}/${ojdbc8.jar}"/>
 		<available property="ojdbc11.jar.available" file="${download.dir}/${ojdbc11.jar}"/>
 		<available property="mssql8.jar.available" file="${download.dir}/${mssql8.jar}"/>
@@ -474,7 +479,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.jms,get.h2v1,get.h2v2,get.ojdbc,get.mssql,get.pgsql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -590,9 +595,15 @@
 			<or><filename regex="core-7\.[0-6]"/><filename regex="core-7\.7-2021"/><filename regex="core-7\.7-2022010"/><filename regex="core-7\.7-2022011[0-7]"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
 		</fileset>
 		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
+		<fileset id="h2v2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
+			<or><filename regex="core-7\.7-2022011[8-9]"/><filename regex="core-7\.7-202201[2-9]"/><filename regex="core-7\.7-20220[2-9]"/><filename regex="core-7\.[8-9]"/></or> <!-- > 7.7.20220117, 7.8 and 7.9 require an older version of h2 version 2 that supports Java 8. Only 8.x or later supports the latest h2 version 2 driver, which requires Java 11 or later -->
+		</fileset>
+		<pathconvert property="h2v2.fallback" refid="h2v2.fallback.fileset" />
 		<property name="h2.jar" value="${h2v1.jar}" unless:blank="${h2.fallback}"/>
+		<property name="h2.jar" value="${h2v2java8.jar}" unless:blank="${h2v2.fallback}"/>
 		<property name="h2.jar" value="${h2v2.jar}"/>
 		<property name="h2.dir" value="${h2v1.dir}" unless:blank="${h2.fallback}"/>
+		<property name="h2.dir" value="${h2v2java8.dir}" unless:blank="${h2v2.fallback}"/>
 		<property name="h2.dir" value="${h2v2.dir}"/>
 		<!-- h2 -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
@@ -874,6 +885,10 @@
 
 	<target name="get.h2v1" unless="${h2v1.jar.available}">
 		<get src="${h2v1.url}" dest="${download.dir}/${h2v1.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.h2v2java8" unless="${h2v2java8.jar.available}">
+		<get src="${h2v2java8.url}" dest="${download.dir}/${h2v2java8.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.h2v2" unless="${h2v2.jar.available}">
