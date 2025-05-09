@@ -596,7 +596,7 @@
 		</fileset>
 		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
 		<fileset id="h2v2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
-			<or><filename regex="core-7\.7-2022011[8-9]"/><filename regex="core-7\.7-202201[2-9]"/><filename regex="core-7\.7-20220[2-9]"/><filename regex="core-7\.[8-9]"/></or>
+			<or><filename regex="core-7\.7-2022011[8-9]"/><filename regex="core-7\.7-202201[2-9]"/><filename regex="core-7\.7-20220[2-9]"/><filename regex="core-7\.[8-9]"/></or> <!-- > 7.7.20220117, 7.8 and 7.9 require an older version of h2 version 2 that supports Java 8. Only 8.x or later supports the latest h2 version 2 driver, which requires Java 11 or later -->
 		</fileset>
 		<pathconvert property="h2v2.fallback" refid="h2v2.fallback.fileset" />
 		<property name="h2.jar" value="${h2v1.jar}" unless:blank="${h2.fallback}"/>
@@ -1345,7 +1345,6 @@ fi</echo>
 		<echo message="tests.dir.rel=${tests.dir.rel}" if:set="debug.true"/>
 		<echo message="tests.dirset.includes=${tests.dirset.includes}" if:set="debug.true"/>
 		<echo message="tests.properties:${tests.properties}" if:set="debug.true"/>
-		<echo message="h2.jar:${h2.jar}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="    https://github.com/ibissource/frank-runner#frankrunner" if:set="debug.true"/>
 		<!-- http://www.network-science.de/ascii/ font standard -->
