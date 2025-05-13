@@ -201,7 +201,7 @@
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="eclipse.version" value="2025-06"/><!-- on update: also update eclipse.jre.dir and lombok -->
+		<property name="eclipse.version" value="2025-03"/><!-- on update: also update eclipse.jre.dir and lombok -->
 		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.4.v20240802-1551/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
@@ -285,7 +285,7 @@
 		<echo file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
 		<condition property="frankflow.version" value="2.27.1-20240202.120321"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
 		<property name="frankflow.version" value="${frankflow.metadata.versioning.release}" if:set="frankflow.metadata.versioning.release"/>
-		<property name="frankflow.version" value="3.0.0-20241014.120602"/><!-- will be used when metadata xml download failed (which will not be retried for one hour) -->
+		<property name="frankflow.version" value="3.0.0-20250402.135324"/><!-- will be used when metadata xml download failed (which will not be retried for one hour) -->
 		<condition property="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
 		<condition property="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
 		<property name="frankflow.war" value="frank-flow-${frankflow.version}.war"/>
