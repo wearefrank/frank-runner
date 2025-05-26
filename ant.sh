@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.6_7.tar.gz
-URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.6+7/OpenJDK21U-jdk_x64_linux_hotspot_21.0.6_7.tar.gz
-DIR=build/jdk-21.0.6+7
+ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_6.tar.gz
+URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_6.tar.gz
+DIR=build/jdk-21.0.7+6
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.6_7.tar.gz
-	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.6+7/OpenJDK21U-jdk_x64_mac_hotspot_21.0.6_7.tar.gz
+	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.7_6.tar.gz
+	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_mac_hotspot_21.0.7_6.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -98,10 +98,10 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
-JDK_8_DIR="${FR_DIR}build/jdk8u442-b06"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.26+4"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.14+7"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.6+7"
+JDK_8_DIR="${FR_DIR}build/jdk8u452-b09"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.27+6"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.15+6"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.7+6"
 if [[ ! -d "${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
