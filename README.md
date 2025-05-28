@@ -782,14 +782,23 @@ administrator of the user to configure `dtap.stage`.
 # Root CA certificates
 
 You may need to add your organistion's Root CA for Ant and Maven to be able to
-download files from behind a Secure Web Gateway like Zscaler and/or to download
-files from your organization's internal repository (e.g. Artifactory). To do so
-simply create a folder `cacerts` in the `frank-runner` folder, put your certificate there and (re)start a
-Frank!Runner build.xml. Frank!Runner will detect added and removed files from
-the `cacerts` folder and reinstall all files in `cacerts` in the downloaded and
-unzipped JDK used by the Frank!Runner. Also when the Frank!Runner's JDK version
-is changed and a new JDK is downloaded Frank!Runner will install the Root CA's
-in the `cacerts` folder in the newly downloaded and unzipped JDK.
+download files from behind a Secure Web Gateway like Zscaler. This might also
+be the case when your project needs to download files from your organization's
+internal repository (e.g. Artifactory) or when you are running a Frank that is
+doing http calls (e.g. when using HttpSender).
+
+Usually you can find the certificate you need by visiting a public website in
+a browser and view the security details of the url (click on the icon left to
+the the url in the address bar). When viewing the certificate details export
+the top certificate in the Certificate Hierarchy to a file. Create a folder
+`cacerts` in the `frank-runner` folder, move the exported file to this folder
+and (re)start the Frank!Runner.
+
+The Frank!Runner will detect added and removed files from the `cacerts` folder
+and reinstall all files in `cacerts` in the downloaded and unzipped JDK used by
+the Frank!Runner. Also when the Frank!Runner's JDK version is changed and a new
+JDK is downloaded Frank!Runner will install the Root CA's in the `cacerts`
+folder in the newly downloaded and unzipped JDK.
 
 
 # Eclipse
