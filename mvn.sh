@@ -112,7 +112,7 @@ fi
 if [[ ! -d "${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.9" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.10" ]]; then
 	RUN_INSTALL="true"
 fi
 # Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)
@@ -122,4 +122,4 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-"${FR_DIR}build/apache-maven-3.9.9/bin/mvn" "$@"
+"${FR_DIR}build/apache-maven-3.9.10/bin/mvn" "$@"

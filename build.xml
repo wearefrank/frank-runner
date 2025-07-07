@@ -176,7 +176,7 @@
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
-		<property name="maven.version" value="3.9.9"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.9.10"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -186,13 +186,13 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="105"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version.patch" value="107"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<property name="tomcat.10.version.minor" value="1"/>
-		<property name="tomcat.10.version.patch" value="41"/><!-- on update: also update jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version.patch" value="43"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
@@ -201,8 +201,8 @@
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="eclipse.version" value="2025-03"/><!-- on update: also update eclipse.jre.dir and lombok -->
-		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.4.v20240802-1551/jre"/>
+		<property name="eclipse.version" value="2025-06"/><!-- on update, also update eclipse.jre.dir and check if lombok needs updating -->
+		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
@@ -245,13 +245,13 @@
 		<property name="ojdbc11.version" value="23.8.0.25.04"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
-		<property name="mssql8.version" value="12.10.0.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql8.version" value="12.10.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
-		<property name="mssql11.version" value="12.10.0.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql11.version" value="12.10.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
-		<property name="pgsql.version" value="42.7.5"/><!-- https://jdbc.postgresql.org/download/ -->
+		<property name="pgsql.version" value="42.7.7"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
 

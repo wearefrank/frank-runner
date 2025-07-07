@@ -79,7 +79,7 @@ if not exist "%JDK_11_DIR%" (
 if not exist "%JDK_17_DIR%" (
 	set RUN_INSTALL=true
 )
-if not exist "%~dp0build\apache-maven-3.9.9" (
+if not exist "%~dp0build\apache-maven-3.9.10" (
 	set RUN_INSTALL=true
 )
 rem Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)
@@ -89,7 +89,7 @@ set ANT_HOME=%~dp0build\apache-ant-1.10.15
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.15\bin\ant" -emacs -buildfile "%~dp0build.xml" install
 )
-call "%~dp0build\apache-maven-3.9.9\bin\mvn.cmd" %*
+call "%~dp0build\apache-maven-3.9.10\bin\mvn.cmd" %*
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
