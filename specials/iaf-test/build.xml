@@ -1,7 +1,6 @@
 <project default="restart-iaf-test" xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<target name="restart-iaf-test">
-		<property file="../../build.properties"/>
-		<property file="build.properties"/>
+		<property file="../iaf-webapp/build.properties"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
 
@@ -27,7 +26,8 @@
 			<!--
 			Optionally change application.server.type.custom as described in StageSpecifics_LOC.properties
 			Please note that ACTIVEMQ requires extra jar files that the Frank!Runner doesn't download yet, see:
-			https://github.com/ibissource/iaf/blob/master/TESTING_WITH_IAF-TEST.md#1-proprietary-modules-and-jar-dependencies
+			https://github.com/frankframework/frankframework/blob/master/TESTING_WITH_IAF-TEST.md#1-proprietary-modules-and-jar-dependencies
+			You can put the files in frank-runner/build/apache-tomcat-<version>/lib
 			<arg value="-Dapplication.server.type.custom=ACTIVEMQ"/>
 			-->
 		</exec>

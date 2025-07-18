@@ -1,6 +1,5 @@
 <project default="restart-ladybug" xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<target name="restart-ladybug">
-		<property file="../../build.properties"/>
 		<property file="build.properties"/>
 		<property name="maven.skip.all" value="false"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>

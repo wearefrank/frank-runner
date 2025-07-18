@@ -1,8 +1,6 @@
 <project default="restart-iaf-example" xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<target name="restart-iaf-example">
-		<property file="../../build.properties"/>
-		<property file="build.properties"/>
-		<!--property file="../iaf-webapp/build.properties"/-->
+		<property file="../iaf-webapp/build.properties"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
 
