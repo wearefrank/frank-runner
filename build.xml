@@ -1317,8 +1317,6 @@ fi</echo>
 		<echo message="ds.properties.configurations.names: ${ds.properties.configurations.names}" if:set="debug.true"/>
 		<echo message="instance.name: ${instance.name}" if:set="debug.true"/>
 		<echo message="ibistesttool.directory: ${ibistesttool.directory}" if:set="debug.true"/>
-		<echo message="scenariosroot1.directory: ${scenariosroot1.directory}" if:set="debug.true"/>
-		<echo message="scenariosroot1.description: ${scenariosroot1.description}" if:set="debug.true"/>
 		<echo message="larva.windiff.command: ${larva.windiff.command}" if:set="debug.true"/>
 		<echo message="context.path: ${context.path}" if:set="debug.true"/>
 		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
