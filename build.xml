@@ -71,8 +71,8 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
-		<property name="jdk.8.version.minor" value="452"/><!-- https://adoptium.net/temurin/archive/?version=8 -->
-		<property name="jdk.8.version.patch" value="b09"/>
+		<property name="jdk.8.version.minor" value="462"/><!-- https://adoptium.net/temurin/ -->
+		<property name="jdk.8.version.patch" value="b08"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
 		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.zip"/>
@@ -89,8 +89,8 @@
 		<property name="jdk.8.url.lin" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.lin}"/>
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
-		<property name="jdk.11.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=11 -->
-		<property name="jdk.11.version.patch" value="27"/>
+		<property name="jdk.11.version.minor" value="0"/>
+		<property name="jdk.11.version.patch" value="28"/>
 		<property name="jdk.11.version.plus" value="6"/>
 		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
@@ -108,9 +108,9 @@
 		<property name="jdk.11.url.lin" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.lin}"/>
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
-		<property name="jdk.17.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=17 -->
-		<property name="jdk.17.version.patch" value="15"/>
-		<property name="jdk.17.version.plus" value="6"/>
+		<property name="jdk.17.version.minor" value="0"/>
+		<property name="jdk.17.version.patch" value="16"/>
+		<property name="jdk.17.version.plus" value="8"/>
 		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
 		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
 		<property name="jdk.17.zip.win" value="OpenJDK17U-jdk_x64_windows_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.zip"/>
@@ -127,9 +127,9 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
-		<property name="jdk.21.version.minor" value="0"/><!-- https://adoptium.net/temurin/releases/?os=any&version=21 -->
-		<property name="jdk.21.version.patch" value="7"/>
-		<property name="jdk.21.version.plus" value="6"/>
+		<property name="jdk.21.version.minor" value="0"/>
+		<property name="jdk.21.version.patch" value="8"/>
+		<property name="jdk.21.version.plus" value="9"/>
 		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
 		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
@@ -176,7 +176,7 @@
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
-		<property name="maven.version" value="3.9.10"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.9.11"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -214,7 +214,7 @@
 		<property name="lombok.version" value="1.18.38"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
-		<property name="winmerge.version" value="2.16.48.2"/>
+		<property name="winmerge.version" value="2.16.50"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
@@ -270,7 +270,7 @@
 		<xmlproperty file="${download.dir}/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
 		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
 		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest" unless:true="${maven}"/><!-- unless:true="${maven} to prevent unnecessary download -->
-		<condition property="ff.version" value="9.1.0" unless:true="${maven}"><equals arg1="${update.strategy}" arg2="stable"/></condition><!-- unless:true="${maven} to prevent unnecessary download -->
+		<condition property="ff.version" value="9.2.0" unless:true="${maven}"><equals arg1="${update.strategy}" arg2="stable"/></condition><!-- unless:true="${maven} to prevent unnecessary download -->
 		<fail message="Property update.strategy has invalid value: ${update.strategy}"><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
 		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>

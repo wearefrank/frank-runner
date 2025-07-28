@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_6.tar.gz
-URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_6.tar.gz
-DIR=build/jdk-21.0.7+6
+ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.8_9.tar.gz
+URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8+9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.8_9.tar.gz
+DIR=build/jdk-21.0.8+9
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.7_6.tar.gz
-	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_mac_hotspot_21.0.7_6.tar.gz
+	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.8_9.tar.gz
+	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8+9/OpenJDK21U-jdk_x64_mac_hotspot_21.0.8_9.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -99,10 +99,10 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
-JDK_8_DIR="${FR_DIR}build/jdk8u452-b09"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.27+6"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.15+6"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.7+6"
+JDK_8_DIR="${FR_DIR}build/jdk8u462-b08"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.28+6"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.16+8"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.8+9"
 if [[ ! -d "${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
@@ -112,7 +112,7 @@ fi
 if [[ ! -d "${JDK_17_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.10" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.11" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_21_DIR}"
@@ -120,7 +120,7 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.10/bin:${PATH}"
+export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.11/bin:${PATH}"
 echo "JAVA : ${JAVA_HOME}"
 echo "ANT  : ${ANT_HOME}"
-echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.10"
+echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.11"

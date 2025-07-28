@@ -7,23 +7,23 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
-set DOWNLOAD_HELP=download https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip" (
+set DOWNLOAD_HELP=download https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8+9/OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip.tmp" -L https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7+6/OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip
+	curl -f -o "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip.tmp" -L https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.8+9/OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip.tmp" "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip"
+	move "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip.tmp" "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip"
 )
-if not exist "%~dp0build\jdk-21.0.7+6\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\jdk-21.0.8+9\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK21U-jdk_x64_windows_hotspot_21.0.8_9.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\jdk-21.0.7+6" "%~dp0build\jdk-21.0.7+6"
+	move "%~dp0build\tmp\build\jdk-21.0.8+9" "%~dp0build\jdk-21.0.8+9"
 )
 set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.15-bin.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\apache-ant-1.10.15-bin.zip" (
@@ -65,10 +65,10 @@ if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.15.jar" (
 	del "%~dp0build\apache-ant-1.10.15\lib\rhino-*.jar"
 	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.15\lib\"
 )
-set JDK_8_DIR=%~dp0%build\jdk8u452-b09
-set JDK_11_DIR=%~dp0%build\jdk-11.0.27+6
-set JDK_17_DIR=%~dp0%build\jdk-17.0.15+6
-set JDK_21_DIR=%~dp0%build\jdk-21.0.7+6
+set JDK_8_DIR=%~dp0%build\jdk8u462-b08
+set JDK_11_DIR=%~dp0%build\jdk-11.0.28+6
+set JDK_17_DIR=%~dp0%build\jdk-17.0.16+8
+set JDK_21_DIR=%~dp0%build\jdk-21.0.8+9
 set JAVA_HOME=%JDK_21_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.15
 call "%~dp0build\apache-ant-1.10.15\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -emacs -buildfile "%~dp0build.xml" %* start
