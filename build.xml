@@ -186,7 +186,7 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="107"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version.patch" value="108"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
@@ -542,8 +542,8 @@
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 		</exec>
 		<!-- tomcat -->
-		<antcall target="install.tomcat"><param name="tomcat.dir" value="${tomcat.9.dir}"/><param name="tomcat.dir.windows" value="${tomcat.9.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.9.dir.available}"/><param name="tomcat.zip" value="${tomcat.9.zip}"/><param name="jms.jar" value="${jms1.jar}"/><param name="ojdbc.jar" value="${ojdbc8.jar}"/><param name="mssql.jar" value="${mssql8.jar}"/></antcall><!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
-		<antcall target="install.tomcat"><param name="tomcat.dir" value="${tomcat.10.dir}"/><param name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.10.dir.available}"/><param name="tomcat.zip" value="${tomcat.10.zip}"/><param name="jms.jar" value="${jms3.jar}"/><param name="ojdbc.jar" value="${ojdbc11.jar}"/><param name="mssql.jar" value="${mssql11.jar}"/></antcall><!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
+		<antcall target="install.tomcat"><param name="tomcat.major.version" value="9"/><param name="tomcat.dir" value="${tomcat.9.dir}"/><param name="tomcat.dir.windows" value="${tomcat.9.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.9.dir.available}"/><param name="tomcat.zip" value="${tomcat.9.zip}"/><param name="jms.jar" value="${jms1.jar}"/><param name="ojdbc.jar" value="${ojdbc8.jar}"/><param name="mssql.jar" value="${mssql8.jar}"/></antcall><!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
+		<antcall target="install.tomcat"><param name="tomcat.major.version" value="10"/><param name="tomcat.dir" value="${tomcat.10.dir}"/><param name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.10.dir.available}"/><param name="tomcat.zip" value="${tomcat.10.zip}"/><param name="jms.jar" value="${jms3.jar}"/><param name="ojdbc.jar" value="${ojdbc11.jar}"/><param name="mssql.jar" value="${mssql11.jar}"/></antcall><!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<!-- eclipse -->
 		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
 		<unzip src="${download.dir}/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
@@ -989,7 +989,16 @@
 		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:true="${tomcat.dir.available}"/>
 		<delete includeemptydirs="true" unless:true="${tomcat.dir.available}"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
 		<copy file="${download.dir}/${jta.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
-		<copy file="${download.dir}/${jakarta.activation.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<condition property="jakarta.activation.needs.installing">
+			<and>
+				<!-- Tomcat version is 10 or later -->
+				<not><equals arg1="${tomcat.major.version}" arg2="9" /></not>
+				<!-- Checking whether the other Tomcat libraries are present is not sufficient.
+				     The need for ${jakarta.activation.jar} has been introdused on August 7 2025. -->
+				<not><available file="${tomcat.dir}/lib/${jakarta.activation.jar}"></available></not>
+			</and>
+		</condition>
+		<copy file="${download.dir}/${jakarta.activation.jar}" todir="${tomcat.dir}/lib" if:true="${jakarta.activation.needs.installing}"/>
 		<copy file="${download.dir}/${jms.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
 		<copy file="${download.dir}/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
 		<copy file="${download.dir}/${mssql.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
