@@ -542,8 +542,8 @@
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 		</exec>
 		<!-- tomcat -->
-		<antcall target="install.tomcat"><param name="tomcat.major.version" value="9"/><param name="tomcat.dir" value="${tomcat.9.dir}"/><param name="tomcat.dir.windows" value="${tomcat.9.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.9.dir.available}"/><param name="tomcat.zip" value="${tomcat.9.zip}"/><param name="jms.jar" value="${jms1.jar}"/><param name="ojdbc.jar" value="${ojdbc8.jar}"/><param name="mssql.jar" value="${mssql8.jar}"/></antcall><!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
-		<antcall target="install.tomcat"><param name="tomcat.major.version" value="10"/><param name="tomcat.dir" value="${tomcat.10.dir}"/><param name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/><param name="tomcat.dir.available" value="${tomcat.10.dir.available}"/><param name="tomcat.zip" value="${tomcat.10.zip}"/><param name="jms.jar" value="${jms3.jar}"/><param name="ojdbc.jar" value="${ojdbc11.jar}"/><param name="mssql.jar" value="${mssql11.jar}"/></antcall><!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
+		<antcall target="install.tomcat.9"></antcall>
+		<antcall target="install.tomcat.10"></antcall>
 		<!-- eclipse -->
 		<condition property="eclipse.and.os.windows"><and><istrue value="${eclipse}"/><istrue value="${os.windows}"/></and></condition>
 		<unzip src="${download.dir}/${eclipse.zip}" dest="${eclipse.dir}" unless:set="eclipse.dir.available" if:true="${eclipse.and.os.windows}"><cutdirsmapper dirs="1"/></unzip>
@@ -984,7 +984,31 @@
 		<copy todir="${jdk.dir}/${cacerts.dir}/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
 	</target>
 
-	<target name="install.tomcat">
+	<!-- 
+		<antcall target="install.tomcat"></antcall>
+		<antcall target="install.tomcat"></antcall>
+	-->
+	<target name="install.tomcat.9">
+		<property name="tomcat.zip" value="${tomcat.9.zip}"/>
+		<property name="tomcat.dir" value="${tomcat.9.dir}"/>
+		<property name="tomcat.dir.available" value="${tomcat.9.dir.available}"/>
+		<!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
+		<property name="ojdbc.jar" value="${ojdbc8.jar}"/>
+		<property name="mssql.jar" value="${mssql8.jar}"/>
+		<property name="jms.jar" value="${jms1.jar}"/>
+		<antcall target="install.tomcat.common"></antcall>
+	</target>
+	<target name="install.tomcat.10">
+		<property name="tomcat.zip" value="${tomcat.10.zip}"/>
+		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
+		<property name="tomcat.dir.available" value="${tomcat.10.dir.available}"/>
+		<!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
+		<property name="ojdbc.jar" value="${ojdbc11.jar}"/>
+		<property name="mssql.jar" value="${mssql11.jar}"/>
+		<property name="jms.jar" value="${jms3.jar}"/>
+		<antcall target="install.tomcat.common"></antcall>
+	</target>
+	<target name="install.tomcat.common">
 		<unzip src="${download.dir}/${tomcat.zip}" dest="build" unless:true="${tomcat.dir.available}"/>
 		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:true="${tomcat.dir.available}"/>
 		<delete includeemptydirs="true" unless:true="${tomcat.dir.available}"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
