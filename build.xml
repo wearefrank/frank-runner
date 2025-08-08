@@ -1073,11 +1073,13 @@
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 	</target>
 	<target name="install.library">
-		<available property="library.is.installed" file="${tomcat.dir}/lib/${library.jar}"/>
-		<delete unless:true="library.is.installed">
+		<echo message="With library.jar=${library.jar}, library.uninstall.mask=${library.uninstall.mask} and tomcat.dir=${tomcat.dir}"/>
+		<available property="library.is.installed" filepath="${tomcat.dir}/lib" file="${library.jar}" searchparents="false"/>
+		<echo message="library.is.installed=${library.is.installed}"/>
+		<delete unless:set="library.is.installed">
 			<fileset dir="${tomcat.dir}/lib" includes="${library.uninstall.mask}"/>
 		</delete>
-		<copy file="${download.dir}/${library.jar}" todir="${tomcat.dir}/lib" unless:true="${library.is.installed}"/>
+		<copy file="${download.dir}/${library.jar}" todir="${tomcat.dir}/lib" unless:set="${library.is.installed}"/>
 	</target>
 	<target name="copy.config.xsd">
 		<property name="dir2check" value="${dir}"/><!-- make dir the default value for dir2check -->
