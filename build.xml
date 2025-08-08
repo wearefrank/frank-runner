@@ -993,10 +993,6 @@
 		<copy todir="${jdk.dir}/${cacerts.dir}/cacerts-custom" if:set="cacerts.changed"><fileset dir="cacerts" includes="*"/></copy>
 	</target>
 
-	<!-- 
-		<antcall target="install.tomcat"></antcall>
-		<antcall target="install.tomcat"></antcall>
-	-->
 	<target name="install.tomcat.9">
 		<property name="tomcat.zip" value="${tomcat.9.zip}"/>
 		<property name="tomcat.dir" value="${tomcat.9.dir}"/>
@@ -1016,11 +1012,11 @@
 		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.10.dir.available}"/>
 		<property name="jakarta.activation.required" value="true"/>
-		<!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<property name="ojdbc.jar" value="${ojdbc11.jar}"/>
 		<property name="ojdbc.uninstall.mask" value="${ojdbc11.uninstall.mask}"/>
 		<property name="mssql.jar" value="${mssql11.jar}"/>
 		<property name="mssql.uninstall.mask" value="${mssql11.uninstall.mask}"/>
+		<!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<property name="jms.jar" value="${jms3.jar}"/>
 		<property name="jms.uninstall.mask" value="${jms3.uninstall.mask}"/>
 		<antcall target="install.tomcat.common"></antcall>
