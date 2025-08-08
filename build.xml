@@ -220,15 +220,19 @@
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
+		<property name="jta.uninstall.mask" value="geronimo-jta*"/>
 		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
 		<property name="jakarta.activation.version" value="2.1.3"/>
 		<property name="jakarta.activation.jar" value="jakarta.activation-api-${jakarta.activation.version}.jar"/>
+		<property name="jakarta.activation.uninstall.mask" value="jakarta.activation-api*"/>
 		<property name="jakarta.activation.url" value="https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/${jakarta.activation.version}/${jakarta.activation.jar}"/>
 		<property name="jms1.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
 		<property name="jms1.jar" value="geronimo-jms_1.1_spec-${jms1.version}.jar"/>
+		<property name="jms1.uninstall.mask" value="geronimo-jms*"/>
 		<property name="jms1.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms1.version}/${jms1.jar}"/>
 		<property name="jms3.version" value="3.1.0"/><!-- https://central.sonatype.com/artifact/jakarta.jms/jakarta.jms-api/versions -->
 		<property name="jms3.jar" value="jakarta.jms-api-${jms3.version}.jar"/>
+		<property name="jms3.uninstall.mask" value="jakarta.jms-api*"/>
 		<property name="jms3.url" value="https://repo1.maven.org/maven2/jakarta/jms/jakarta.jms-api/${jms3.version}/${jms3.jar}"/>
 		<property name="h2v1.version" value="1.4.200"/>
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
@@ -244,18 +248,23 @@
 		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
 		<property name="ojdbc8.version" value="23.8.0.25.04"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
+		<property name="ojdbc8.uninstall.mask" value="ojdbc8-*"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
 		<property name="ojdbc11.version" value="23.8.0.25.04"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
+		<property name="ojdbc11.uninstall.mask" value="ojdbc11-*"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
 		<property name="mssql8.version" value="12.10.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
+		<property name="mssql8.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
 		<property name="mssql11.version" value="12.10.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
+		<property name="mssql11.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
 		<property name="pgsql.version" value="42.7.7"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
+		<property name="pgsql.uninstall.mask" value="postgresql-*"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
 
 		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
@@ -992,41 +1001,58 @@
 		<property name="tomcat.zip" value="${tomcat.9.zip}"/>
 		<property name="tomcat.dir" value="${tomcat.9.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.9.dir.available}"/>
+		<property name="jakarta.activation.required" value="false"/>
 		<!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
 		<property name="ojdbc.jar" value="${ojdbc8.jar}"/>
+		<property name="ojdbc.uninstall.mask" value="${ojdbc8.uninstall.mask}"/>
 		<property name="mssql.jar" value="${mssql8.jar}"/>
+		<property name="mssql.uninstall.mask" value="${mssql8.uninstall.mask}"/>
 		<property name="jms.jar" value="${jms1.jar}"/>
+		<property name="jms.uninstall.mask" value="${jms1.uninstall.mask}"/>
 		<antcall target="install.tomcat.common"></antcall>
 	</target>
 	<target name="install.tomcat.10">
 		<property name="tomcat.zip" value="${tomcat.10.zip}"/>
 		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.10.dir.available}"/>
+		<property name="jakarta.activation.required" value="true"/>
 		<!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<property name="ojdbc.jar" value="${ojdbc11.jar}"/>
+		<property name="ojdbc.uninstall.mask" value="${ojdbc11.uninstall.mask}"/>
 		<property name="mssql.jar" value="${mssql11.jar}"/>
+		<property name="mssql.uninstall.mask" value="${mssql11.uninstall.mask}"/>
 		<property name="jms.jar" value="${jms3.jar}"/>
+		<property name="jms.uninstall.mask" value="${jms3.uninstall.mask}"/>
 		<antcall target="install.tomcat.common"></antcall>
 	</target>
 	<target name="install.tomcat.common">
 		<unzip src="${download.dir}/${tomcat.zip}" dest="build" unless:true="${tomcat.dir.available}"/>
 		<chmod dir="${tomcat.dir}/bin" includes="*.sh" perm="+x" unless:true="${tomcat.dir.available}"/>
 		<delete includeemptydirs="true" unless:true="${tomcat.dir.available}"><fileset dir="${tomcat.dir}/webapps" includes="**/*"/></delete>
-		<copy file="${download.dir}/${jta.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
-		<condition property="jakarta.activation.needs.installing">
-			<and>
-				<!-- Tomcat version is 10 or later -->
-				<not><equals arg1="${tomcat.major.version}" arg2="9" /></not>
-				<!-- Checking whether the other Tomcat libraries are present is not sufficient.
-				     The need for ${jakarta.activation.jar} has been introdused on August 7 2025. -->
-				<not><available file="${tomcat.dir}/lib/${jakarta.activation.jar}"></available></not>
-			</and>
-		</condition>
-		<copy file="${download.dir}/${jakarta.activation.jar}" todir="${tomcat.dir}/lib" if:true="${jakarta.activation.needs.installing}"/>
-		<copy file="${download.dir}/${jms.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
-		<copy file="${download.dir}/${ojdbc.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
-		<copy file="${download.dir}/${mssql.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
-		<copy file="${download.dir}/${pgsql.jar}" todir="${tomcat.dir}/lib" unless:true="${tomcat.dir.available}"/>
+		<antcall target="install.library">
+			<param name="library.jar" value="${jta.jar}"/>
+			<param name="library.uninstall.mask" value="${jta.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library" if:true="${jakarta.activation.required}">
+			<param name="library.jar" value="${jakarta.activation.jar}"/>
+			<param name="library.uninstall.mask" value="${jakarta.activation.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library">
+			<param name="library.jar" value="${jms.jar}"/>
+			<param name="library.uninstall.mask" value="${jms.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library">
+			<param name="library.jar" value="${ojdbc.jar}"/>
+			<param name="library.uninstall.mask" value="${ojdbc.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library">
+			<param name="library.jar" value="${mssql.jar}"/>
+			<param name="library.uninstall.mask" value="${mssql.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library">
+			<param name="library.jar" value="${pgsql.jar}"/>
+			<param name="library.uninstall.mask" value="${pgsql.uninstall.mask}"/>
+		</antcall>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;HTTP)" replace="\1${tomcat.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.port can be changed -->
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Connector port=&quot;).*(&quot; protocol=&quot;org.apache.coyote.http11.Http11NioProtocol)" replace="\1${tomcat.secure.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.secure.port can be changed -->
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="(Server port=&quot;).*(&quot; shutdown)" replace="\1${tomcat.server.port}\2"/><!-- dont'use unless:true="${tomcat.dir.available}" because tomcat.secure.port can be changed -->
@@ -1046,7 +1072,13 @@
 		<available property="lib.server.dir.available" file="${projects.dir}/${project.dir}/${lib.server.dir}"/>
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 	</target>
-
+	<target name="install.library">
+		<available property="library.is.installed" file="${tomcat.dir}/lib/${library.jar}"/>
+		<delete unless:true="library.is.installed">
+			<fileset dir="${tomcat.dir}/lib" includes="${library.uninstall.mask}"/>
+		</delete>
+		<copy file="${download.dir}/${library.jar}" todir="${tomcat.dir}/lib" unless:true="${library.is.installed}"/>
+	</target>
 	<target name="copy.config.xsd">
 		<property name="dir2check" value="${dir}"/><!-- make dir the default value for dir2check -->
 		<available property="dir2check.available" file="${dir2check}"/>
