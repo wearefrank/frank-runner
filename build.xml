@@ -622,13 +622,15 @@
 		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/><!-- xml file could have a different name in previous run or in previous run maven could be true and in current run false -->
 		<delete file="${context.xml.target}"/><!-- in case ${context.xml.source} doesn't point to a file next copy will not clean ${context.xml.target} -->
 		<available property="resources.yml.available" file="${projects.dir}/${project.dir}/${classes.dir}/resources.yml"/>
-		<antcall target="context.xml" unless:set="${resources.yml.available}"/>
+		<antcall target="context.xml" unless:set="resources.yml.available"/>
+		<copy file="database/emptyContextXml/context.xml" tofile="${context.xml.target}" if:set="resources.yml.available"/>
 		<property name="webapp.dir.abs" location="${webapp.dir}"/>
 		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="true"/>
 		<property name="frankflow.dir.abs" location="${frankflow.dir}"/>
 		<echo file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" message="&lt;Context docBase=&quot;${frankflow.dir.abs}&quot;/>"/>
 		<property name="frankflow.active" value="true"/>
 		<delete file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" unless:true="${frankflow.active}"/>
+
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
