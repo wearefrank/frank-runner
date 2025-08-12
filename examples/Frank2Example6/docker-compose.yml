@@ -1,0 +1,12 @@
+services:
+  frank-docker-example:
+    image: frankframework/frankframework:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./configurations:/opt/frank/configurations
+      - ./classes:/opt/frank/resources
+    environment:
+      instance.name: frank-docker-example
+      dtap.stage: LOC
+      configurations.directory.autoLoad: true
