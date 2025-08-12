@@ -1,5 +1,5 @@
 services:
-  frank-docker-example:
+  frank2example6:
     image: frankframework/frankframework:latest
     ports:
       - 8080:8080
@@ -7,6 +7,6 @@ services:
       - ./configurations:/opt/frank/configurations
       - ./classes:/opt/frank/resources
     environment:
-      instance.name: frank-docker-example
+      instance.name: frank2example6
       dtap.stage: LOC
       configurations.directory.autoLoad: true
