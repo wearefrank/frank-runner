@@ -250,7 +250,6 @@ project and the following default values are used:
 classes.dir=src/main/resources
 configurations.dir=src/main/configurations
 tests.dir=src/test/testtool
-context.xml=src/main/webapp/META-INF/context.xml
 ```
 
 Otherwise:
@@ -259,7 +258,6 @@ Otherwise:
 classes.dir=classes
 configurations.dir=configurations
 tests.dir=tests
-context.xml=context.xml
 ```
 
 Hence by default your folder structure will need to look like the following (for
@@ -294,11 +292,19 @@ Frank developers are encouraged not to use `context.xml` to configure
 resources, but `resources.yml`. See
 https://frank-manual.readthedocs.io/en/latest/deploying/database.html. Using
 `context.xml` is still supported by the Frank!Runner though. Your project
-doesn't need to contain a `resource.yml` or `context.xml` in case you want to use an
+doesn't need to contain a `resources.yml` or `context.xml` in case you want to use an
 H2, Oracle, MSSQL or PostgreSQL database. By default
 `frank-runner/database/h2/context.xml` will be used when your project doesn't
 contain a `context.xml`. Use `database.type=oracle`, `mssql` or `postgresql` to use one
 of the other `context.xml` files provided by the Frank!Runner.
+
+The Frank!Runner expects `resources.yml` in the classes folder. If
+`resources.yml` is not present, the Frank!Runner uses a property named
+ `context.xml` for the location of this file that you can set in
+ `frank-runner.properties` or `build.properties`. If there is a `pom.xml`
+the default value for property `context.xml` is
+`src/main/webapp/META-INF/context.xml`. Otherwise it is just
+`context.xml`.
 
 When changing files in the classes folder you need to restart Tomcat. When
 changing files in the configurations folder you need to reload the configuration
