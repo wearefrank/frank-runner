@@ -21,27 +21,23 @@
 		<property name="war.dir" value="war"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
-
 		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
 		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/><!-- Enables CI/CD to choose configurations in frank-runner/build.properties. See https://github.com/wearefrank/ladybug-ff-cypress-test/blob/main/.github/workflows/testing.js.yml -->
 		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
 		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
-		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/${war.dir}" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
 		<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
 		<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
-		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}" if:set="pom.xml.available"/>
 
 		<property name="classes.dir" value="classes"/>
 		<property name="configurations.dir" value="configurations"/>
 		<property name="java.dir" value="java"/>
 		<property name="tests.dir" value="tests"/>
-		<property name="context.xml" value="context.xml"/>
 
 		<property name="maven" value="false"/>
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
@@ -621,22 +617,20 @@
 		<!-- h2 -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
 		<copy file="${download.dir}/${h2.jar}" todir="${tomcat.dir}/lib"/>
-		<!-- context.xml -->
-		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
+		<!-- Put context.xml if no resources.yml, otherwise delete -->
 		<property name="context.xml.target" value="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml"/>
 		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/><!-- xml file could have a different name in previous run or in previous run maven could be true and in current run false -->
 		<delete file="${context.xml.target}"/><!-- in case ${context.xml.source} doesn't point to a file next copy will not clean ${context.xml.target} -->
-		<copy file="${context.xml.source}" tofile="${context.xml.target}"/>
-		<lower from="${instance.name}" to="instance.name.lc"/>
-		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<available property="resources.yml.available" file="${projects.dir}/${project.dir}/${classes.dir}/resources.yml"/>
+		<antcall target="context.xml" unless:set="resources.yml.available"/>
+		<copy file="database/emptyContextXml/context.xml" tofile="${context.xml.target}" if:set="resources.yml.available"/>
 		<property name="webapp.dir.abs" location="${webapp.dir}"/>
 		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="true"/>
 		<property name="frankflow.dir.abs" location="${frankflow.dir}"/>
 		<echo file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" message="&lt;Context docBase=&quot;${frankflow.dir.abs}&quot;/>"/>
 		<property name="frankflow.active" value="true"/>
 		<delete file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" unless:true="${frankflow.active}"/>
+
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
@@ -773,6 +767,19 @@
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</java>
+	</target>
+
+	<target name="context.xml">
+		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
+		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
+		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
+		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
+		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
+		<copy file="${context.xml.source}" tofile="${context.xml.target}"/>
+		<lower from="${instance.name}" to="instance.name.lc"/>
+		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
+		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" summary="true"/>
+		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
 	</target>
 
 	<target name="start" depends="install">
@@ -1369,7 +1376,7 @@ fi</echo>
 		<echo message="configurations.dir: ${configurations.dir}" if:set="debug.true"/>
 		<echo message="java.dir: ${java.dir}" if:set="debug.true"/>
 		<echo message="tests.dir: ${tests.dir}" if:set="debug.true"/>
-		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
+		<echo message="resources.yml.available: ${resources.yml.available}"/>
 		<echo message="maven.exec.dir: ${maven.exec.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="maven: ${maven}" if:set="debug.true"/>
