@@ -13,7 +13,7 @@ jobs:
   testing-linux:
     strategy:
       matrix:
-        example: [Frank2Example1, Frank2Example2, Frank2Example3, Frank2Example4]
+        example: [Frank2Example1, Frank2Example2, Frank2Example3, Frank2Example4, Frank2Example6]
     name: Test linux ${{ matrix.example }}
     runs-on: ubuntu-latest
 
@@ -104,7 +104,7 @@ jobs:
   testing-windows:
     strategy:
       matrix:
-        example: [Frank2Example1, Frank2Example2, Frank2Example3, Frank2Example4]
+        example: [Frank2Example1, Frank2Example2, Frank2Example3, Frank2Example4, Frank2Example6]
     name: Test windows ${{ matrix.example }}
     runs-on: windows-latest
 
