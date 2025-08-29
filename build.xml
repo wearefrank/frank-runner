@@ -223,10 +223,14 @@
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
 		<property name="jta.uninstall.mask" value="geronimo-jta*"/>
 		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
-		<property name="jakarta.activation.version" value="2.1.3"/>
-		<property name="jakarta.activation.jar" value="jakarta.activation-api-${jakarta.activation.version}.jar"/>
-		<property name="jakarta.activation.uninstall.mask" value="jakarta.activation-api*"/>
-		<property name="jakarta.activation.url" value="https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/${jakarta.activation.version}/${jakarta.activation.jar}"/>
+		<property name="activation.version" value="2.1.3"/>
+		<property name="activation.jar" value="jakarta.activation-api-${activation.version}.jar"/>
+		<property name="activation.uninstall.mask" value="jakarta.activation-api*"/>
+		<property name="activation.url" value="https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/${activation.version}/${activation.jar}"/>
+		<property name="transaction.version" value="2.0.1"/><!-- https://central.sonatype.com/artifact/jakarta.transaction/jakarta.transaction-api/versions -->
+		<property name="transaction.jar" value="jakarta.transaction-api-${transaction.version}.jar"/>
+		<property name="transaction.uninstall.mask" value="jakarta.transaction-api*"/>
+		<property name="transaction.url" value="https://repo1.maven.org/maven2/jakarta/transaction/jakarta.transaction-api/${transaction.version}/${transaction.jar}"/>
 		<property name="jms1.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
 		<property name="jms1.jar" value="geronimo-jms_1.1_spec-${jms1.version}.jar"/>
 		<property name="jms1.uninstall.mask" value="geronimo-jms*"/>
@@ -327,7 +331,8 @@
 		<available property="ff.war.available" file="${download.dir}/${ff.war}"/>
 		<available property="frankflow.war.available" file="${download.dir}/${frankflow.war}"/>
 		<available property="jta.jar.available" file="${download.dir}/${jta.jar}"/>
-		<available property="jakarta.activation.jar.available" file="${download.dir}/${jakarta.activation.jar}"/>
+		<available property="activation.jar.available" file="${download.dir}/${activation.jar}"/>
+		<available property="transaction.jar.available" file="${download.dir}/${transaction.jar}"/>
 		<available property="jms1.jar.available" file="${download.dir}/${jms1.jar}"/>
 		<available property="jms3.jar.available" file="${download.dir}/${jms3.jar}"/>
 		<available property="h2v1.jar.available" file="${download.dir}/${h2v1.jar}"/>
@@ -495,7 +500,7 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.jakarta.activation,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -894,8 +899,12 @@
 		<get src="${jta.url}" dest="${download.dir}/${jta.jar}" verbose="on"/>
 	</target>
 
-	<target name="get.jakarta.activation" unless="${jakarta.activation.jar.available}">
-		<get src="${jakarta.activation.url}" dest="${download.dir}/${jakarta.activation.jar}" verbose="on"/>
+	<target name="get.activation" unless="${activation.jar.available}">
+		<get src="${activation.url}" dest="${download.dir}/${activation.jar}" verbose="on"/>
+	</target>
+
+	<target name="get.transaction" unless="${transaction.jar.available}">
+		<get src="${transaction.url}" dest="${download.dir}/${transaction.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.jms">
@@ -1000,11 +1009,10 @@
 		<property name="tomcat.zip" value="${tomcat.9.zip}"/>
 		<property name="tomcat.dir" value="${tomcat.9.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.9.dir.available}"/>
-		<property name="jakarta.activation.required" value="false"/>
-		<!-- older ff versions run with jdk 8, hence ojdbc8 and mssql8 -->
-		<property name="ojdbc.jar" value="${ojdbc8.jar}"/>
+		<property name="activation.required" value="false"/><!-- all ff versions running on tomcat 9 include the activation jar in the webapp -->
+		<property name="ojdbc.jar" value="${ojdbc8.jar}"/><!-- older ff versions run with jdk 8, hence ojdbc8 -->
 		<property name="ojdbc.uninstall.mask" value="${ojdbc8.uninstall.mask}"/>
-		<property name="mssql.jar" value="${mssql8.jar}"/>
+		<property name="mssql.jar" value="${mssql8.jar}"/><!-- older ff versions run with jdk 8, hence mssql8 -->
 		<property name="mssql.uninstall.mask" value="${mssql8.uninstall.mask}"/>
 		<property name="jms.jar" value="${jms1.jar}"/>
 		<property name="jms.uninstall.mask" value="${jms1.uninstall.mask}"/>
@@ -1014,13 +1022,12 @@
 		<property name="tomcat.zip" value="${tomcat.10.zip}"/>
 		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.10.dir.available}"/>
-		<property name="jakarta.activation.required" value="true"/>
+		<property name="activation.required" value="true"/><!-- frankframework-webapp-9.3.0-20250806.042330 was the last version to include the activation jar -->
 		<property name="ojdbc.jar" value="${ojdbc11.jar}"/>
 		<property name="ojdbc.uninstall.mask" value="${ojdbc11.uninstall.mask}"/>
 		<property name="mssql.jar" value="${mssql11.jar}"/>
 		<property name="mssql.uninstall.mask" value="${mssql11.uninstall.mask}"/>
-		<!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
-		<property name="jms.jar" value="${jms3.jar}"/>
+		<property name="jms.jar" value="${jms3.jar}"/><!-- ff 8.2 requires jakarta instead of javax, hence jms3 -->
 		<property name="jms.uninstall.mask" value="${jms3.uninstall.mask}"/>
 		<antcall target="install.tomcat.common"></antcall>
 	</target>
@@ -1032,9 +1039,13 @@
 			<param name="library.jar" value="${jta.jar}"/>
 			<param name="library.uninstall.mask" value="${jta.uninstall.mask}"/>
 		</antcall>
-		<antcall target="install.library" if:true="${jakarta.activation.required}">
-			<param name="library.jar" value="${jakarta.activation.jar}"/>
-			<param name="library.uninstall.mask" value="${jakarta.activation.uninstall.mask}"/>
+		<antcall target="install.library" if:true="${activation.required}">
+			<param name="library.jar" value="${activation.jar}"/>
+			<param name="library.uninstall.mask" value="${activation.uninstall.mask}"/>
+		</antcall>
+		<antcall target="install.library">
+			<param name="library.jar" value="${transaction.jar}"/><!-- prevent ClassNotFoundException when application.server.type.custom=NARAYANA is being used, see also https://github.com/frankframework/frankframework/blob/master/TESTING_WITH_IAF-TEST.md -->
+			<param name="library.uninstall.mask" value="${transaction.uninstall.mask}"/>
 		</antcall>
 		<antcall target="install.library">
 			<param name="library.jar" value="${jms.jar}"/>
