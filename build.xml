@@ -274,7 +274,7 @@
 
 		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 
-		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
+		<antcall target="install.cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
 		<property name="update.strategy" value="latest"/>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
@@ -502,10 +502,10 @@
 
 	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
-		<antcall target="jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
-		<antcall target="jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
-		<antcall target="jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
-		<antcall target="jdk"><param name="jdk.dir" value="${jdk.21.dir}"/><param name="jdk.zip" value="${jdk.21.zip}"/><param name="jdk.tar" value="${jdk.21.tar}"/></antcall>
+		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
+		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
+		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
+		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.21.dir}"/><param name="jdk.zip" value="${jdk.21.zip}"/><param name="jdk.tar" value="${jdk.21.tar}"/></antcall>
 		<!-- ant -->
 		<unzip src="${download.dir}/${ant.zip}" dest="build" unless:set="ant.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -571,7 +571,7 @@
 		<chmod dir="${eclipse.dir}/plugins/" includes="**/jre/bin/*" perm="+x" unless:set="eclipse.dir.available" if:true="${eclipse}" unless:true="${os.windows}"/>
 		<copy todir="${eclipse.dir}" file="${download.dir}/${lombok.jar}" unless:set="eclipse.dir.available" if:true="${eclipse}"/>
 		<concat destfile="${eclipse.dir}/eclipse.ini" append="true" unless:set="eclipse.dir.available" if:true="${eclipse}">-javaagent:${lombok.jar}&#13;&#10;</concat>
-		<antcall target="cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/${eclipse.jre.dir}"/><param name="cacerts.dir" value="lib/security"/></antcall>
+		<antcall target="install.cacerts" if:true="${eclipse}"><param name="jdk.dir" value="${eclipse.dir}/${eclipse.jre.dir}"/><param name="cacerts.dir" value="lib/security"/></antcall>
 		<!-- winmerge -->
 		<unzip src="${download.dir}/${winmerge.zip}" dest="${winmerge.dir}" unless:set="winmerge.dir.available"/>
 		<!-- webapp -->
@@ -939,7 +939,7 @@
 		<get src="${pgsql.url}" dest="${download.dir}/${pgsql.jar}" verbose="on"/>
 	</target>
 
-	<target name="jdk">
+	<target name="install.jdk">
 		<available property="jdk.dir.available" file="${jdk.dir}"/>
 		<unzip src="${download.dir}/${jdk.zip}" dest="build" unless:set="jdk.dir.available" if:true="${os.windows}">
 			<patternset>
@@ -964,10 +964,10 @@
 		</untar>
 		<delete file="build/${jdk.tar}" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
 		<chmod dir="${jdk.dir}" includes="bin/*,${jdk.lib.jspawnhelper}" perm="+x" unless:set="jdk.dir.available" unless:true="${os.windows}"/>
-		<antcall target="cacerts"/>
+		<antcall target="install.cacerts"/>
 	</target>
 
-	<target name="cacerts">
+	<target name="install.cacerts">
 		<property name="cacerts.dir" value="lib/security"/>
 		<condition property="copy.cacerts">
 			<and>
