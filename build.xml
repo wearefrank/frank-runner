@@ -579,6 +579,7 @@
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties.old."/>
 		<property name="frankflow.dir" value="build/webapps/frank-flow"/>
 		<property file="${frankflow.dir}/META-INF/maven/org.ibissource/frank-flow-webapp/pom.properties" prefix="frankflow.pom.properties.old."/>
+		<property file="${frankflow.dir}/META-INF/maven/org.frankframework/frank-flow/pom.properties" prefix="frankflow.pom.properties.old."/>
 		<pathconvert property="contexts.dirs" dirsep="," pathsep=","><dirset dir="build/webapps" includes="*" excludes="frank-flow"/><flattenmapper/></pathconvert>
 		<condition property="maven.or.ff.version.changed.or.context.path.changed"><or><istrue value="${maven}"/><not><equals arg1="${ff.version}" arg2="${ff.pom.properties.old.version}"/></not><not><equals arg1="${contexts.dirs}" arg2="${context.path}"/></not></or></condition>
 		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.old.version}"/></not></condition>
