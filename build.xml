@@ -21,23 +21,27 @@
 		<property name="war.dir" value="war"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
+
 		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
 		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/><!-- Enables CI/CD to choose configurations in frank-runner/build.properties. See https://github.com/wearefrank/ladybug-ff-cypress-test/blob/main/.github/workflows/testing.js.yml -->
 		<property name="configurations.dir" value="${war.dir}/src/main/configurations" if:set="war.pom.xml.available"/>
 		<property name="java.dir" value="${war.dir}/src/main/java" if:set="war.pom.xml.available"/>
 		<property name="tests.dir" value="${war.dir}/src/test/testtool" if:set="war.pom.xml.available"/>
+		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}/${war.dir}" if:set="war.pom.xml.available"/>
 
 		<property name="classes.dir" value="src/main/resources" if:set="pom.xml.available"/>
 		<property name="configurations.dir" value="src/main/configurations" if:set="pom.xml.available"/>
 		<property name="java.dir" value="src/main/java" if:set="pom.xml.available"/>
 		<property name="tests.dir" value="src/test/testtool" if:set="pom.xml.available"/>
+		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
 		<property name="maven.exec.dir" value="${projects.dir}/${project.dir}" if:set="pom.xml.available"/>
 
 		<property name="classes.dir" value="classes"/>
 		<property name="configurations.dir" value="configurations"/>
 		<property name="java.dir" value="java"/>
 		<property name="tests.dir" value="tests"/>
+		<property name="context.xml" value="context.xml"/>
 
 		<property name="maven" value="false"/>
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
@@ -57,6 +61,7 @@
 		<property file="${projects.dir}/${project.dir}/${classes.dir}/DeploymentSpecifics.properties" prefix="ds.properties."/>
 		<property name="instance.name" value="${ds.properties.instance.name}" if:set="ds.properties.instance.name"/>
 		<basename property="instance.name" file="${project.dir}"/>
+		<lower from="${instance.name}" to="instance.name.lc"/>
 		<available property="configuration.name.default" value="${instance.name}" file="${projects.dir}/${project.dir}/${classes.dir}/Configuration.xml"/>
 		<property name="ibistesttool.directory" value="${projects.dir}/${project.dir}/${tests.dir}"/>
 		<property name="context.path" value="ROOT"/>
@@ -262,6 +267,8 @@
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.uninstall.mask" value="postgresql-*"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
+
+		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 
 		<antcall target="cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 
@@ -617,20 +624,22 @@
 		<!-- h2 -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
 		<copy file="${download.dir}/${h2.jar}" todir="${tomcat.dir}/lib"/>
-		<!-- Put context.xml if no resources.yml, otherwise delete -->
+		<!-- context.xml -->
 		<property name="context.xml.target" value="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml"/>
 		<delete dir="${tomcat.dir}/conf/Catalina/localhost"/><!-- xml file could have a different name in previous run or in previous run maven could be true and in current run false -->
-		<delete file="${context.xml.target}"/><!-- in case ${context.xml.source} doesn't point to a file next copy will not clean ${context.xml.target} -->
 		<available property="resources.yml.available" file="${projects.dir}/${project.dir}/${classes.dir}/resources.yml"/>
-		<antcall target="context.xml" unless:set="resources.yml.available"/>
-		<copy file="database/emptyContextXml/context.xml" tofile="${context.xml.target}" if:set="resources.yml.available"/>
+		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
+		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
+		<copy file="${context.xml.source}" tofile="${context.xml.target}" unless:set="resources.yml.available" verbose="${debug.true}"/>
+		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" unless:set="resources.yml.available" summary="${debug.true}"/>
+		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" unless:set="resources.yml.available" summary="${debug.true}"/>
+		<echo message="&lt;Context&gt;&lt;/Context&gt;" file="${context.xml.target}" if:set="resources.yml.available"/>
 		<property name="webapp.dir.abs" location="${webapp.dir}"/>
-		<replace file="${tomcat.dir}/conf/Catalina/localhost/${context.path}.xml" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="true"/>
+		<replace file="${context.xml.target}" token="&lt;Context>" value="&lt;Context docBase=&quot;${webapp.dir.abs}&quot;>" summary="${debug.true}"/>
 		<property name="frankflow.dir.abs" location="${frankflow.dir}"/>
 		<echo file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" message="&lt;Context docBase=&quot;${frankflow.dir.abs}&quot;/>"/>
 		<property name="frankflow.active" value="true"/>
 		<delete file="${tomcat.dir}/conf/Catalina/localhost/frank-flow.xml" unless:true="${frankflow.active}"/>
-
 		<!-- classes -->
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
@@ -767,19 +776,6 @@
 				<fileset dir="${tomcat.dir}/lib"><include name="*.jar"/></fileset>
 			</classpath>
 		</java>
-	</target>
-
-	<target name="context.xml">
-		<property name="context.xml" value="${war.dir}/src/main/webapp/META-INF/context.xml" if:set="war.pom.xml.available"/>
-		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
-		<property name="context.xml" value="src/main/webapp/META-INF/context.xml" if:set="pom.xml.available"/>
-		<available property="context.xml.source" value="${projects.dir}/${project.dir}/${context.xml}" file="${projects.dir}/${project.dir}/${context.xml}"/>
-		<property name="context.xml.source" value="database/${database.type}/context.xml"/>
-		<copy file="${context.xml.source}" tofile="${context.xml.target}"/>
-		<lower from="${instance.name}" to="instance.name.lc"/>
-		<replace file="${context.xml.target}" token="@instance.name.lc@" value="${instance.name.lc}" summary="true"/>
-		<replace file="${context.xml.target}" token="@h2.dir@" value="${h2.dir}" summary="true"/>
-		<echo message="context.xml: ${context.xml}" if:set="debug.true"/>
 	</target>
 
 	<target name="start" depends="install">
@@ -1066,8 +1062,8 @@
 		<exec executable="${jdk.8.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:true="${tomcat.dir.available}">
 			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
 		</exec>
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="true" unless:true="${tomcat.dir.available}"/><!-- speed up startup time -->
-		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,frankframework-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,ladybug-frontend-*.jar,\" summary="true" unless:true="${tomcat.dir.available}"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="${debug.true}" unless:true="${tomcat.dir.available}"/><!-- speed up startup time -->
+		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToScan=\" value="jarsToScan=spring-web-*.jar,frankframework-*.jar,ibis-adapterframework-*.jar,frank-flow-*.jar,wearefrank__ladybug-*.jar,ladybug-frontend-*.jar,\" summary="${debug.true}" unless:true="${tomcat.dir.available}"/><!-- core jar needed for iaf/frankdoc (since https://github.com/ibissource/iaf/commit/2489369a052d046dba94adbcbcfea4428f0d12fd). See also https://www.webjars.org/documentation#servlet3 -->
 		<replaceregexp file="${tomcat.dir}/conf/catalina.properties" match="\# \&lt;frank-runner\>.*\# \&lt;\/frank-runner\>" replace="" flags="sg"/>
 		<concat destfile="${tomcat.dir}/conf/catalina.properties" append="true"># &lt;frank-runner>&#13;&#10;${system.properties}&#13;&#10;${configurations.properties}&#13;&#10;${tests.properties}&#13;&#10;&#13;&#10;# &lt;/frank-runner></concat>
 		<replaceregexp file="${tomcat.dir}/conf/logging.properties" match="^org\.apache\.catalina\.core.ContainerBase\.\[Catalina\]\.\[localhost\]\.handlers\ " replace="# org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers " flags="m"/><!-- some errors end up in localhost.<date>.log (e.g. when springIbisTestTool.xml is not correct), make them show up in the console -->
@@ -1076,9 +1072,9 @@
 		<copy todir="${tomcat.dir}/lib" if:set="lib.server.dir.available"><fileset dir="${projects.dir}/${project.dir}/${lib.server.dir}"/><globmapper from="*.jar" to="*-CUSTOM.jar"/></copy>
 	</target>
 	<target name="install.library">
-		<echo message="With library.jar=${library.jar}, library.uninstall.mask=${library.uninstall.mask} and tomcat.dir=${tomcat.dir}"/>
+		<echo message="With library.jar=${library.jar}, library.uninstall.mask=${library.uninstall.mask} and tomcat.dir=${tomcat.dir}" if:set="debug.true"/>
 		<available property="library.is.installed" filepath="${tomcat.dir}/lib" file="${library.jar}" searchparents="false"/>
-		<echo message="library.is.installed=${library.is.installed}"/>
+		<echo message="library.is.installed=${library.is.installed}" if:set="debug.true"/>
 		<delete unless:set="library.is.installed">
 			<fileset dir="${tomcat.dir}/lib" includes="${library.uninstall.mask}"/>
 		</delete>
@@ -1357,7 +1353,6 @@ fi</echo>
 	</target>
 
 	<target name="splash">
-		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 		<echo message="main.project: ${main.project}" if:set="debug.true"/>
 		<echo message="sub.project: ${sub.project}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/><!-- space instead of empty for eclipse -->
@@ -1376,7 +1371,7 @@ fi</echo>
 		<echo message="configurations.dir: ${configurations.dir}" if:set="debug.true"/>
 		<echo message="java.dir: ${java.dir}" if:set="debug.true"/>
 		<echo message="tests.dir: ${tests.dir}" if:set="debug.true"/>
-		<echo message="resources.yml.available: ${resources.yml.available}"/>
+		<echo message="resources.yml.available: ${resources.yml.available}" if:set="debug.true"/>
 		<echo message="maven.exec.dir: ${maven.exec.dir}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="maven: ${maven}" if:set="debug.true"/>
@@ -1395,6 +1390,7 @@ fi</echo>
 		<echo message="ds.properties.instance.name: ${ds.properties.instance.name}" if:set="debug.true"/>
 		<echo message="ds.properties.configurations.names: ${ds.properties.configurations.names}" if:set="debug.true"/>
 		<echo message="instance.name: ${instance.name}" if:set="debug.true"/>
+		<echo message="instance.name.lc: ${instance.name.lc}" if:set="debug.true"/>
 		<echo message="ibistesttool.directory: ${ibistesttool.directory}" if:set="debug.true"/>
 		<echo message="larva.windiff.command: ${larva.windiff.command}" if:set="debug.true"/>
 		<echo message="context.path: ${context.path}" if:set="debug.true"/>
