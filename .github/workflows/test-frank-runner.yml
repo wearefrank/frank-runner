@@ -20,13 +20,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: ${{ runner.os }}-frank-runner-build
-        restore-keys: |
-          ${{ runner.os }}-frank-runner-build
+    # Do not cache build directory because we do not want to keep old logs.
     - name: Cache Frank!Runner dependencies - download
       uses: actions/cache@v3
       with:
@@ -111,13 +105,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: ${{ runner.os }}-frank-runner-build
-        restore-keys: |
-          ${{ runner.os }}-frank-runner-build
+    # Do not cache build directory because we do not want to keep old logs.
     - name: Cache Frank!Runner dependencies - download
       uses: actions/cache@v3
       with:
