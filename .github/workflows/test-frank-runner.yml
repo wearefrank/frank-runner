@@ -20,13 +20,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: ${{ runner.os }}-frank-runner-build
-        restore-keys: |
-          ${{ runner.os }}-frank-runner-build
+    # Do not cache build directory because we do not want to keep old logs.
     - name: Cache Frank!Runner dependencies - download
       uses: actions/cache@v3
       with:
@@ -55,10 +49,10 @@ jobs:
     - name: Check network
       run: time ping -c 4 -O -v -w 60 localhost
     - name: Start Frank!Runner ${{ matrix.example }}
-      run: bash ./restart.sh &
+      run: bash ./restart.sh > ../../frankRunnerStartLog.txt &
       working-directory: examples/${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
+      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 1000
     - name: Wait, otherwise we fail with status STARTING
       run: sleep 10s
     - name: Capture status
@@ -81,6 +75,12 @@ jobs:
           } else {
             core.info('status is OK');
           }
+    - name: Store frankRunnerStartLog.txt
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Linux-${{ matrix.example}}-frankRunnerStartLog
+        path: frankRunnerStartLog.txt
     - name: Store Apache Tomcat log
       uses: actions/upload-artifact@v4
       if: always()
@@ -111,13 +111,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Cache Frank!Runner dependencies - build
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: ${{ runner.os }}-frank-runner-build
-        restore-keys: |
-          ${{ runner.os }}-frank-runner-build
+    # Do not cache build directory because we do not want to keep old logs.
     - name: Cache Frank!Runner dependencies - download
       uses: actions/cache@v3
       with:
