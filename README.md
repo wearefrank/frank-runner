@@ -250,6 +250,7 @@ project and the following default values are used:
 classes.dir=src/main/resources
 configurations.dir=src/main/configurations
 tests.dir=src/test/testtool
+context.xml=src/main/webapp/META-INF/context.xml (read about resources.yml below)
 ```
 
 Otherwise:
@@ -258,6 +259,7 @@ Otherwise:
 classes.dir=classes
 configurations.dir=configurations
 tests.dir=tests
+context.xml=context.xml (read about resources.yml below)
 ```
 
 Hence by default your folder structure will need to look like the following (for
