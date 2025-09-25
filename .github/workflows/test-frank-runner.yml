@@ -75,9 +75,9 @@ jobs:
           } else {
             core.info('status is OK');
           }
-    - name: Store frankRunnerStartLog.txt
+    - name: Store logs
       uses: actions/upload-artifact@v4
-      if: always()
+      if: failure()
       with:
         name: Linux-${{ matrix.example}}
         path: |
@@ -160,9 +160,9 @@ jobs:
           } else {
             core.info('status is OK');
           }
-    - name: Store Apache Tomcat log
+    - name: Store logs
       uses: actions/upload-artifact@v4
-      if: always()
+      if: failure()
       with:
         name: Windows-${{ matrix.example}}
         path: |
