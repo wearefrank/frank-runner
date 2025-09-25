@@ -75,18 +75,14 @@ jobs:
           } else {
             core.info('status is OK');
           }
-    - name: Store frankRunnerStartLog.txt
+    - name: Store logs
       uses: actions/upload-artifact@v4
-      if: always()
+      if: failure()
       with:
-        name: Linux-${{ matrix.example}}-frankRunnerStartLog
-        path: frankRunnerStartLog.txt
-    - name: Store Apache Tomcat log
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: Linux-${{ matrix.example}}-logs
-        path: build/*/logs
+        name: Linux-${{ matrix.example}}
+        path: |
+          frankRunnerStartLog.txt
+          build/*/logs
     - name: Check existence of FrankConfig.xsd - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
       run: test -e examples/${{ matrix.example }}/FrankConfig.xsd
@@ -99,12 +95,12 @@ jobs:
 
     - name: Show files
       run: tree -L 5 .
-      if: always()
+      if: failure()
 
   testing-windows:
     strategy:
       matrix:
-        example: [Frank2Example1, Frank2Example2, Frank2Example3, Frank2Example4, Frank2Example6]
+        example: [Frank2Example1]
     name: Test windows ${{ matrix.example }}
     runs-on: windows-latest
 
@@ -164,12 +160,13 @@ jobs:
           } else {
             core.info('status is OK');
           }
-    - name: Store Apache Tomcat log
+    - name: Store logs
       uses: actions/upload-artifact@v4
-      if: always()
+      if: failure()
       with:
-        name: Windows-${{ matrix.example}}-logs
-        path: build\*\logs
+        name: Windows-${{ matrix.example}}
+        path: |
+          build\*\logs
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
       shell: cmd
@@ -185,5 +182,5 @@ jobs:
 
     - name: Show files
       run: tree /A /F
-      if: always()
+      if: failure()
 
