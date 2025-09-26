@@ -243,7 +243,7 @@
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
 		<property name="h2v1.dir" value="${basedir}/build/h2"/>
-		<property name="h2v2.version" value="2.3.232"/> <!-- Version 2.4.240 does not work with the FF!. Type datetime does not work anymore -->
+		<property name="h2v2.version" value="2.3.232"/>
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
@@ -295,6 +295,11 @@
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
+		<condition property="ff.available">
+			<resourcecount when="greater" count="0">
+				<fileset file="${download.dir}/frankframework*"/>
+			</resourcecount>
+		</condition>
 
 		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<mkdir dir="${download.dir}/metadata/frank-flow"/>
@@ -500,7 +505,49 @@
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
+	<target name="is.gitrepo">
+		<exec executable="git" outputproperty="git.output">
+			<arg value="status"/>
+		</exec>
+		<condition property="is.gitrepo">
+			<contains string="${git.output}" substring="On branch master"/>
+		</condition>
+	</target>
+
+	<target name="ask.user.input.fr" depends="is.gitrepo" if="${is.gitrepo}">
+		<input message="Would you like to use the latest Frank!Runner version?" validargs="Y,N" addproperty="user.input.fr" defaultvalue="Y"/>
+		<condition property="user.wants.update.fr">
+			<equals arg1="${user.input.fr}" arg2="Y"/>
+		</condition>
+	</target>
+
+	<target name="update.fr" depends="ask.user.input.fr" if="${user.wants.update.fr}">
+		<exec executable="git">
+			<arg value="pull"/>
+		</exec>
+	</target>
+
+	<target name="ask.user.input.ff" if="${ff.available}" unless="${ff.war.available}">
+		<input message="Would you like to use the latest Frank!Framework version?" validargs="Y,N" addproperty="user.input.ff" defaultvalue="Y"/>
+		<condition property="user.wants.update.ff">
+			<equals arg1="${user.input.ff}" arg2="Y"/>
+		</condition>
+	</target>
+
+	<target name="update.ff" depends="ask.user.input.ff" if="${user.wants.update.ff}">
+		<delete>
+			<fileset dir="${download.dir}">
+				<include name="frankframework*"/>
+			</fileset>
+		</delete>
+		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+	</target>
+
+	<target name="get.ff" unless="${ff.available}">
+		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+	</target>
+
+	<target name="install" depends="init,update.fr,update.ff,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -886,10 +933,6 @@
 
 	<target name="get.winmerge" unless="${winmerge.zip.available}">
 		<get src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
-	</target>
-
-	<target name="get.ff" unless="${ff.war.available}">
-		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
 	</target>
 
 	<target name="get.frankflow" unless="${frankflow.war.available}">
