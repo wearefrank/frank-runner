@@ -243,7 +243,7 @@
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
 		<property name="h2v1.dir" value="${basedir}/build/h2"/>
-		<property name="h2v2.version" value="2.3.232"/>
+		<property name="h2v2.version" value="2.3.232"/><!-- Version 2.4.240 does not work with the FF!. Type datetime does not work anymore -->
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
