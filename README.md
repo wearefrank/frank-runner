@@ -629,7 +629,7 @@ automatically by the Frank!Runner. There are situations however in which
 another DTAP stage is needed during local development. The Frank!Framework
 requires users to authenticate themselves when `dtap.stage` is not `LOC`,
 and by default access is only possible through HTTPS in this case.
-Here are example properties you can put in `build.properties` to do
+Here are example properties you can put in `frank-runner.properties` to do
 development testing with `dtap.stage=DEV`:
 
     dtap.stage=DEV
