@@ -503,6 +503,11 @@
 		<echo file="${download.dir}/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<copy file="build.xml" tofile="${download.dir}/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
+	
+		<condition property="skip.update.fr.ff"><equals arg1="${fr.ff.update.preference}" arg2="skip"/></condition>
+		<condition property="always.update.fr.ff"><equals arg1="${fr.ff.update.preference}" arg2="always"/></condition>
+		<condition property="no.prompt.fr.ff"><or><isset property="skip.update.fr.ff"/><isset property="always.update.fr.ff"/></or></condition>
+		<condition property="no.prompt.ff"><or><isset property="ff.war.available"/><isset property="no.prompt.fr.ff"/></or></condition>
 	</target>
 
 	<target name="is.gitrepo">
@@ -510,41 +515,58 @@
 			<arg value="status"/>
 		</exec>
 		<condition property="is.gitrepo">
-			<contains string="${git.output}" substring="On branch master"/>
+			<contains string="${git.output}" substring="On branch ask-userinput-for-updates"/>
+		</condition>
+
+		<condition property="fr.update.condition">
+			<and>
+				<isset property="is.gitrepo"/>
+				<not>
+					<isset property="frank.runner.up.to.date"/>
+				</not>
+			</and>
 		</condition>
 	</target>
 
-	<target name="ask.user.input.fr" depends="is.gitrepo" if="${is.gitrepo}">
+	<target name="ask.user.input.fr" depends="is.gitrepo" if="fr.update.condition" unless="no.prompt.fr.ff">
 		<input message="Would you like to use the latest Frank!Runner version?" validargs="Y,N" addproperty="user.input.fr" defaultvalue="Y"/>
 		<condition property="user.wants.update.fr">
 			<equals arg1="${user.input.fr}" arg2="Y"/>
 		</condition>
 	</target>
 
-	<target name="update.fr" depends="ask.user.input.fr" if="${user.wants.update.fr}">
+	<target name="force.update.fr" if="always.update.fr.ff">
+		<property name="user.wants.update.fr" value="true"/>
+	</target>
+
+	<target name="update.fr" depends="ask.user.input.fr,force.update.fr" if="user.wants.update.fr">
 		<exec executable="git">
 			<arg value="pull"/>
 		</exec>
 	</target>
 
-	<target name="ask.user.input.ff" if="${ff.available}" unless="${ff.war.available}">
+	<target name="ask.user.input.ff" if="ff.available" unless="no.prompt.ff">
 		<input message="Would you like to use the latest Frank!Framework version?" validargs="Y,N" addproperty="user.input.ff" defaultvalue="Y"/>
 		<condition property="user.wants.update.ff">
 			<equals arg1="${user.input.ff}" arg2="Y"/>
 		</condition>
 	</target>
 
-	<target name="update.ff" depends="ask.user.input.ff" if="${user.wants.update.ff}">
+	<target name="force.update.ff" if="always.update.fr.ff">
+		<property name="user.wants.update.ff" value="true"/>
+	</target>
+
+	<target name="update.ff" depends="ask.user.input.ff,force.update.ff" if="user.wants.update.ff">
 		<delete>
 			<fileset dir="${download.dir}">
 				<include name="frankframework*"/>
 			</fileset>
 		</delete>
-		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
 	</target>
 
-	<target name="get.ff" unless="${ff.available}">
-		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+	<target name="get.ff" unless="ff.available">
+		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
 	</target>
 
 	<target name="install" depends="init,update.fr,update.ff,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
