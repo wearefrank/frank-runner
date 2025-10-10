@@ -295,7 +295,7 @@
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
-		<condition property="ff.available">
+		<condition property="some.ff.war.available">
 			<resourcecount when="greater" count="0">
 				<fileset file="${download.dir}/frankframework*"/>
 			</resourcecount>
@@ -504,10 +504,12 @@
 		<copy file="build.xml" tofile="${download.dir}/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
 	
-		<condition property="skip.update.fr.ff"><equals arg1="${fr.ff.update.preference}" arg2="skip"/></condition>
-		<condition property="always.update.fr.ff"><equals arg1="${fr.ff.update.preference}" arg2="always"/></condition>
-		<condition property="no.prompt.fr.ff"><or><isset property="skip.update.fr.ff"/><isset property="always.update.fr.ff"/></or></condition>
-		<condition property="no.prompt.ff"><or><isset property="ff.war.available"/><isset property="no.prompt.fr.ff"/></or></condition>
+		<condition property="skip.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="skip"/></condition>
+		<condition property="always.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="always"/></condition>
+
+		<condition property="no.prompt.fr.and.ff"><or><equals arg1="skip.update.fr.and.ff" arg2="true"/><equals arg1="${always.update.fr.and.ff}" arg2="true"/></or></condition>
+		<condition property="no.prompt.ff"><or><equals arg1="${ff.war.available}" arg2="true"/><equals arg1="${no.prompt.fr.and.ff}" arg2="true"/></or></condition>
+		<condition property="force.updates"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
 	</target>
 
 	<target name="is.gitrepo">
@@ -515,7 +517,7 @@
 			<arg value="status"/>
 		</exec>
 		<condition property="is.gitrepo">
-			<contains string="${git.output}" substring="On branch ask-userinput-for-updates"/>
+			<contains string="${git.output}" substring="On branch"/>
 		</condition>
 
 		<condition property="fr.update.condition">
@@ -528,14 +530,14 @@
 		</condition>
 	</target>
 
-	<target name="ask.user.input.fr" depends="is.gitrepo" if="fr.update.condition" unless="no.prompt.fr.ff">
+	<target name="ask.user.input.fr" depends="is.gitrepo" if="fr.update.condition" unless="no.prompt.fr.and.ff">
 		<input message="Would you like to use the latest Frank!Runner version?" validargs="Y,N" addproperty="user.input.fr" defaultvalue="Y"/>
 		<condition property="user.wants.update.fr">
 			<equals arg1="${user.input.fr}" arg2="Y"/>
 		</condition>
 	</target>
 
-	<target name="force.update.fr" if="always.update.fr.ff">
+	<target name="force.update.fr" if="force.updates">
 		<property name="user.wants.update.fr" value="true"/>
 	</target>
 
@@ -545,14 +547,15 @@
 		</exec>
 	</target>
 
-	<target name="ask.user.input.ff" if="ff.available" unless="no.prompt.ff">
+	<target name="ask.user.input.ff" if="some.ff.war.available" unless="no.prompt.ff">
 		<input message="Would you like to use the latest Frank!Framework version?" validargs="Y,N" addproperty="user.input.ff" defaultvalue="Y"/>
 		<condition property="user.wants.update.ff">
 			<equals arg1="${user.input.ff}" arg2="Y"/>
 		</condition>
 	</target>
 
-	<target name="force.update.ff" if="always.update.fr.ff">
+	<target name="force.update.ff" if="force.updates">
+		<echo>TSDD</echo>
 		<property name="user.wants.update.ff" value="true"/>
 	</target>
 
@@ -565,7 +568,7 @@
 		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
 	</target>
 
-	<target name="get.ff" unless="ff.available">
+	<target name="get.ff" unless="some.ff.war.available">
 		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
 	</target>
 
