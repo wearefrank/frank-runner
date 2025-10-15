@@ -1,4 +1,6 @@
 <project default="restart" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<taskdef resource="com/sardak/antform/taskdefs.properties"
+            classpath="${antform.home}/lib/antform.jar"/>
 
 	<target name="init">
 		<basename property="basedir.basename" file="${basedir}"/>
@@ -506,60 +508,34 @@
 	
 		<condition property="skip.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="skip"/></condition>
 		<condition property="always.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="always"/></condition>
-
-		<condition property="no.prompt.fr.and.ff"><or><equals arg1="skip.update.fr.and.ff" arg2="true"/><equals arg1="${always.update.fr.and.ff}" arg2="true"/></or></condition>
-		<condition property="no.prompt.ff"><or><equals arg1="${ff.war.available}" arg2="true"/><equals arg1="${no.prompt.fr.and.ff}" arg2="true"/></or></condition>
-		<condition property="force.updates"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
+		<condition property="dont.ask.user"><or><equals arg1="${skip.update.fr.and.ff}" arg2="true"/><equals arg1="${always.update.fr.and.ff}" arg2="true"/></or></condition>
+		<condition property="fr.or.ff.outdated"><or><not><isset property="frank.runner.up.to.date"/></not><and><not><isset property="ff.war.available"/></not><isset property="some.ff.war.available"/></and></or></condition>
+		<condition property="do.update.fr"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
+		<condition property="do.get.or.update.ff"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
+		<condition property="do.get.or.update.ff"><not><isset property="some.ff.war.available"/></not></condition>
 	</target>
 
-	<target name="is.gitrepo">
+	<target name="ask.user.to.update" unless="dont.ask.user" if="fr.or.ff.outdated">
 		<exec executable="git" outputproperty="git.output">
 			<arg value="status"/>
 		</exec>
-		<condition property="is.gitrepo">
-			<contains string="${git.output}" substring="On branch"/>
-		</condition>
+		<condition property="is.gitrepo"><contains string="${git.output}" substring="On branch"/></condition>
+		<condition property="fr.meets.update.conditions"><and><isset property="is.gitrepo"/><not><isset property="frank.runner.up.to.date"/></not></and></condition>
 
-		<condition property="fr.update.condition">
-			<and>
-				<isset property="is.gitrepo"/>
-				<not>
-					<isset property="frank.runner.up.to.date"/>
-				</not>
-			</and>
-		</condition>
+		<antform title="Updater" width="300" height="300">
+			<label>Would you like to update the:</label>
+			<booleanProperty label="Frank!Runner" property="do.update.fr" if="fr.meets.update.conditions"></booleanProperty>
+			<booleanProperty label="Frank!Framework" property="do.get.or.update.ff" if="some.ff.war.available" unless="ff.war.available"></booleanProperty>
+		</antform>
 	</target>
 
-	<target name="ask.user.input.fr" depends="is.gitrepo" if="fr.update.condition" unless="no.prompt.fr.and.ff">
-		<input message="Would you like to use the latest Frank!Runner version?" validargs="Y,N" addproperty="user.input.fr" defaultvalue="Y"/>
-		<condition property="user.wants.update.fr">
-			<equals arg1="${user.input.fr}" arg2="Y"/>
-		</condition>
-	</target>
-
-	<target name="force.update.fr" if="force.updates">
-		<property name="user.wants.update.fr" value="true"/>
-	</target>
-
-	<target name="update.fr" depends="ask.user.input.fr,force.update.fr" if="user.wants.update.fr">
+	<target name="update.fr" if="do.update.fr">
 		<exec executable="git">
 			<arg value="pull"/>
 		</exec>
 	</target>
 
-	<target name="ask.user.input.ff" if="some.ff.war.available" unless="no.prompt.ff">
-		<input message="Would you like to use the latest Frank!Framework version?" validargs="Y,N" addproperty="user.input.ff" defaultvalue="Y"/>
-		<condition property="user.wants.update.ff">
-			<equals arg1="${user.input.ff}" arg2="Y"/>
-		</condition>
-	</target>
-
-	<target name="force.update.ff" if="force.updates">
-		<echo>TSDD</echo>
-		<property name="user.wants.update.ff" value="true"/>
-	</target>
-
-	<target name="update.ff" depends="ask.user.input.ff,force.update.ff" if="user.wants.update.ff">
+	<target name="get.or.update.ff" if="do.get.or.update.ff">
 		<delete>
 			<fileset dir="${download.dir}">
 				<include name="frankframework*"/>
@@ -568,11 +544,7 @@
 		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
 	</target>
 
-	<target name="get.ff" unless="some.ff.war.available">
-		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
-	</target>
-
-	<target name="install" depends="init,update.fr,update.ff,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
+	<target name="install" depends="init,ask.user.to.update,update.fr,get.or.update.ff,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
 		<!-- jdk -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
