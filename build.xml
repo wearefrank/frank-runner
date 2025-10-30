@@ -1106,6 +1106,43 @@
 		<echo file="${dir}/.gitignore" message="${ignore}" append="true" if:true="${gitignore.add}"/>
 	</target>
 
+	<target name="extract.stable.version">
+		<xslt in="download/metadata/maven-metadata.xml" out="download/metadata/stable.txt" style="stableVersions.xslt"/>
+		<loadfile property="comma.separated.stable.versions" srcfile="download/metadata/stable.txt"/>
+		<echo message="${comma.separated.stable.versions}"/>
+		<scriptdef language="javascript" name="getLastStableVersion">
+			<attribute name="name"/>
+			<attribute name="commaseparated"/>
+			var commaSeparated = new String(attributes.get("commaseparated")).split(',');
+			var largest = '';
+			for (var i = 0; i &lt; commaSeparated.length; i++) {
+				if (commaSeparated[i].length &gt; 0) {
+					if (largest === '') {
+						largest = commaSeparated[i];
+					} else {
+						largestNumbers = largest.split('.').map((s) =&gt; +s);
+						newNumbers = commaSeparated[i].split('.').map((s) =&gt; +s);
+						if (newNumbers[0] &gt; largestNumbers[0]) {
+							largest = commaSeparated[i];
+						} else if(newNumbers[0] === largestNumbers[0]) {
+							if (newNumbers[1] &gt; largestNumbers[1]) {
+								largest = commaSeparated[i];
+							}
+							else if(newNumbers[1] === largestNumbers[1]) {
+								if (newNumbers[2] &gt; largestNumbers[2]) {
+									largest = commaSeparated[i];
+								}
+							}
+						}
+					}
+				}
+			}
+			project.setProperty(attributes.get("name"), largest);
+		</scriptdef>
+		<getLastStableVersion name="last.stable.version" commaseparated="${comma.separated.stable.versions}"/>
+		<echo message="${last.stable.version}"/>
+	</target>
+
 	<target name="generate.bat">
 		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
 		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
