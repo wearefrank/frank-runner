@@ -1126,8 +1126,8 @@
 		<loadfile property="last.stable.version" srcfile="${download.dir}/metadata/last.stable.version.txt"/>
 		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata" message="metadata.versioning.latest=${metadata.versioning.latest}${line.separator}"/>
 		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" append="true" if:set="get.metadata" message="last.stable.version=${last.stable.version}${line.separator}"/>
-		<property name="ff.version" value="${metadata.versioning.latest}" if:set="update.strategy.is.latest" unless:true="${maven}"/><!-- unless:true="${maven} to prevent unnecessary download -->
-		<property name="ff.version" value="${last.stable.version}" if:set="update.strategy.is.stable" unless:true="${maven}"/><!-- unless:true="${maven} to prevent unnecessary download -->
+		<property name="ff.version" value="${metadata.versioning.latest}" if:set="update.strategy.is.latest"/>
+		<property name="ff.version" value="${last.stable.version}" if:set="update.strategy.is.stable"/>
 		<echo file="${download.dir}/metadata/update.strategy.result.txt" message="update.strategy=${update.strategy}${line.separator}"/>
 		<echo file="${download.dir}/metadata/update.strategy.result.txt" append="true" message="ff.version=${ff.version}${line.separator}"/>
 	</target>
