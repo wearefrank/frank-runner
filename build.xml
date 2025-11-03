@@ -177,6 +177,10 @@
 		<property name="rhino.zip" value="rhino-${rhino.version}.zip"/>
 		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.major}_${rhino.version.minor}_${rhino.version.patch}_Release/${rhino.zip}"/>
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
+		<property name="antform.base" value="antform-src-2.0"/>
+		<property name="antform.zip" value="${antform.base}.zip"/>
+		<property name="antform.zip.url" value="https://sourceforge.net/projects/antforms/files/antforms/AntForm%%202.0/${antform.zip}/download"/>
+		<property name="antform.dir" value="build/${antform.base}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
 		<property name="maven.version" value="3.9.11"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
@@ -491,6 +495,7 @@
 		<loadresource property="fr.jdk.dir.windows"><propertyresource name="fr.jdk.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="ant.dir.windows"><propertyresource name="ant.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="rhino.dir.windows"><propertyresource name="rhino.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
+		<loadresource property="antform.dir.windows"><propertyresource name="antform.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="maven.dir.windows"><propertyresource name="maven.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.9.dir.windows"><propertyresource name="tomcat.9.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="tomcat.10.dir.windows"><propertyresource name="tomcat.10.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -1167,10 +1172,15 @@ if not exist "%~dp0build\tmp\build\" (
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${fr.jdk.zip.win}"/><param name="url" value="${fr.jdk.url.win}"/><param name="dir.windows" value="${fr.jdk.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${antform.zip}"/><param name="url" value="${antform.zip.url}"/><param name="dir.windows" value="${antform.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
 	del "%~dp0${ant.dir.windows}\lib\rhino-*.jar"
 	copy "%~dp0${rhino.dir.windows}\lib\rhino-*.jar" "%~dp0${ant.dir.windows}\lib\"
+)
+if not exist "%~dp0${ant.dir.windows}\lib\antform.jar" (
+	del "%~dp0${ant.dir.windows}\lib\antform.jar"
+	copy "%~dp0${antform.dir.windows}\lib\antform.jar" "%~dp0${ant.dir.windows}\lib\"
 )
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
@@ -1276,10 +1286,15 @@ fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${fr.jdk.zip.lin}"/><param name="zip.mac" value="${fr.jdk.zip.mac}"/><param name="url" value="${fr.jdk.url.lin}"/><param name="url.mac" value="${fr.jdk.url.mac}"/><param name="dir" value="${fr.jdk.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.chmod.jspawnhelper" value="true"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${antform.zip}"/><param name="url" value="${antform.zip.url}"/><param name="dir" value="${antform.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	rm "${FR_DIR}${ant.dir}/lib/rhino-"*.jar
 	cp "${FR_DIR}${rhino.dir}/lib/rhino-"*.jar "${FR_DIR}${ant.dir}/lib/"
+fi
+if [[ ! -f "${FR_DIR}${ant.dir}/lib/antform.jar" ]]; then
+	rm "${FR_DIR}${ant.dir}/lib/antform.jar
+	cp "${FR_DIR}${antform.dir}/lib/antform.jar "${FR_DIR}${ant.dir}/lib/"
 fi
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"

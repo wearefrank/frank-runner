@@ -94,9 +94,37 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
+ZIP=antform-src-2.0.zip
+URL=https://sourceforge.net/projects/antforms/files/antforms/AntForm%%202.0/antform-src-2.0.zip/download
+DIR=build/antform-src-2.0
+SUB=
+DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
+if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
+	echo In case of errors ${DOWNLOAD_HELP}
+	curl -f -o "${FR_DIR}download/${ZIP}.tmp" -L ${URL}
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}download/${ZIP}.tmp" "${FR_DIR}/download/${ZIP}"
+fi
+if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
+	unzip "${FR_DIR}download/${ZIP}" -d "${FR_DIR}build/tmp/build"
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Please ${DOWNLOAD_HELP}"
+		exit $retVal
+	fi
+	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
+fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
+fi
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/antform.jar" ]]; then
+	rm "${FR_DIR}build/apache-ant-1.10.15/lib/antform.jar
+	cp "${FR_DIR}build/antform-src-2.0/lib/antform.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
 JDK_8_DIR="${FR_DIR}build/jdk8u462-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.28+6"
