@@ -301,8 +301,8 @@
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
-		<condition property="some.ff.war.available"><resourcecount when="greater" count="0"><fileset file="${download.dir}/frankframework*"/></resourcecount></condition>
-
+		<condition property="some.ff.war.available"><resourcecount when="greater" count="0"><fileset dir="${download.dir}"><include name="frankframework*.war"/><include name="ibis-adapterframework-webapp*.war"/></fileset></resourcecount></condition>
+		
 		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<mkdir dir="${download.dir}/metadata/frank-flow"/>
 		<get src="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/maven-metadata.xml" dest="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
@@ -630,7 +630,7 @@
 		<condition property="frankflow.version.changed"><not><equals arg1="${frankflow.version}" arg2="${frankflow.pom.properties.old.version}"/></not></condition>
 		<delete includeemptydirs="true" if:set="maven.or.ff.version.changed.or.context.path.changed"><fileset dir="build/webapps" includes="**/*" excludes="frank-flow/**/*"/></delete>
 		<delete includeemptydirs="true" if:set="frankflow.version.changed"><fileset dir="build/webapps" includes="frank-flow/**/*"/></delete>
-		<unzip dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"><fileset dir="${download.dir}" includes="frankframework*.war"/></unzip>
+		<unzip dest="${webapp.dir}" if:set="maven.or.ff.version.changed.or.context.path.changed" unless:true="${maven}"><fileset dir="${download.dir}"><include name="frankframework*.war"/><include name="ibis-adapterframework-webapp*.war"/></fileset></unzip>
 		<unzip src="${download.dir}/${frankflow.war}" dest="${frankflow.dir}" if:set="frankflow.version.changed"/>
  		<delete><fileset dir="${webapp.dir}/WEB-INF/lib" includes="**-CUSTOM.jar"/></delete>
 		<available property="lib.webapp.dir.available" file="${projects.dir}/${project.dir}/${lib.webapp.dir}"/>
