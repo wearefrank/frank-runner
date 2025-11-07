@@ -302,7 +302,7 @@
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
 		<condition property="some.ff.war.available"><resourcecount when="greater" count="0"><fileset dir="${download.dir}"><include name="frankframework*.war"/><include name="ibis-adapterframework-webapp*.war"/></fileset></resourcecount></condition>
-		
+
 		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<mkdir dir="${download.dir}/metadata/frank-flow"/>
 		<get src="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/maven-metadata.xml" dest="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
@@ -510,10 +510,10 @@
 		<condition property="skip.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="skip"/></condition>
 		<condition property="always.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="always"/></condition>
 		<condition property="dont.ask.user"><or><equals arg1="${skip.update.fr.and.ff}" arg2="true"/><equals arg1="${always.update.fr.and.ff}" arg2="true"/></or></condition>
-		<condition property="fr.or.ff.outdated"><or><not><isset property="frank.runner.up.to.date"/></not><and><not><isset property="ff.war.available"/></not><isset property="some.ff.war.available"/><not><equals arg1="${maven}" arg2="true"/></not></and></or></condition>
+		<condition property="fr.or.ff.outdated"><or><not><isset property="frank.runner.up.to.date"/></not><and><not><isset property="ff.war.available"/></not><isset property="some.ff.war.available"/><not><equals arg1="${maven}" arg2="true"/></not><equals arg1="${ff.version}" arg2="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/></and></or></condition>
 		<condition property="do.update.fr"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
 		<condition property="do.get.or.update.ff"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
-		<condition property="do.get.or.update.ff"><not><isset property="some.ff.war.available"/></not></condition>
+		<condition property="do.get.or.update.ff"><or><not><isset property="some.ff.war.available"/></not><not><equals arg1="${ff.version}" arg2="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/></not></or></condition>
 	</target>
 
 	<target name="ask.user.to.update" unless="dont.ask.user" if="fr.or.ff.outdated">
@@ -526,7 +526,7 @@
 		<antform title="Updater" width="300" height="300">
 			<label>Would you like to update the:</label>
 			<booleanProperty label="Frank!Runner" property="do.update.fr" if="fr.meets.update.conditions"></booleanProperty>
-			<booleanProperty label="Frank!Framework" property="do.get.or.update.ff" if="some.ff.war.available" unless="ff.war.available" unless:true="${maven}"></booleanProperty>
+			<booleanProperty label="Frank!Framework" property="do.get.or.update.ff" if="some.ff.war.available" unless="ff.war.available" unless:true="${maven}, do.get.or.update.ff"></booleanProperty>
 		</antform>
 	</target>
 
@@ -536,10 +536,11 @@
 		</exec>
 	</target>
 
-	<target name="get.or.update.ff" if="do.get.or.update.ff">
+	<target name="get.or.update.ff" if="do.get.or.update.ff" unless="ff.war.available">
 		<delete>
 			<fileset dir="${download.dir}">
 				<include name="frankframework*.war"/>
+				<include name="ibis-adapterframework-webapp*.war"/>
 			</fileset>
 		</delete>
 		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/>
