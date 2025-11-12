@@ -506,16 +506,19 @@
 		<echo file="${download.dir}/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<copy file="build.xml" tofile="${download.dir}/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
-	
+		
 		<condition property="skip.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="skip"/></condition>
 		<condition property="always.update.fr.and.ff" else="false"><equals arg1="${fr.and.ff.update.preference}" arg2="always"/></condition>
 		<condition property="dont.ask.user"><or><equals arg1="${skip.update.fr.and.ff}" arg2="true"/><equals arg1="${always.update.fr.and.ff}" arg2="true"/></or></condition>
-		<condition property="fr.or.ff.outdated"><or><not><isset property="frank.runner.up.to.date"/></not><and><not><isset property="ff.war.available"/></not><isset property="some.ff.war.available"/><not><equals arg1="${maven}" arg2="true"/></not><equals arg1="${ff.version}" arg2="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/></and></or></condition>
+
+		<condition property="ff.outdated"><and><not><isset property="ff.war.available"/></not><isset property="some.ff.war.available"/><equals arg1="${ff.version}" arg2="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/></and></condition><!-- check whether a war is available and if this is the desired version, but only if desired version is the latest version, in case its defined in frank-runner.properties. -->
+
+		<condition property="fr.or.ff.outdated"><or><not><isset property="frank.runner.up.to.date"/></not><and><isset property="ff.outdated"/><not><equals arg1="${maven}" arg2="true"/></not></and></or></condition>
+		
 		<condition property="do.update.fr"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
 		<condition property="do.get.or.update.ff"><equals arg1="${always.update.fr.and.ff}" arg2="true"/></condition>
 		<condition property="do.get.or.update.ff"><or><not><isset property="some.ff.war.available"/></not><not><equals arg1="${ff.version}" arg2="${metadata.versioning.latest}" if:set="metadata.versioning.latest"/></not></or></condition>
 	</target>
-
 	<target name="ask.user.to.update" unless="dont.ask.user" if="fr.or.ff.outdated">
 		<exec executable="git" outputproperty="git.output">
 			<arg value="status"/>
