@@ -23,6 +23,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
+- [Use rewrite-frankframework for upgrading](#use-rewrite-frankframework-for-upgrading)
 - [Testing with DTAP stage different from LOC](#testing-with-dtap-stage-different-from-loc)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
@@ -620,6 +621,51 @@ E.g. use:
 
 ```
 tomcat.server.port=8105
+```
+
+# Use rewrite-frankframework for upgrading
+[rewrite-frankframework](https://github.com/frankframework/rewrite-frankframework) is an OpenRewrite-based application which includes "recipes" and tools designed to assist developers with migrating XML configuration files built on Frank!Framework. To be able to upgrade your Frank!Framework projects with it, you need to:
+
+- Clone rewrite-frankframework into the same directory as Frank!Runner
+- Add the following content to your project's build.xml
+
+```
+<target name="upgrade">
+   <basename property="project.dir" file="${basedir}"/>
+   <property name="target.dir" value="${basedir}"/>
+   <condition property="exe" value="../frank-runner/upgrade.bat" else="/bin/bash"><os family="windows"/></condition>
+   <condition property="arg" value="../frank-runner/upgrade.sh" else=""><os family="unix"/></condition>
+   <exec executable="${exe}" vmlauncher="false" failonerror="true">
+      <arg value="${arg}"/>
+      <arg value="-Dproject.dir=${project.dir}"/>
+      <arg value="-Dtarget.dir=${target.dir}"/>
+   </exec>
+</target>
+```
+
+- Create a upgrade.bat with the following content in the root folder of your project which you can run from Windows Explorer:
+
+```
+call ..\frank-runner\ant.bat upgrade
+if %errorlevel% equ 0 goto end
+rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
+set arg0=%0
+if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
+:end
+```
+
+or a restart.sh with the following content in the root folder of your project for Linux and Mac:
+
+```
+#!/bin/bash
+../frank-runner/ant.sh upgrade
+```
+
+- Add the following two properties with matching values to your project frank-runner.properties file
+
+```
+current.version=
+target.version=
 ```
 
 # Testing with DTAP stage different from LOC
