@@ -96,7 +96,7 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
 ZIP=antform-src-2.0.zip
-URL=https://sourceforge.net/projects/antforms/files/antforms/AntForm%%202.0/antform-src-2.0.zip/download
+URL=https://sourceforge.net/projects/antforms/files/antforms/AntForm%202.0/antform-src-2.0.zip/download
 DIR=build/antform-src-2.0
 SUB=
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
