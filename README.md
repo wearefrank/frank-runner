@@ -23,7 +23,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
-- [Use rewrite-frankframework for upgrading](#use-rewrite-frankframework-for-upgrading)
+- [Use rewrite-frankframework for upgrading your Frank](#use-rewrite-frankframework-for-upgrading-your-Frank)
 - [Testing with DTAP stage different from LOC](#testing-with-dtap-stage-different-from-loc)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
@@ -623,7 +623,7 @@ E.g. use:
 tomcat.server.port=8105
 ```
 
-# Use rewrite-frankframework for upgrading
+# Use rewrite-frankframework for upgrading your Frank
 [rewrite-frankframework](https://github.com/frankframework/rewrite-frankframework) is an OpenRewrite-based application which includes "recipes" and tools designed to assist developers with migrating XML configuration files built on Frank!Framework. To be able to upgrade your Frank!Framework projects with it, you need to:
 
 - Clone rewrite-frankframework into the same directory as Frank!Runner
