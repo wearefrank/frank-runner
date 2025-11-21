@@ -661,11 +661,11 @@ or a restart.sh with the following content in the root folder of your project fo
 ../frank-runner/ant.sh upgrade
 ```
 
-- Add the following two properties with matching values to your project frank-runner.properties file
+- Add the following two properties with matching values to your project frank-runner.properties file, example:
 
 ```
-current.version=
-target.version=
+current.version=7_6
+target.version=7_9
 ```
 
 # Testing with DTAP stage different from LOC
