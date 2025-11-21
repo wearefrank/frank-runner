@@ -44,7 +44,7 @@
 		<property name="context.xml" value="context.xml"/>
 
 		<property name="rewrite.dir" location="${basedir}/../rewrite-frankframework"/>
-		<available property="rewrite.installed" file="${rewrite.dir}/target"/>
+		<available property="recipes.installed" file="${rewrite.dir}/target"/>
 
 		<property name="maven" value="false"/>
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
@@ -851,13 +851,13 @@
 		<antcall target="run"/>
 	</target>
 
-	<!-- If rewrite-frankframework not installed, run installRecipes.bat -->
-	<target name="install-rewrite" unless="rewrite.installed">
-		<echo message="Installing rewrite-frankframework..."/>
+	<!-- if recipes not installed, run installRecipes.bat -->
+	<target name="install-recipes" unless="recipes.installed">
+		<echo message="Installing recipes..."/>
 		<exec executable="${rewrite.dir}/installRecipes.bat" dir="${rewrite.dir}" vmlauncher="false" failonerror="true"/>
 	</target>
 
-	<target name="upgrade" depends="init,install-rewrite">
+	<target name="upgrade" depends="init,install-recipes">
 		<property file="${target.dir}/frank-runner.properties"/>
     	<echo message="Running upgrade for ${project.dir} from ${current.version} to ${target.version}, ${target.dir}"/>
 		<exec executable="${rewrite.dir}/runRecipes.bat" failonerror="true">

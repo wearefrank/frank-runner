@@ -627,20 +627,20 @@ tomcat.server.port=8105
 [rewrite-frankframework](https://github.com/frankframework/rewrite-frankframework) is an OpenRewrite-based application which includes "recipes" and tools designed to assist developers with migrating XML configuration files built on Frank!Framework. To be able to upgrade your Frank!Framework projects with it, you need to:
 
 - Clone rewrite-frankframework into the same directory as Frank!Runner
-- Add the following content to your project's build.xml
+- Add the following target to your project's build.xml
 
 ```
-<target name="upgrade">
-   <basename property="project.dir" file="${basedir}"/>
-   <property name="target.dir" value="${basedir}"/>
-   <condition property="exe" value="../frank-runner/upgrade.bat" else="/bin/bash"><os family="windows"/></condition>
-   <condition property="arg" value="../frank-runner/upgrade.sh" else=""><os family="unix"/></condition>
-   <exec executable="${exe}" vmlauncher="false" failonerror="true">
-      <arg value="${arg}"/>
-      <arg value="-Dproject.dir=${project.dir}"/>
-      <arg value="-Dtarget.dir=${target.dir}"/>
-   </exec>
-</target>
+   <target name="upgrade">
+      <basename property="project.dir" file="${basedir}"/>
+      <property name="target.dir" value="${basedir}"/>
+      <condition property="exe" value="../frank-runner/upgrade.bat" else="/bin/bash"><os family="windows"/></condition>
+      <condition property="arg" value="../frank-runner/upgrade.sh" else=""><os family="unix"/></condition>
+      <exec executable="${exe}" vmlauncher="false" failonerror="true">
+         <arg value="${arg}"/>
+         <arg value="-Dproject.dir=${project.dir}"/>
+         <arg value="-Dtarget.dir=${target.dir}"/>
+      </exec>
+   </target>
 ```
 
 - Create a upgrade.bat with the following content in the root folder of your project which you can run from Windows Explorer:
