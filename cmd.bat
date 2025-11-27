@@ -62,9 +62,31 @@ if not exist "%~dp0build\rhino1.7.15\" (
 	)
 	move "%~dp0build\tmp\build\rhino1.7.15" "%~dp0build\rhino1.7.15"
 )
+set DOWNLOAD_HELP=download https://sourceforge.net/projects/antforms/files/antforms/AntForm%%202.0/antform-src-2.0.zip/download manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\antform-src-2.0.zip" (
+	echo "In case of errors %DOWNLOAD_HELP%"
+	curl -f -o "%~dp0download\antform-src-2.0.zip.tmp" -L https://sourceforge.net/projects/antforms/files/antforms/AntForm%%202.0/antform-src-2.0.zip/download
+	if !errorlevel! neq 0 (
+		echo "Please %DOWNLOAD_HELP%"
+		goto error
+	)
+	move "%~dp0download\antform-src-2.0.zip.tmp" "%~dp0download\antform-src-2.0.zip"
+)
+if not exist "%~dp0build\antform-src-2.0\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\antform-src-2.0.zip" -C "%~dp0build\tmp\build"
+	if !errorlevel! neq 0 (
+		echo "Please %DOWNLOAD_HELP%"
+		goto error
+	)
+	move "%~dp0build\tmp\build\antform-src-2.0" "%~dp0build\antform-src-2.0"
+)
 if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.15.jar" (
 	del "%~dp0build\apache-ant-1.10.15\lib\rhino-*.jar"
 	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.15\lib\"
+)
+if not exist "%~dp0build\apache-ant-1.10.15\lib\antform.jar" (
+	del "%~dp0build\apache-ant-1.10.15\lib\antform.jar"
+	copy "%~dp0build\antform-src-2.0\lib\antform.jar" "%~dp0build\apache-ant-1.10.15\lib\"
 )
 set JDK_8_DIR=%~dp0%build\jdk8u462-b08
 set JDK_11_DIR=%~dp0%build\jdk-11.0.28+6
