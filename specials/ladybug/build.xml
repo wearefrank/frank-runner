@@ -9,6 +9,7 @@
 		<property name="maven.skip.source.jar" value="${maven.skip.all}"/>
 		<property name="maven.skip.copyright" value="${maven.skip.all}"/>
 		<property name="tomcat.skip.waitfor" value="false"/>
+		<property name="maven.skip.checkstyle" value="${maven.skip.all}"/>
 		<property name="maven.verbose" value="false"/>
 		<property name="test.with" value="ladybug-test-webapp"/>
 		<condition property="test.with.test.webapp"><equals arg1="${test.with}" arg2="ladybug-test-webapp"/></condition>
@@ -140,6 +141,7 @@
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
 			<arg value="-Dmaven.skip.copyright=true" if:true="${maven.skip.copyright}"/>
+			<arg value="-Dcheckstyle.skip=true" if:true="${maven.skip.checkstyle"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
