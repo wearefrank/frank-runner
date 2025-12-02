@@ -75,7 +75,7 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
-		<property name="jdk.8.version.minor" value="462"/><!-- https://adoptium.net/temurin/ -->
+		<property name="jdk.8.version.minor" value="472"/><!-- https://adoptium.net/temurin/ -->
 		<property name="jdk.8.version.patch" value="b08"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
@@ -94,8 +94,8 @@
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
 		<property name="jdk.11.version.minor" value="0"/>
-		<property name="jdk.11.version.patch" value="28"/>
-		<property name="jdk.11.version.plus" value="6"/>
+		<property name="jdk.11.version.patch" value="29"/>
+		<property name="jdk.11.version.plus" value="7"/>
 		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
 		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.zip"/>
@@ -113,8 +113,8 @@
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
 		<property name="jdk.17.version.minor" value="0"/>
-		<property name="jdk.17.version.patch" value="16"/>
-		<property name="jdk.17.version.plus" value="8"/>
+		<property name="jdk.17.version.patch" value="17"/>
+		<property name="jdk.17.version.plus" value="10"/>
 		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
 		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
 		<property name="jdk.17.zip.win" value="OpenJDK17U-jdk_x64_windows_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.zip"/>
@@ -132,8 +132,8 @@
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
 		<property name="jdk.21.version.minor" value="0"/>
-		<property name="jdk.21.version.patch" value="8"/>
-		<property name="jdk.21.version.plus" value="9"/>
+		<property name="jdk.21.version.patch" value="9"/>
+		<property name="jdk.21.version.plus" value="10"/>
 		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
 		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
@@ -190,13 +190,13 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="109"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version.patch" value="112"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<property name="tomcat.10.version.minor" value="1"/>
-		<property name="tomcat.10.version.patch" value="46"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version.patch" value="49"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
@@ -218,7 +218,7 @@
 		<property name="lombok.version" value="1.18.42"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
-		<property name="winmerge.version" value="2.16.50.2"/>
+		<property name="winmerge.version" value="2.16.52.2"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
@@ -254,11 +254,11 @@
 		<property name="h2v2java8.jar" value="h2-${h2v2java8.version}.jar"/>
 		<property name="h2v2java8.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2java8.version}/${h2v2java8.jar}"/>
 		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<property name="ojdbc8.version" value="23.9.0.25.07"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
+		<property name="ojdbc8.version" value="23.26.0.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
 		<property name="ojdbc8.uninstall.mask" value="ojdbc8-*"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
-		<property name="ojdbc11.version" value="23.9.0.25.07"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
+		<property name="ojdbc11.version" value="23.26.0.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.uninstall.mask" value="ojdbc11-*"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
