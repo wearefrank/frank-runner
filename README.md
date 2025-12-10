@@ -526,6 +526,56 @@ configure it for all modules in the same file.
 See [Module per config](#module-per-config) for information on how to start the
 modules and for more information about the application, ear and war folder.
 
+# Foks monorepo
+
+Similar to [Module per config flattened (aka monorepo)](#module_per_config_flattened_(aka_monorepo))
+It will be activated when there is a workers folder in the root of the project. Workers have a pom.
+In the pom they use maven assemly plugin to generate a zip file in the following format:
+worker.zip
+├── configurations/
+|   ├── configA.jar
+│   ├── configB.jar
+├── resources/
+├── drivers/
+├── plugins
+
+```
+frank2myapp/   (or ibis4myapp)
+├── application/
+│   ├── drivers/           # Additional libraries for your application
+│   ├── plugins/           # plugins
+│   │   └── customcode.jar
+│   └── resources/
+│       ├── DeploymentSpecifics.properties
+│       ├── resources.yml
+│       └── StageSpecifics_LOC.properties
+├── configurations/
+│   ├── config1/
+│   │   ├── adapters/
+│   │   ├── test/
+│   │   ├── pom.xml
+│   │   ├── build.xml
+│   │   └── start-frank.bat
+│   ├── config2/
+│   │   ├── adapters/
+│   │   ├── test/
+│   │   ├── pom.xml
+│   │   ├── build.xml
+│   │   └── start-frank.bat
+├── documentation/
+├── workers/
+│   ├── worker1/
+│   │   └── pom.xml (references to a set of configurations)
+│   ├── worker2/
+│   │   └── pom.xml
+├── .gitignore
+├── azure-pipelines.yml
+├── build.xml
+├── pom.xml
+├── frank-runner.properties
+├── start-frank.bat
+└── README.md
+```
 
 
 # Debug property
