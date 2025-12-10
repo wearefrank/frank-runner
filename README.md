@@ -531,6 +531,7 @@ modules and for more information about the application, ear and war folder.
 Similar to [Module per config flattened (aka monorepo)](#module_per_config_flattened_(aka_monorepo))
 It will be activated when there is a workers folder in the root of the project. Workers have a pom.
 In the pom they use maven assemly plugin to generate a zip file in the following format:
+```
 worker.zip
 ├── configurations/
 |   ├── configA.jar
@@ -538,6 +539,7 @@ worker.zip
 ├── resources/
 ├── drivers/
 ├── plugins
+```
 
 ```
 frank2myapp/   (or ibis4myapp)
