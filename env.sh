@@ -99,6 +99,10 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/progressbarget.jar" ]]; then
+	rm "${FR_DIR}build/apache-ant-1.10.15/lib/progressbarget"*.jar
+	cp "${FR_DIR}ant-extension/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
+fi
 JDK_8_DIR="${FR_DIR}build/jdk8u472-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.29+7"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.17+10"

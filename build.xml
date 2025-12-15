@@ -1,4 +1,5 @@
 <project default="restart" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<taskdef name="progressbarget" classname="org.apache.tools.ant.taskdefs.ProgressBarGet"/>
 
 	<target name="init">
 		<basename property="basedir.basename" file="${basedir}"/>
@@ -287,7 +288,7 @@
 		<mkdir dir="${download.dir}/metadata/"/>
 
 		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not><not><equals arg1="${maven}" arg2="true"/></not></and></condition>
-		<get src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="${download.dir}/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<progressbarget src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="${download.dir}/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
 		<move file="${download.dir}/metadata/maven-metadata-tmp.xml" tofile="${download.dir}/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="${download.dir}/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
 		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
@@ -301,7 +302,7 @@
 
 		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<mkdir dir="${download.dir}/metadata/frank-flow"/>
-		<get src="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/maven-metadata.xml" dest="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
+		<progressbarget src="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/maven-metadata.xml" dest="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="frankflow.get.metadata"/>
 		<move file="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" tofile="${download.dir}/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="${download.dir}/metadata/frank-flow/maven-metadata.xml" prefix="frankflow"/>
 		<echo file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
@@ -497,7 +498,7 @@
 		<property name="get.build.maxtime" value="10"/>
 		<property name="get.build.ignoreerrors" value="true"/>
 		<mkdir dir="${download.dir}/frank-runner"/>
-		<get src="https://raw.githubusercontent.com/ibissource/frank-runner/master/build.xml" dest="${download.dir}/frank-runner/build.xml" maxtime="${get.build.maxtime}" ignoreerrors="${get.build.ignoreerrors}" verbose="on" if:set="get.build"/>
+		<progressbarget src="https://raw.githubusercontent.com/ibissource/frank-runner/master/build.xml" dest="${download.dir}/frank-runner/build.xml" maxtime="${get.build.maxtime}" ignoreerrors="${get.build.ignoreerrors}" verbose="on" if:set="get.build"/>
 		<echo file="${download.dir}/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<copy file="build.xml" tofile="${download.dir}/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
@@ -869,96 +870,96 @@
 	</target>
 
 	<target name="get.java">
-		<get src="${jdk.8.url.win}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.8.zip.available}"/>
-		<get src="${jdk.8.url.lin}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.8.zip.available}"/>
-		<get src="${jdk.8.url.mac}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.8.zip.available}"/>
-		<get src="${jdk.11.url.win}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.11.zip.available}"/>
-		<get src="${jdk.11.url.lin}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.11.zip.available}"/>
-		<get src="${jdk.11.url.mac}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.11.zip.available}"/>
-		<get src="${jdk.17.url.win}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.17.zip.available}"/>
-		<get src="${jdk.17.url.lin}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.17.zip.available}"/>
-		<get src="${jdk.17.url.mac}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.17.zip.available}"/>
-		<get src="${jdk.21.url.win}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.21.zip.available}"/>
-		<get src="${jdk.21.url.lin}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.21.zip.available}"/>
-		<get src="${jdk.21.url.mac}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.21.zip.available}"/>
+		<progressbarget src="${jdk.8.url.win}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.8.zip.available}"/>
+		<progressbarget src="${jdk.8.url.lin}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.8.zip.available}"/>
+		<progressbarget src="${jdk.8.url.mac}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.8.zip.available}"/>
+		<progressbarget src="${jdk.11.url.win}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.11.zip.available}"/>
+		<progressbarget src="${jdk.11.url.lin}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.11.zip.available}"/>
+		<progressbarget src="${jdk.11.url.mac}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.11.zip.available}"/>
+		<progressbarget src="${jdk.17.url.win}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.17.zip.available}"/>
+		<progressbarget src="${jdk.17.url.lin}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.17.zip.available}"/>
+		<progressbarget src="${jdk.17.url.mac}" dest="${download.dir}/${jdk.17.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.17.zip.available}"/>
+		<progressbarget src="${jdk.21.url.win}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.21.zip.available}"/>
+		<progressbarget src="${jdk.21.url.lin}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.21.zip.available}"/>
+		<progressbarget src="${jdk.21.url.mac}" dest="${download.dir}/${jdk.21.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.21.zip.available}"/>
 	</target>
 
 	<target name="get.ant" unless="${ant.zip.available}">
-		<get src="${ant.zip.url}" dest="${download.dir}/${ant.zip}" verbose="on" if:true="${os.windows}"/>
-		<get src="${ant.gz.url}" dest="${download.dir}/${ant.gz}" verbose="on" unless:true="${os.windows}"/>
+		<progressbarget src="${ant.zip.url}" dest="${download.dir}/${ant.zip}" verbose="on" if:true="${os.windows}"/>
+		<progressbarget src="${ant.gz.url}" dest="${download.dir}/${ant.gz}" verbose="on" unless:true="${os.windows}"/>
 	</target>
 
 	<target name="get.maven" unless="${maven.zip.available}">
-		<get src="${maven.zip.url}" dest="${download.dir}/${maven.zip}" verbose="on" if:true="${os.windows}"/>
-		<get src="${maven.gz.url}" dest="${download.dir}/${maven.gz}" verbose="on" unless:true="${os.windows}"/>
+		<progressbarget src="${maven.zip.url}" dest="${download.dir}/${maven.zip}" verbose="on" if:true="${os.windows}"/>
+		<progressbarget src="${maven.gz.url}" dest="${download.dir}/${maven.gz}" verbose="on" unless:true="${os.windows}"/>
 	</target>
 
 	<target name="get.tomcat">
-		<get src="${tomcat.9.url}" dest="${download.dir}/${tomcat.9.zip}" verbose="on" unless:true="${tomcat.9.zip.available}"/>
-		<get src="${tomcat.10.url}" dest="${download.dir}/${tomcat.10.zip}" verbose="on" unless:true="${tomcat.10.zip.available}"/>
+		<progressbarget src="${tomcat.9.url}" dest="${download.dir}/${tomcat.9.zip}" verbose="on" unless:true="${tomcat.9.zip.available}"/>
+		<progressbarget src="${tomcat.10.url}" dest="${download.dir}/${tomcat.10.zip}" verbose="on" unless:true="${tomcat.10.zip.available}"/>
 	</target>
 
 	<target name="get.eclipse" unless="${eclipse.zip.available}" if="${eclipse}">
-		<get src="${eclipse.url}" dest="${download.dir}/${eclipse.zip}" verbose="on"/>
+		<progressbarget src="${eclipse.url}" dest="${download.dir}/${eclipse.zip}" verbose="on"/>
 	</target>
 
 	<target name="get.lombok" unless="${lombok.jar.available}">
-		<get src="${lombok.url}" dest="${download.dir}/${lombok.jar}" verbose="on"/>
+		<progressbarget src="${lombok.url}" dest="${download.dir}/${lombok.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.winmerge" unless="${winmerge.zip.available}">
-		<get src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
+		<progressbarget src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
 	</target>
 
 	<target name="get.ff" unless="${ff.war.available}">
-		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
 	</target>
 
 	<target name="get.frankflow" unless="${frankflow.war.available}">
-		<get src="${frankflow.url}" dest="${download.dir}/${frankflow.war}" verbose="on"/>
+		<progressbarget src="${frankflow.url}" dest="${download.dir}/${frankflow.war}" verbose="on"/>
 	</target>
 
 	<target name="get.jta" unless="${jta.jar.available}">
-		<get src="${jta.url}" dest="${download.dir}/${jta.jar}" verbose="on"/>
+		<progressbarget src="${jta.url}" dest="${download.dir}/${jta.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.activation" unless="${activation.jar.available}">
-		<get src="${activation.url}" dest="${download.dir}/${activation.jar}" verbose="on"/>
+		<progressbarget src="${activation.url}" dest="${download.dir}/${activation.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.transaction" unless="${transaction.jar.available}">
-		<get src="${transaction.url}" dest="${download.dir}/${transaction.jar}" verbose="on"/>
+		<progressbarget src="${transaction.url}" dest="${download.dir}/${transaction.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.jms">
-		<get src="${jms1.url}" dest="${download.dir}/${jms1.jar}" verbose="on" unless:true="${jms1.jar.available}"/>
-		<get src="${jms3.url}" dest="${download.dir}/${jms3.jar}" verbose="on" unless:true="${jms3.jar.available}"/>
+		<progressbarget src="${jms1.url}" dest="${download.dir}/${jms1.jar}" verbose="on" unless:true="${jms1.jar.available}"/>
+		<progressbarget src="${jms3.url}" dest="${download.dir}/${jms3.jar}" verbose="on" unless:true="${jms3.jar.available}"/>
 	</target>
 
 	<target name="get.h2v1" unless="${h2v1.jar.available}">
-		<get src="${h2v1.url}" dest="${download.dir}/${h2v1.jar}" verbose="on"/>
+		<progressbarget src="${h2v1.url}" dest="${download.dir}/${h2v1.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.h2v2java8" unless="${h2v2java8.jar.available}">
-		<get src="${h2v2java8.url}" dest="${download.dir}/${h2v2java8.jar}" verbose="on"/>
+		<progressbarget src="${h2v2java8.url}" dest="${download.dir}/${h2v2java8.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.h2v2" unless="${h2v2.jar.available}">
-		<get src="${h2v2.url}" dest="${download.dir}/${h2v2.jar}" verbose="on"/>
+		<progressbarget src="${h2v2.url}" dest="${download.dir}/${h2v2.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.ojdbc">
-		<get src="${ojdbc8.url}" dest="${download.dir}/${ojdbc8.jar}" verbose="on" unless:true="${ojdbc8.jar.available}"/>
-		<get src="${ojdbc11.url}" dest="${download.dir}/${ojdbc11.jar}" verbose="on" unless:true="${ojdbc11.jar.available}"/>
+		<progressbarget src="${ojdbc8.url}" dest="${download.dir}/${ojdbc8.jar}" verbose="on" unless:true="${ojdbc8.jar.available}"/>
+		<progressbarget src="${ojdbc11.url}" dest="${download.dir}/${ojdbc11.jar}" verbose="on" unless:true="${ojdbc11.jar.available}"/>
 	</target>
 
 	<target name="get.mssql">
-		<get src="${mssql8.url}" dest="${download.dir}/${mssql8.jar}" verbose="on" unless:true="${mssql8.jar.available}"/>
-		<get src="${mssql11.url}" dest="${download.dir}/${mssql11.jar}" verbose="on" unless:true="${mssql11.jar.available}"/>
+		<progressbarget src="${mssql8.url}" dest="${download.dir}/${mssql8.jar}" verbose="on" unless:true="${mssql8.jar.available}"/>
+		<progressbarget src="${mssql11.url}" dest="${download.dir}/${mssql11.jar}" verbose="on" unless:true="${mssql11.jar.available}"/>
 	</target>
 
 	<target name="get.pgsql" unless="${pgsql.jar.available}">
-		<get src="${pgsql.url}" dest="${download.dir}/${pgsql.jar}" verbose="on"/>
+		<progressbarget src="${pgsql.url}" dest="${download.dir}/${pgsql.jar}" verbose="on"/>
 	</target>
 
 	<target name="install.jdk">
@@ -1154,6 +1155,10 @@ if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
 	del "%~dp0${ant.dir.windows}\lib\rhino-*.jar"
 	copy "%~dp0${rhino.dir.windows}\lib\rhino-*.jar" "%~dp0${ant.dir.windows}\lib\"
 )
+if not exist "%~dp0${ant.dir.windows}\lib\progressbarget.jar" (
+	del "%~dp0${ant.dir.windows}\lib\progressbarget.jar"
+	copy "%~dp0ant-extension\progressbarget.jar" "%~dp0${ant.dir.windows}\lib\"
+)
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
@@ -1262,6 +1267,10 @@ fi</echo>
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	rm "${FR_DIR}${ant.dir}/lib/rhino-"*.jar
 	cp "${FR_DIR}${rhino.dir}/lib/rhino-"*.jar "${FR_DIR}${ant.dir}/lib/"
+fi
+if [[ ! -f "${FR_DIR}${ant.dir}/lib/progressbarget.jar" ]]; then
+	rm "${FR_DIR}${ant.dir}/lib/progressbarget"*.jar
+	cp "${FR_DIR}ant-extension/progressbarget"*.jar "${FR_DIR}${ant.dir}/lib/"
 fi
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
