@@ -1135,7 +1135,7 @@
 
 	<target name="set.ff.version.from.update.strategy">
 		<property name="update.strategy" value="latest"/>
-		<fail message="Property update.strategy has invalid value: ${update.strategy}"><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
+		<fail message="Property update.strategy has invalid value: '${update.strategy}'. Set it to 'stable' or 'latest'."><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
 		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
 		<condition property="update.strategy.is.stable"><equals arg1="${update.strategy}" arg2="stable"/></condition>
 		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
