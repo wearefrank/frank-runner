@@ -1,4 +1,4 @@
-This folder is a temporary solution for adding the functionality of a progressbar to the Get-task of Ant. A PR has been made to the Apache Ant repository, but has not yet been reviewed.
+This folder is a temporary solution for adding the functionality of a progressbar to the Get-task of Ant. A PR has been made to the Apache Ant repository, but has not yet been reviewed (https://github.com/apache/ant/pull/224).
 
 The goal is to replace the current verbose behaviour of the Ant Get-task with a progressbar as to give more actually useful information.
 
