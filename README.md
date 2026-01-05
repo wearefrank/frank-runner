@@ -245,7 +245,8 @@ directory to `frank-runner/specials/util/syncPomVersions` and execute the
 # Project structure and customisation
 
 In case Frank2YourApplication contains a pom.xml it is assumed to be a Maven
-project and the following default values are used:
+project (add maven=true to frank-runner.properties to also build with maven)
+and the following default values are used:
 
 ```
 classes.dir=src/main/resources
@@ -286,10 +287,6 @@ You can overwrite default values by creating a frank-runner.properties in the
 project to run. In case you need to change the default value for projects.dir
 (which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
-
-If your project has a `pom.xml`, you can choose whether the Frank!Runner
-should build your project with Maven (by default not, building is then done
-with ANT). Set property `maven` to `true` to build with Maven.
 
 Frank developers are encouraged not to use `context.xml` to configure
 resources, but `resources.yml`. See
@@ -811,10 +808,11 @@ files and dependencies.
 # Web development
 
 In case you want to develop and package a web application with your Frank! it
-is recommended to setup your project as a Maven project as it will allow you to
-edit the web application files in src/main/webapp and see the changes in your
-browser without the need to restart your Frank!. A small example can be found
-in [Frank2Example4](#frank2example4).
+is recommended to setup your project as a Maven project (see
+[Project structure and customisation](#project-structure-and-customisation)) as
+it will allow you to edit the web application files in src/main/webapp and see
+the changes in your browser without the need to restart your Frank!. A small
+example can be found in [Frank2Example4](#frank2example4).
 
 When you write a webapplication with Maven, your `pom.xml` file defines how the
 application should be packaged. The Maven build is then typically what you need
