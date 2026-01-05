@@ -23,6 +23,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
+- [Use rewrite-frankframework for upgrading your Frank](#use-rewrite-frankframework-for-upgrading-your-Frank)
 - [Testing with DTAP stage different from LOC](#testing-with-dtap-stage-different-from-loc)
 - [Code completion with FrankConfig.xsd](#code-completion-with-frankconfigxsd)
 - [How to add custom jars and classes](#how-to-add-custom-jars-and-classes)
@@ -244,7 +245,8 @@ directory to `frank-runner/specials/util/syncPomVersions` and execute the
 # Project structure and customisation
 
 In case Frank2YourApplication contains a pom.xml it is assumed to be a Maven
-project and the following default values are used:
+project (add maven=true to frank-runner.properties to also build with maven)
+and the following default values are used:
 
 ```
 classes.dir=src/main/resources
@@ -285,10 +287,6 @@ You can overwrite default values by creating a frank-runner.properties in the
 project to run. In case you need to change the default value for projects.dir
 (which is ..) you can create a build.properties in the frank-runner folder
 (which can also be used to specify the project.dir as explained earlier).
-
-If your project has a `pom.xml`, you can choose whether the Frank!Runner
-should build your project with Maven (by default not, building is then done
-with ANT). Set property `maven` to `true` to build with Maven.
 
 Frank developers are encouraged not to use `context.xml` to configure
 resources, but `resources.yml`. See
@@ -622,6 +620,51 @@ E.g. use:
 tomcat.server.port=8105
 ```
 
+# Use rewrite-frankframework for upgrading your Frank
+[rewrite-frankframework](https://github.com/frankframework/rewrite-frankframework) is an OpenRewrite-based application which includes "recipes" and tools designed to assist developers with migrating XML configuration files built on Frank!Framework. To be able to upgrade your Frank!Framework projects with it, you need to:
+
+- Clone rewrite-frankframework into the same directory as Frank!Runner
+- Add the following target to your project's build.xml
+
+```
+   <target name="upgrade">
+      <basename property="project.dir" file="${basedir}"/>
+      <property name="target.dir" value="${basedir}"/>
+      <condition property="exe" value="../frank-runner/upgrade.bat" else="/bin/bash"><os family="windows"/></condition>
+      <condition property="arg" value="../frank-runner/upgrade.sh" else=""><os family="unix"/></condition>
+      <exec executable="${exe}" vmlauncher="false" failonerror="true">
+         <arg value="${arg}"/>
+         <arg value="-Dproject.dir=${project.dir}"/>
+         <arg value="-Dtarget.dir=${target.dir}"/>
+      </exec>
+   </target>
+```
+
+- Create a upgrade.bat with the following content in the root folder of your project which you can run from Windows Explorer:
+
+```
+call ..\frank-runner\ant.bat upgrade
+if %errorlevel% equ 0 goto end
+rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
+set arg0=%0
+if [%arg0:~2,1%]==[:] if not [%TERM_PROGRAM%] == [vscode] pause
+:end
+```
+
+or a restart.sh with the following content in the root folder of your project for Linux and Mac:
+
+```
+#!/bin/bash
+../frank-runner/ant.sh upgrade
+```
+
+- Add the following two properties with matching values to your project frank-runner.properties file, example:
+
+```
+current.version=7_6
+target.version=7_9
+```
+
 # Testing with DTAP stage different from LOC
 
 Developers are adviced to test their work with `dtap.stage=LOC`, which is set
@@ -765,10 +808,11 @@ files and dependencies.
 # Web development
 
 In case you want to develop and package a web application with your Frank! it
-is recommended to setup your project as a Maven project as it will allow you to
-edit the web application files in src/main/webapp and see the changes in your
-browser without the need to restart your Frank!. A small example can be found
-in [Frank2Example4](#frank2example4).
+is recommended to setup your project as a Maven project (see
+[Project structure and customisation](#project-structure-and-customisation)) as
+it will allow you to edit the web application files in src/main/webapp and see
+the changes in your browser without the need to restart your Frank!. A small
+example can be found in [Frank2Example4](#frank2example4).
 
 When you write a webapplication with Maven, your `pom.xml` file defines how the
 application should be packaged. The Maven build is then typically what you need

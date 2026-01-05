@@ -45,7 +45,6 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 	chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
-	RUN_INSTALL="true"
 fi
 ZIP=apache-ant-1.10.15-bin.tar.gz
 URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.15-bin.tar.gz
@@ -106,24 +105,6 @@ JDK_8_DIR="${FR_DIR}build/jdk8u472-b08"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.29+7"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.17+10"
 JDK_21_DIR="${FR_DIR}build/jdk-21.0.9+10"
-if [[ ! -d "${JDK_8_DIR}" ]]; then
-	RUN_INSTALL="true"
-fi
-if [[ ! -d "${JDK_11_DIR}" ]]; then
-	RUN_INSTALL="true"
-fi
-if [[ ! -d "${JDK_17_DIR}" ]]; then
-	RUN_INSTALL="true"
-fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.11" ]]; then
-	RUN_INSTALL="true"
-fi
 export JAVA_HOME="${JDK_21_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
-if [[ "$RUN_INSTALL" == "true" ]]; then
-	"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
-fi
-export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.11/bin:${PATH}"
-echo "JAVA : ${JAVA_HOME}"
-echo "ANT  : ${ANT_HOME}"
-echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.11"
+"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" upgrade
