@@ -289,7 +289,7 @@
 		<!-- This goal is executed multiple times because multiple goals depend on init. This is no problem
 			because property ff.version cannot be changed by the extra invocations and the extra invocations
 			won't reload the metadata -->
-		<echo message="maven=${maven}, ff.version=${ff.version}, should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}"/>
+		<echo message="maven=${maven}, ff.version=${ff.version}, should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}" if:set="debug.true"/>
 		<antcall target="set.ff.version.from.update.strategy" if:set="should.set.ff.version.from.update.strategy"/>
 		<property file="${download.dir}/metadata/update.strategy.result.txt" if:set="should.set.ff.version.from.update.strategy"/>
 		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
@@ -1157,7 +1157,7 @@
 	</target>
 
 	<target name="extract.stable.version">
-		<xslt in="download/metadata/maven-metadata.xml" out="download/metadata/stable.txt" style="stableVersions.xslt"/>
+		<xslt in="download/metadata/maven-metadata.xml" out="download/metadata/stable.txt" style="extensions/xslt/stableVersions.xslt"/>
 		<loadfile property="comma.separated.stable.versions" srcfile="download/metadata/stable.txt"/>
 		<scriptdef language="javascript" name="getLastStableVersion">
 			<attribute name="name"/>
@@ -1501,10 +1501,7 @@ fi</echo>
 		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}" if:set="debug.true"/>
-		<condition property="show.update.strategy">
-			<and><isset property="debug"/><isset property="should.set.ff.version.from.update.strategy"/></and>
-		</condition>
-		<echo message="update.strategy: ${update.strategy}" if:set="show.update.strategy"/>
+		<echo message="update.strategy: ${update.strategy}" if:set="debug.true"/>
 		<echo message="ff.version: ${ff.version}" if:set="debug.true"/>
 		<echo message="h2.jar: ${h2.jar}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
