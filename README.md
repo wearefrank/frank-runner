@@ -602,15 +602,16 @@ Please report any Frank!Framework bugs at:
 https://github.com/frankframework/frankframework/issues
 
 We appreciate your help but in case you would like to use a more reliable
-version and/or like to disable the update mechanism add the following to either
-a build.properties in the frank-runner folder or a frank-runner.properties in
-the root folder of your project:
+version then add the following to either a build.properties in the
+frank-runner folder or a frank-runner.properties in the root folder of your
+project:
 
 ```
 update.strategy=stable
 ```
 
-Or specify a specific Frank!Framework version like:
+Or disable updating the Frank!Framework completely by specifying a specific
+version like:
 
 ```
 ff.version=7.4

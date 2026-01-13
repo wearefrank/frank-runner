@@ -284,22 +284,19 @@
 		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 
 		<antcall target="install.cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
-
-		<property name="update.strategy" value="latest"/>
-		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
-		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
 		<property name="get.metadata.maxtime" value="10"/>
-		<property name="get.metadata.ignoreerrors" value="true"/>
-		<mkdir dir="${download.dir}/metadata/"/>
-
-		<condition property="get.metadata"><and><isset property="update.strategy.is.latest"/><not><resourceexists><file file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="ff.version"/></not><not><equals arg1="${maven}" arg2="true"/></not></and></condition>
-		<progressbarget src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="${download.dir}/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
-		<move file="${download.dir}/metadata/maven-metadata-tmp.xml" tofile="${download.dir}/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
-		<xmlproperty file="${download.dir}/metadata/maven-metadata.xml" if:set="update.strategy.is.latest"/>
-		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata">metadata.versioning.latest=${metadata.versioning.latest}</echo>
-		<property name="ff.version" value="${metadata.versioning.latest}" if:set="metadata.versioning.latest" unless:true="${maven}"/><!-- unless:true="${maven} to prevent unnecessary download -->
-		<condition property="ff.version" value="9.3.0" unless:true="${maven}"><equals arg1="${update.strategy}" arg2="stable"/></condition><!-- unless:true="${maven} to prevent unnecessary download -->
-		<fail message="Property update.strategy has invalid value: ${update.strategy}"><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
+		<condition property="should.set.ff.version.from.update.strategy">
+			<and>
+				<equals arg1="${maven}" arg2="false"/>
+				<not><isset property="ff.version"></isset></not>
+			</and>
+		</condition>
+		<!-- This goal is executed multiple times because multiple goals depend on init. This is no problem
+			because property ff.version cannot be changed by the extra invocations and the extra invocations
+			won't reload the metadata -->
+		<echo message="maven=${maven}, ff.version=${ff.version}, should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}" if:set="debug.true"/>
+		<antcall target="set.ff.version.from.update.strategy" if:set="should.set.ff.version.from.update.strategy"/>
+		<property file="${download.dir}/metadata/update.strategy.result.txt" if:set="should.set.ff.version.from.update.strategy"/>
 		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
@@ -507,9 +504,16 @@
 		<echo file="${download.dir}/frank-runner/build-${get.build.tstamp}.txt" if:set="get.build"/>
 		<copy file="build.xml" tofile="${download.dir}/frank-runner/build.xml"/><!-- overwrite when newer, e.g. when git pull is done when build.xml is already downloaded that day -->
 		<condition property="frank.runner.up.to.date"><or><filesmatch file1="build.xml" file2="${download.dir}/frank-runner/build.xml" textfile="true"/><not><resourceexists><file file="${download.dir}/frank-runner/build.xml"/></resourceexists></not></or></condition>
+		<echo file="${download.dir}/metadata/goal.init.output.txt" message="ff.version=${ff.version}${line.separator}" if:set="should.set.ff.version.from.update.strategy"/>
+		<echo file="${download.dir}/metadata/goal.init.output.txt" append="true" message="update.strategy=${update.strategy}${line.separator}" if:set="should.set.ff.version.from.update.strategy"/>
+		<delete file="${download.dir}/metadata/goal.init.output.txt" unless:set="should.set.ff.version.from.update.strategy"/>
+		<delete file="${download.dir}/metadata/update.strategy.result.txt" unless:set="should.set.ff.version.from.update.strategy"/>
+		<delete file="${download.dir}/metadata/stable.txt" unless:set="should.set.ff.version.from.update.strategy"/>
+		<delete file="${download.dir}/metadata/last.stable.version.txt" unless:set="should.set.ff.version.from.update.strategy"/>
 	</target>
 
 	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
+		<property file="${download.dir}/metadata/goal.init.output.txt"/>
 		<!-- jdk -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
@@ -540,6 +544,7 @@
 		<property name="webapp.dir" value="build/webapps/${context.path}" unless:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/${war.dir}/src/main/webapp" if:set="war.pom.xml.available" if:true="${maven}"/>
 		<property name="webapp.dir" value="${projects.dir}/${project.dir}/src/main/webapp" if:set="pom.xml.available" if:true="${maven}"/>
+		<fail message="Could not set property webapp.dir" unless:set="webapp.dir" />
 		<property name="webapp.gitignore" value="/iaf/&#10;/images/&#10;/js/&#10;/jsp/&#10;/larva/&#10;/META-INF/maven/&#10;/META-INF/jboss-all.xml&#10;/META-INF/MANIFEST.MF&#10;/testtool/&#10;/WEB-INF/&#10;/body.css&#10;/favicon.ico&#10;/ie4.css&#10;/ie55.css" if:true="${maven}"/>
 		<property name="webapp.clean" value="     iaf/**    images/**    js/**    jsp/**    larva/**    META-INF/maven/**    META-INF/jboss-all.xml      META-INF/MANIFEST.MF      testtool/**    WEB-INF/**    body.css      favicon.ico      ie4.css      ie55.css" unless:true="${maven.skip.clean}"/>
 		<condition property="webapp.gitignore.add" unless:true="${webapp.gitignore.skip}" if:true="${maven}"><not><resourcecontains resource="${webapp.dir}/.gitignore" substring="${webapp.gitignore}"/></not></condition>
@@ -1134,6 +1139,64 @@
 		<echo file="${dir}/.gitignore" message="${ignore}" append="true" if:true="${gitignore.add}"/>
 	</target>
 
+	<target name="set.ff.version.from.update.strategy">
+		<property name="update.strategy" value="latest"/>
+		<fail message="Property update.strategy has invalid value: '${update.strategy}'. Set it to 'stable' or 'latest'."><condition><not><or><equals arg1="${update.strategy}" arg2="latest"/><equals arg1="${update.strategy}" arg2="stable"/></or></not></condition></fail>
+		<condition property="update.strategy.is.latest"><equals arg1="${update.strategy}" arg2="latest"/></condition>
+		<condition property="update.strategy.is.stable"><equals arg1="${update.strategy}" arg2="stable"/></condition>
+		<tstamp><format property="get.metadata.tstamp" pattern="yyyyMMdd-HH"/></tstamp>
+		<property name="get.metadata.ignoreerrors" value="true"/>
+		<mkdir dir="${download.dir}/metadata/"/>
+		<condition property="get.metadata"><not><resourceexists><file file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not></condition>
+		<progressbarget src="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/maven-metadata.xml" dest="${download.dir}/metadata/maven-metadata-tmp.xml" maxtime="${get.metadata.maxtime}" ignoreerrors="${get.metadata.ignoreerrors}" verbose="on" if:set="get.metadata"/>
+		<move file="${download.dir}/metadata/maven-metadata-tmp.xml" tofile="${download.dir}/metadata/maven-metadata.xml" failonerror="false" quiet="true"/>
+		<xmlproperty file="${download.dir}/metadata/maven-metadata.xml"/>
+		<antcall target="extract.stable.version"/>
+		<loadfile property="last.stable.version" srcfile="${download.dir}/metadata/last.stable.version.txt"/>
+		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" if:set="get.metadata" message="metadata.versioning.latest=${metadata.versioning.latest}${line.separator}"/>
+		<echo file="${download.dir}/metadata/maven-metadata-${get.metadata.tstamp}.txt" append="true" if:set="get.metadata" message="last.stable.version=${last.stable.version}${line.separator}"/>
+		<property name="ff.version" value="${metadata.versioning.latest}" if:set="update.strategy.is.latest"/>
+		<property name="ff.version" value="${last.stable.version}" if:set="update.strategy.is.stable"/>
+		<echo file="${download.dir}/metadata/update.strategy.result.txt" message="update.strategy=${update.strategy}${line.separator}"/>
+		<echo file="${download.dir}/metadata/update.strategy.result.txt" append="true" message="ff.version=${ff.version}${line.separator}"/>
+	</target>
+
+	<target name="extract.stable.version">
+		<xslt in="download/metadata/maven-metadata.xml" out="download/metadata/stable.txt" style="extensions/xslt/stableVersions.xslt"/>
+		<loadfile property="comma.separated.stable.versions" srcfile="download/metadata/stable.txt"/>
+		<scriptdef language="javascript" name="getLastStableVersion">
+			<attribute name="name"/>
+			<attribute name="commaseparated"/>
+			var commaSeparated = new String(attributes.get("commaseparated")).split(',');
+			var largest = '';
+			for (var i = 0; i &lt; commaSeparated.length; i++) {
+				if (commaSeparated[i].length &gt; 0) {
+					if (largest === '') {
+						largest = commaSeparated[i];
+					} else {
+						largestNumbers = largest.split('.').map((s) =&gt; +s);
+						newNumbers = commaSeparated[i].split('.').map((s) =&gt; +s);
+						if (newNumbers[0] &gt; largestNumbers[0]) {
+							largest = commaSeparated[i];
+						} else if(newNumbers[0] === largestNumbers[0]) {
+							if (newNumbers[1] &gt; largestNumbers[1]) {
+								largest = commaSeparated[i];
+							}
+							else if(newNumbers[1] === largestNumbers[1]) {
+								if (newNumbers[2] &gt; largestNumbers[2]) {
+									largest = commaSeparated[i];
+								}
+							}
+						}
+					}
+				}
+			}
+			project.setProperty(attributes.get("name"), largest);
+		</scriptdef>
+		<getLastStableVersion name="last.stable.version" commaseparated="${comma.separated.stable.versions}"/>
+		<echo file="${download.dir}/metadata/last.stable.version.txt" message="${last.stable.version}"/>
+	</target>
+
 	<target name="generate.bat">
 		<condition property="ant"><equals arg1="${filename}" arg2="ant"/></condition>
 		<condition property="mvn"><equals arg1="${filename}" arg2="mvn"/></condition>
@@ -1443,6 +1506,7 @@ fi</echo>
 		<echo message="context.path: ${context.path}" if:set="debug.true"/>
 		<echo message="maxmemory: ${maxmemory}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
+		<echo message="should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}" if:set="debug.true"/>
 		<echo message="update.strategy: ${update.strategy}" if:set="debug.true"/>
 		<echo message="ff.version: ${ff.version}" if:set="debug.true"/>
 		<echo message="h2.jar: ${h2.jar}" if:set="debug.true"/>
