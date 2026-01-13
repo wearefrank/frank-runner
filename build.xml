@@ -22,6 +22,11 @@
 		<property name="war.dir" value="war"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
+		
+		<!-- example foks project structure -->
+		<available property="workers.dir.available" type="dir" file="${projects.dir}/${project.dir}/workers"/>
+		<property name="classes.dir" value="application/resources" if:set="workers.dir.available"/>
+		<property name="lib.server.dir" value="application/drivers" if:set="workers.dir.available"/>
 
 		<property name="classes.dir" value="${war.dir}/src/main/resources" if:set="war.pom.xml.available"/>
 		<property name="configurations.dir" value="${override.configurations.dir}" if:set="override.configurations.dir"/><!-- Enables CI/CD to choose configurations in frank-runner/build.properties. See https://github.com/wearefrank/ladybug-ff-cypress-test/blob/main/.github/workflows/testing.js.yml -->
@@ -1407,6 +1412,7 @@ fi</echo>
 		<echo message="application.war.pom.xml.available: ${application.war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="war.pom.xml.available: ${war.pom.xml.available}" if:set="debug.true"/>
 		<echo message="pom.xml.available: ${pom.xml.available}" if:set="debug.true"/>
+		<echo message="workers.dir.available: ${workers.dir.available}" if:set="debug.true"/>
 		<echo message=" " if:set="debug.true"/>
 		<echo message="classes.dir: ${classes.dir}" if:set="debug.true"/>
 		<echo message="configurations.dir: ${configurations.dir}" if:set="debug.true"/>
