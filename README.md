@@ -20,6 +20,7 @@ run it using a [small restart.bat](#small-restartbat-for-every-project) /
 - [Project per config](#project-per-config)
 - [Module per config](#module-per-config)
 - [Module per config flattened (aka monorepo)](#module-per-config-flattened-aka-monorepo)
+- [Foks monorepo](#foks-monorepo)
 - [Debug property](#debug-property)
 - [Frank!Framework version](#frankframework-version)
 - [Other properties and software versions](#other-properties-and-software-versions)
