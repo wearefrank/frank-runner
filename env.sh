@@ -119,7 +119,7 @@ fi
 if [[ ! -d "${JDK_21_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.11" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.12" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_25_DIR}"
@@ -127,7 +127,7 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.11/bin:${PATH}"
+export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.12/bin:${PATH}"
 echo "JAVA : ${JAVA_HOME}"
 echo "ANT  : ${ANT_HOME}"
-echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.11"
+echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.12"
