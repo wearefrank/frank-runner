@@ -384,10 +384,6 @@
 			<propertyref name="application.security.console.authentication.type" />
 			<propertyref name="application.security.console.authentication.username" />
 			<propertyref name="application.security.console.authentication.password" />
-			<!-- The three properties below are no longer relevant for new FF! versions.
-			     In these versions it is not possible anymore to have different authorization
-				 for the Frank!Console and for ladybug. These properties are not removed yet
-				 to support them for old FF! versions -->
 			<propertyref name="application.security.testtool.authentication.type" />
 			<propertyref name="application.security.testtool.authentication.username" />
 			<propertyref name="application.security.testtool.authentication.password" />
