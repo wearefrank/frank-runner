@@ -21,10 +21,28 @@
 		<condition property="ladybug.not.present"><not><resourceexists><file file="../../../ladybug"/></resourceexists></not></condition>
 		<fail message="Folder ladybug not found, please clone https://github.com/wearefrank/ladybug.git" if:set="ladybug.not.present"/>
 
-		<echo message="ladybug: Check ladybug-test-webapp present"/>
-		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}"><not><resourceexists><file file="../../../ladybug-test-webapp"/></resourceexists></not></condition>
+		<xmlproperty file="../../../ladybug/pom.xml" prefix="ladybug.pom.xml"/>
+		<condition property="separate.ladybug.projects">
+			<matches string="${ladybug.pom.xml.project.properties.revision}" pattern="^([0123]\.).*$"/>
+		</condition>
+
+		<echo message="ladybug: Check ladybug-test-webapp present" if:set="separate.ladybug.projects"/>
+		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.test.webapp}" if:set="separate.ladybug.projects"><not><resourceexists><file file="../../../ladybug-test-webapp"/></resourceexists></not></condition>
 		<fail message="Folder ladybug-test-webapp not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:true="${ladybug-test-webapp.not.present}"/>
 
+		<echo message="Need separate Git projects for Ladybug because ladybug version &lt; 4.0-*" if:set="separate.ladybug.projects"/>
+		<condition property="ladybug.test.webapp.executable" value="ladybug-test-webapp">
+			<and>
+				<equals arg1="${test.with.test.webapp}" arg2="true"></equals>
+				<isset property="separate.ladybug.projects"/>
+			</and>
+		</condition>
+		<condition property="ladybug.test.webapp.executable" value="ladybug/ladybug-test-webapp">
+			<and>
+				<equals arg1="${test.with.test.webapp}" arg2="true"></equals>
+				<not><isset property="separate.ladybug.projects"/></not>
+			</and>
+		</condition>
 		<echo message="ladybug: Check ladybug-ff-test-webapp present"/>
 		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ff.test.webapp}"><not><resourceexists><file file="../../../ladybug-ff-test-webapp"/></resourceexists></not></condition>
 		<fail message="Folder ladybug-ff-test-webapp not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
@@ -33,14 +51,14 @@
 		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../frankframework"/></resourceexists></not></condition>
 		<fail message="Folder frankframework not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
 
-		<echo message="ladybug: Check ladybug version in ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}"/>
+		<echo message="ladybug: Check ladybug version in ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}" if:set="separate.ladybug.projects"/>
 		<echo message="ladybug: Check ladybug version in frankframework/ladybug/pom.xml" unless:true="${test.with.test.webapp}"/>
-		<property name="pom.xml" location="${basedir}/../../../ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}"/>
+		<property name="pom.xml" location="${basedir}/../../../ladybug-test-webapp/pom.xml" if:true="${test.with.test.webapp}" if:set="separate.ladybug.projects"/>
 		<property name="pom.xml" location="${basedir}/../../../frankframework/ladybug/pom.xml" unless:true="${test.with.test.webapp}"/>
 		<xmlproperty file="${pom.xml}" prefix="pom.xml"/>
-		<xmlproperty file="../../../ladybug/pom.xml" prefix="ladybug.pom.xml"/>
 		<condition property="ladybug.version.not.ok">
 			<and>
+				<isset property="separate.ladybug.projects"/>
 				<or>
 					<isset property="test.with.test.webapp"/>
 					<isset property="test.with.ff.test.webapp"/>
@@ -150,7 +168,7 @@
 		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.test.webapp}"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.test.webapp}">
 			<arg value="${start.arg}"/>
-			<arg value="-Dproject.dir=ladybug-test-webapp"/>
+			<arg value="-Dproject.dir=${ladybug.test.webapp.executable}"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
