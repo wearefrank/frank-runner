@@ -22,7 +22,7 @@
         <fail message="File frankframework/pom.xml does not exist" unless:set="ff.pom.available" />
         <xmlproperty file="frankframework/pom.xml" prefix="ff" />
         <xmlproperty file="ladybug/ladybug-ff-test-webapp/pom.xml" prefix="ladybug.ff.test.webapp" />
-        <replace file="ladybug-ff-test-webapp/pom.xml"
+        <replace file="ladybug/ladybug-ff-test-webapp/pom.xml"
             token="&lt;ff.version&gt;${ladybug.ff.test.webapp.project.properties.ff.version}&lt;/ff.version&gt;"
             value="&lt;ff.version&gt;${ff.project.properties.revision}&lt;/ff.version&gt;" />
     </target>
