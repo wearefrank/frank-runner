@@ -7,23 +7,23 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
-set DOWNLOAD_HELP=download https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1+8/OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip" (
+set DOWNLOAD_HELP=download https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip.tmp" -L https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1+8/OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip
+	curl -f -o "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip.tmp" -L https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip.tmp" "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip"
+	move "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip.tmp" "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip"
 )
-if not exist "%~dp0build\jdk-25.0.1+8\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.1_8.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\jdk-25.0.2+10\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\jdk-25.0.1+8" "%~dp0build\jdk-25.0.1+8"
+	move "%~dp0build\tmp\build\jdk-25.0.2+10" "%~dp0build\jdk-25.0.2+10"
 )
 set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.15-bin.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\apache-ant-1.10.15-bin.zip" (
@@ -68,11 +68,11 @@ if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.15.jar" (
 if not exist "%~dp0build\apache-ant-1.10.15\lib\progressbarget.jar" (
 	copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.15\lib\"
 )
-set JDK_8_DIR=%~dp0%build\jdk8u472-b08
-set JDK_11_DIR=%~dp0%build\jdk-11.0.29+7
-set JDK_17_DIR=%~dp0%build\jdk-17.0.17+10
-set JDK_21_DIR=%~dp0%build\jdk-21.0.9+10
-set JDK_25_DIR=%~dp0%build\jdk-25.0.1+8
+set JDK_8_DIR=%~dp0%build\jdk8u482-b08
+set JDK_11_DIR=%~dp0%build\jdk-11.0.30+7
+set JDK_17_DIR=%~dp0%build\jdk-17.0.18+8
+set JDK_21_DIR=%~dp0%build\jdk-21.0.10+7
+set JDK_25_DIR=%~dp0%build\jdk-25.0.2+10
 if not exist "%JDK_8_DIR%" (
 	set RUN_INSTALL=true
 )
