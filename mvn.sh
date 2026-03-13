@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.1_8.tar.gz
-URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1+8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.1_8.tar.gz
-DIR=build/jdk-25.0.1+8
+ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz
+URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz
+DIR=build/jdk-25.0.2+10
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz
-	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1+8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.1_8.tar.gz
+	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.2_10.tar.gz
+	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_mac_hotspot_25.0.2_10.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -102,11 +102,11 @@ fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/progressbarget.jar" ]]; then
 	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
-JDK_8_DIR="${FR_DIR}build/jdk8u472-b08"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.29+7"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.17+10"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.9+10"
-JDK_25_DIR="${FR_DIR}build/jdk-25.0.1+8"
+JDK_8_DIR="${FR_DIR}build/jdk8u482-b08"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.30+7"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.18+8"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.10+7"
+JDK_25_DIR="${FR_DIR}build/jdk-25.0.2+10"
 if [[ ! -d "${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
@@ -119,7 +119,7 @@ fi
 if [[ ! -d "${JDK_21_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.12" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.14" ]]; then
 	RUN_INSTALL="true"
 fi
 # Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)
@@ -129,4 +129,4 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-"${FR_DIR}build/apache-maven-3.9.12/bin/mvn" "$@"
+"${FR_DIR}build/apache-maven-3.9.14/bin/mvn" "$@"
