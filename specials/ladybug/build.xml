@@ -160,6 +160,7 @@
 			<arg value="-Dmaven.source.skip=true" if:true="${maven.skip.source.jar}"/>
 			<arg value="-Dmaven.skip.copyright=true" if:true="${maven.skip.copyright}"/>
 			<arg value="-Dcheckstyle.skip=true" if:true="${maven.skip.checkstyle}"/>
+			<arg value="-Dkeep.all.ladybug.reports.from.unit.tests=true" if:true="${keep.all.ladybug.reports.from.unit.tests}"/>
 			<arg value="-X" if:true="${maven.verbose}"/>
 			<arg value="--settings" if:set="maven.settings.xml"/>
 			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
