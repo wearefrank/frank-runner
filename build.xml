@@ -231,7 +231,7 @@
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
 		<property name="eclipse.version" value="2026-03"/><!-- on update, also update eclipse.jre.dir and check if lombok needs updating -->
-		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.9.v20251105-0741/jre"/>
+		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.10.v20260205-0638/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
