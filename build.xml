@@ -187,7 +187,7 @@
 		<property name="jdk.lib.jspawnhelper" value="lib/jspawnhelper"/><!-- chmod +x to prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
-		<property name="ant.version." value="1.10.15"/><!-- on update: see extensions/progress-bar/README.md --><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.version." value="1.10.17"/><!-- on update: see extensions/progress-bar/README.md --><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
 		<property name="ant.tar" value="${ant.base}.tar"/>
@@ -196,7 +196,7 @@
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-		<property name="rhino.version.major" value="1"/>
+		<property name="rhino.version.major" value="1"/> <!-- https://rhino.github.io/releases/ -->
 		<property name="rhino.version.minor" value="7"/>
 		<property name="rhino.version.patch" value="15"/>
 		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
@@ -215,13 +215,13 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="115"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version.patch" value="117"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<property name="tomcat.10.version.minor" value="1"/>
-		<property name="tomcat.10.version.patch" value="52"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version.patch" value="54"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
@@ -230,8 +230,8 @@
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
 		<property name="tomcat.secure.port" value="443"/>
 		<property name="tomcat.server.port" value="8005"/>
-		<property name="eclipse.version" value="2025-12"/><!-- on update, also update eclipse.jre.dir and check if lombok needs updating -->
-		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.9.v20251105-0741/jre"/>
+		<property name="eclipse.version" value="2026-03"/><!-- on update, also update eclipse.jre.dir and check if lombok needs updating -->
+		<property name="eclipse.jre.dir" value="plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.10.v20260205-0638/jre"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-win32-x86_64" if:true="${os.windows}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-linux-gtk-x86_64" if:true="${os.linux}"/>
 		<property name="eclipse.file" value="eclipse-jee-${eclipse.version}-R-macosx-cocoa-x86_64" if:true="${os.mac}"/>
@@ -251,7 +251,7 @@
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
 		<property name="jta.uninstall.mask" value="geronimo-jta*"/>
 		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
-		<property name="activation.version" value="2.1.4"/>
+		<property name="activation.version" value="2.1.4"/> <!-- https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api/versions -->
 		<property name="activation.jar" value="jakarta.activation-api-${activation.version}.jar"/>
 		<property name="activation.uninstall.mask" value="jakarta.activation-api*"/>
 		<property name="activation.url" value="https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/${activation.version}/${activation.jar}"/>
@@ -287,11 +287,11 @@
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.uninstall.mask" value="ojdbc11-*"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
-		<property name="mssql8.version" value="13.2.1.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql8.version" value="13.4.0.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
 		<property name="mssql8.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
-		<property name="mssql11.version" value="13.2.1.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql11.version" value="13.4.0.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
 		<property name="mssql11.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
