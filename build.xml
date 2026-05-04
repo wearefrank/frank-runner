@@ -81,6 +81,9 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
+		<!-- Reminder for manual life cycle management of Frank!Runner 
+		     Apart from updating these versions, update the FF! version
+			 referenced in examples/Frank2Example4 -->
 		<property name="jdk.8.version.minor" value="482"/><!-- https://adoptium.net/temurin/ -->
 		<property name="jdk.8.version.patch" value="b08"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
