@@ -144,7 +144,6 @@ public class ProgressBarGet extends Task {
             final int logLevel = Project.MSG_INFO;
             DownloadProgress progress = null;
             boolean interactiveConsole = System.console() != null;
-            System.out.println(getProject().getBuildListeners().);
             if (verbose.equals("on") && interactiveConsole) {
                 PrintStream rawOut = new PrintStream(new FileOutputStream(FileDescriptor.out), true);
                 progress = new ProgressBarProgress(rawOut);
