@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz
-URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz
-DIR=build/jdk-25.0.2+10
+ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.3_9.tar.gz
+URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_linux_hotspot_25.0.3_9.tar.gz
+DIR=build/jdk-25.0.3+9
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.2_10.tar.gz
-	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2+10/OpenJDK25U-jdk_x64_mac_hotspot_25.0.2_10.tar.gz
+	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.3_9.tar.gz
+	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_mac_hotspot_25.0.3_9.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -102,11 +102,11 @@ fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.17/lib/progressbarget.jar" ]]; then
 	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 fi
-JDK_8_DIR="${FR_DIR}build/jdk8u482-b08"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.30+7"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.18+8"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.10+7"
-JDK_25_DIR="${FR_DIR}build/jdk-25.0.2+10"
+JDK_8_DIR="${FR_DIR}build/jdk8u492-b09"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.31+11"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.19+10"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.11+10"
+JDK_25_DIR="${FR_DIR}build/jdk-25.0.3+9"
 if [[ ! -d "${JDK_8_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
@@ -119,7 +119,7 @@ fi
 if [[ ! -d "${JDK_21_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.14" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.9.16" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_25_DIR}"
@@ -127,7 +127,7 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.17"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.17/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.14/bin:${PATH}"
+export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.16/bin:${PATH}"
 echo "JAVA : ${JAVA_HOME}"
 echo "ANT  : ${ANT_HOME}"
-echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.14"
+echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.16"
