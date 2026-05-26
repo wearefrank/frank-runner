@@ -1,2 +1,2 @@
 #!/bin/bash
-../../ant.sh
+../../ant.sh -buildfile ${pwd}/build.xml
