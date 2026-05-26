@@ -59,6 +59,7 @@
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
 		<property name="maven" value="false"/>
+		<echo message="application.war.pom.xml.available=${application.war.pom.xml.available} and war.pom.xml.available=${war.pom.xml.available} and pom.xml.available=${pom.xml.available}"/>
 		<echo message="Property [maven] was set to [${maven}]"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
 		<property name="maven.skip.clean" value="false" if:true="${maven}"/>

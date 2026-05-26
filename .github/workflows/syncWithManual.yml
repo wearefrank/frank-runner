@@ -1,6 +1,8 @@
 name: Sync with manual.
 on:
   push:
+    branches:
+      - master
   pull_request:
 jobs:
   Frank2Example1-Example1a:
