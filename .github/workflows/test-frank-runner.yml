@@ -52,7 +52,7 @@ jobs:
       run: bash ./restart.sh > ../../frankRunnerStartLog.txt &
       working-directory: examples/${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 1000
+      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
     - name: Wait, otherwise we fail with status STARTING
       run: sleep 10s
     - name: Capture status
@@ -100,7 +100,7 @@ jobs:
   testing-windows:
     strategy:
       matrix:
-        example: [Frank2Example1]
+        example: [Frank2Example1, Frank2Example4]
     name: Test windows ${{ matrix.example }}
     runs-on: windows-latest
 
