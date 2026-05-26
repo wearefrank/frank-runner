@@ -52,9 +52,10 @@
 		<property name="rewrite.dir" location="${basedir}/../rewrite-frankframework"/>
 		<available property="recipes.installed" file="${rewrite.dir}/target"/>
 
-		<property name="maven" value="false"/>
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
+		<property name="maven" value="false"/>
+		<echo message="Property [maven] was set to [${maven}]"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
 		<property name="maven.skip.clean" value="false" if:true="${maven}"/>
 		<property name="maven.skip.tests" value="false" if:true="${maven}"/>
@@ -947,10 +948,9 @@
 		<progressbarget src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
 	</target>
 
-	<!-- ff.version is not set when running maven -->
-	<target name="get.ff" if:set="ff.version">
+	<target name="get.ff" unless="${maven}">
+		<fail message="Property ff.version has no value" unless="ff.version"/>
 		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
-		<available property="ff.war.from.frankframework.nexus.available" file="${download.dir}/${ff.war}"/>
 		<progressbarget src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
 		<available property="ff.war.finally.available" file="${download.dir}/${ff.war}"/>
 		<fail unless="ff.war.finally.available"/>
