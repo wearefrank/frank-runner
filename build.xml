@@ -17,10 +17,13 @@
 		<available property="project.dir.available" file="${projects.dir}/${project.dir}"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
 
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/application/war/pom.xml"/>
 		<available property="application.war.pom.xml.available" file="${projects.dir}/${project.dir}/application/war/pom.xml"/>
 		<property name="war.dir" value="application/war" if:set="application.war.pom.xml.available"/>
 		<property name="war.dir" value="war"/>
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/pom.xml"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 		
 		<!-- example foks project structure -->
@@ -52,6 +55,7 @@
 		<property name="rewrite.dir" location="${basedir}/../rewrite-frankframework"/>
 		<available property="recipes.installed" file="${rewrite.dir}/target"/>
 
+		<property name="maven" value="true" if:set="application.war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
 		<property name="maven" value="false"/>
