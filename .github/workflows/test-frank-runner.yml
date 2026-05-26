@@ -54,7 +54,7 @@ jobs:
       run: bash ./restart.sh > ../../frankRunnerStartLog.txt &
       working-directory: examples/${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
+      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 150
     - name: Wait, otherwise we fail with status STARTING
       run: sleep 10s
     - name: Capture status
