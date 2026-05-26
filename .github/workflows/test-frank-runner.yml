@@ -1,6 +1,8 @@
 name: TestFrankRunner.
 on:
   push:
+    branches:
+      - master
   pull_request:
   workflow_dispatch:
     inputs:
@@ -77,7 +79,7 @@ jobs:
           }
     - name: Store logs
       uses: actions/upload-artifact@v4
-      if: failure()
+      if: always()
       with:
         name: Linux-${{ matrix.example}}
         path: |
@@ -133,7 +135,7 @@ jobs:
     - name: Configure another SSL port
       run: echo "tomcat.secure.port=8443" >> build.properties
     - name: Start Frank!Runner ${{ matrix.example }}
-      run: cmd /C .\restart.bat
+      run: cmd /C .\restart.bat > ..\..\frankRunnerStartLog.txt
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up
       run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
@@ -166,6 +168,7 @@ jobs:
       with:
         name: Windows-${{ matrix.example}}
         path: |
+          frankRunnerStartLog.txt
           build\*\logs
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
