@@ -323,6 +323,7 @@
 		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
+		<property name="ff.maven.central.url" value="https://repo1.maven.org/maven2/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
 
 		<condition property="frankflow.get.metadata"><and><not><resourceexists><file file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt"/></resourceexists></not><not><isset property="frankflow.version"/></not></and></condition>
 		<mkdir dir="${download.dir}/metadata/frank-flow"/>
@@ -946,8 +947,13 @@
 		<progressbarget src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
 	</target>
 
-	<target name="get.ff" unless="${ff.war.available}">
-		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" if:set="ff.version"/><!-- ff.version is not set when running maven -->
+	<!-- ff.version is not set when running maven -->
+	<target name="get.ff" if:set="ff.version">
+		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
+		<available property="ff.war.from.frankframework.nexus.available" file="${download.dir}/${ff.war}"/>
+		<progressbarget src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
+		<available property="ff.war.finally.available" file="${download.dir}/${ff.war}"/>
+		<fail unless="ff.war.finally.available"/>
 	</target>
 
 	<target name="get.frankflow" unless="${frankflow.war.available}">
