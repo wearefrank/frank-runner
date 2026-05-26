@@ -51,8 +51,7 @@ jobs:
     - name: Check network
       run: time ping -c 4 -O -v -w 60 localhost
     - name: Start Frank!Runner ${{ matrix.example }}
-      run: bash ./restart.sh > ../../frankRunnerStartLog.txt &
-      working-directory: examples/${{ matrix.example }}
+      run: cd examples/${{ matrix.example }} && bash ./restart.sh > ../../frankRunnerStartLog.txt &
     - name: Wait until Frank!Framework is up
       run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
     - name: Wait, otherwise we fail with status STARTING
