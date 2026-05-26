@@ -2,6 +2,7 @@
 	<taskdef name="progressbarget" classname="org.apache.tools.ant.taskdefs.ProgressBarGet"/>
 
 	<target name="init">
+		<echo message="frank-runner main build.xml enters with project.dir=${project.dir}"/>
 		<basename property="basedir.basename" file="${basedir}"/>
 		<property file="build.properties"/>
 		<property name="download.dir" value="download"/>
