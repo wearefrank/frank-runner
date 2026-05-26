@@ -1,4 +1,4 @@
-call ..\..\ant.bat
+call ..\..\ant.bat -buildfile %CD%\build.xml
 if %errorlevel% equ 0 goto end
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
 set arg0=%0
