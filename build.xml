@@ -954,6 +954,7 @@
 		<progressbarget src="${winmerge.url}" dest="${download.dir}/${winmerge.zip}" verbose="on"/>
 	</target>
 
+	<!-- TODO issue https://github.com/wearefrank/frank-runner/issues/173 -->
 	<target name="get.ff" unless="${maven}">
 		<fail message="Property ff.version has no value" unless="ff.version"/>
 		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
