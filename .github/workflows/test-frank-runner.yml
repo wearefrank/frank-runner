@@ -78,6 +78,9 @@ jobs:
             core.info('status is OK');
           }
     - name: Capture OpenAPI
+      # if is workaround for FF! issue https://github.com/frankframework/frankframework/issues/10922
+      # TODO: When we have the final version of this code then replicate to job on Windows.
+      if: ${{ matrix.example != 'Frank2Example4' }}
       id: captureOpenAPI
       uses: fjogeleit/http-request-action@v1
       with:
