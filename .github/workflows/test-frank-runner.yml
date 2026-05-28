@@ -88,6 +88,8 @@ jobs:
         url: "http://localhost:8091/iaf/api/webservices/openapi.json"
     - name: Check that we really run ${{ matrix.example }}
       uses: actions/github-script@v6
+      # TODO FF! issue https://github.com/frankframework/frankframework/issues/10922
+      if: ${{ matrix.example != 'Frank2Example4' }}
       with:
         script: |
           let rawOpenAPI = '${{ steps.captureOpenAPI.outputs.response }}'
