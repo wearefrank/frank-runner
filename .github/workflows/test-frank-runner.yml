@@ -77,6 +77,26 @@ jobs:
           } else {
             core.info('status is OK');
           }
+    - name: Capture OpenAPI
+      id: captureOpenAPI
+      uses: fjogeleit/http-request-action@v1
+      with:
+        method: GET
+        url: "http://localhost:8091/iaf/api/webservices/openapi.json"
+    - name: Check that we really run ${{ matrix.example }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          let rawOpenAPI = '${{ steps.captureOpenAPI.outputs.response }}'
+          core.info('Captured open API: ' + rawOpenAPI)
+          let openAPI = JSON.parse(rawOpenAPI)
+          if(! openAPI.info?.title) {
+            core.setFailed('Response has no field "info.title"')
+          } else if(openAPI.info.title !== '${{ matrix.example }}') {
+            core.setFailed('Field "info.title" is not "${{ matrix.example }}"')
+          } else {
+            core.info('info.title is ${{ matrix.example }}');
+          }
     - name: Store logs
       uses: actions/upload-artifact@v4
       if: always()
