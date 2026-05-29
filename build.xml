@@ -57,11 +57,14 @@
 		<property name="rewrite.dir" location="${basedir}/../rewrite-frankframework"/>
 		<available property="recipes.installed" file="${rewrite.dir}/target"/>
 
-		<!-- Do not set "maven" to "true" automatically when "application.war.pom.xml.available"
-		     Many projects at customers have a pom.xml but they do not use Maven to do the build. -->
-		<property name="maven" value="true" if:set="war.pom.xml.available"/>
+		<property name="maven" value="false"/> <!-- Technically this causes the next changes of property "maven" not to happen
+			The issue here is that the existence of pom.xml is often only to indicate that there is a Maven project structure.
+			For such projects the Frank!Runner should not really use Maven to do the build.
+			The intend was to test whether building with Maven works by default when there is a pom.xml.
+			Then the default setting of "maven" to "false" can be removed so that the other changes of "maven"
+			will become effective. -->
+		<property name="maven" value="true" if:set="war.pom.xml.available"/> <!-- Do not set "maven" to "true" automatically when "application.war.pom.xml.available". Some projects at customers have a pom.xml but they do not use Maven to do the build. -->
 		<property name="maven" value="true" if:set="pom.xml.available"/>
-		<property name="maven" value="false"/>
 		<echo message="application.war.pom.xml.available=${application.war.pom.xml.available} and war.pom.xml.available=${war.pom.xml.available} and pom.xml.available=${pom.xml.available}"/>
 		<echo message="Property [maven] was set to [${maven}]"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
