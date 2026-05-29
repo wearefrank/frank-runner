@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK21U-jdk_x64_linux_hotspot_21.0.9_10.tar.gz
-URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.9+10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.9_10.tar.gz
-DIR=build/jdk-21.0.9+10
+ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.3_9.tar.gz
+URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_linux_hotspot_25.0.3_9.tar.gz
+DIR=build/jdk-25.0.3+9
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK21U-jdk_x64_mac_hotspot_21.0.9_10.tar.gz
-	URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.9+10/OpenJDK21U-jdk_x64_mac_hotspot_21.0.9_10.tar.gz
+	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.3_9.tar.gz
+	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_mac_hotspot_25.0.3_9.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -46,9 +46,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 	chmod +x "${FR_DIR}${DIR}/lib/jspawnhelper"
 fi
-ZIP=apache-ant-1.10.15-bin.tar.gz
-URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.15-bin.tar.gz
-DIR=build/apache-ant-1.10.15
+ZIP=apache-ant-1.10.17-bin.tar.gz
+URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.17-bin.tar.gz
+DIR=build/apache-ant-1.10.17
 SUB=
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
@@ -94,20 +94,21 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
-if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-1.7.15.jar" ]]; then
-	rm "${FR_DIR}build/apache-ant-1.10.15/lib/rhino-"*.jar
-	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.17/lib/rhino-1.7.15.jar" ]]; then
+	rm "${FR_DIR}build/apache-ant-1.10.17/lib/rhino-"*.jar
+	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 fi
-if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/progressbarget.jar" ]]; then
-	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.17/lib/progressbarget.jar" ]]; then
+	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.15/lib/customexec.jar" ]]; then
 	cp "${FR_DIR}extensions/progress-bar/customexec"*.jar "${FR_DIR}build/apache-ant-1.10.15/lib/"
 fi
-JDK_8_DIR="${FR_DIR}build/jdk8u472-b08"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.29+7"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.17+10"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.9+10"
-export JAVA_HOME="${JDK_21_DIR}"
-export ANT_HOME="${FR_DIR}build/apache-ant-1.10.15"
-"${FR_DIR}build/apache-ant-1.10.15/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" rerun
+JDK_8_DIR="${FR_DIR}build/jdk8u492-b09"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.31+11"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.19+10"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.11+10"
+JDK_25_DIR="${FR_DIR}build/jdk-25.0.3+9"
+export JAVA_HOME="${JDK_25_DIR}"
+export ANT_HOME="${FR_DIR}build/apache-ant-1.10.17"
+"${FR_DIR}build/apache-ant-1.10.17/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -Dfr.jdk.25.dir="${JDK_25_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" rerun

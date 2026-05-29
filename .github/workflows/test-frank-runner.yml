@@ -1,6 +1,8 @@
 name: TestFrankRunner.
 on:
   push:
+    branches:
+      - master
   pull_request:
   workflow_dispatch:
     inputs:
@@ -52,7 +54,7 @@ jobs:
       run: bash ./restart.sh > ../../frankRunnerStartLog.txt &
       working-directory: examples/${{ matrix.example }}
     - name: Wait until Frank!Framework is up
-      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 1000
+      run: bash .github/workflows/waitForUrl.sh http://localhost:8091/iaf/api/server/health 500
     - name: Wait, otherwise we fail with status STARTING
       run: sleep 10s
     - name: Capture status
@@ -74,6 +76,31 @@ jobs:
             core.setFailed('Field "status" is not "OK"')
           } else {
             core.info('status is OK');
+          }
+    - name: Capture OpenAPI
+      # if is workaround for FF! issue https://github.com/frankframework/frankframework/issues/10922
+      # TODO: When we have the final version of this code then replicate to job on Windows.
+      if: ${{ matrix.example != 'Frank2Example4' }}
+      id: captureOpenAPI
+      uses: fjogeleit/http-request-action@v1
+      with:
+        method: GET
+        url: "http://localhost:8091/iaf/api/webservices/openapi.json"
+    - name: Check that we really run ${{ matrix.example }}
+      uses: actions/github-script@v6
+      # TODO FF! issue https://github.com/frankframework/frankframework/issues/10922
+      if: ${{ matrix.example != 'Frank2Example4' }}
+      with:
+        script: |
+          let rawOpenAPI = '${{ steps.captureOpenAPI.outputs.response }}'
+          core.info('Captured open API: ' + rawOpenAPI)
+          let openAPI = JSON.parse(rawOpenAPI)
+          if(! openAPI.info?.title) {
+            core.setFailed('Response has no field "info.title"')
+          } else if(openAPI.info.title !== '${{ matrix.example }}') {
+            core.setFailed('Field "info.title" is not "${{ matrix.example }}"')
+          } else {
+            core.info('info.title is ${{ matrix.example }}');
           }
     - name: Store logs
       uses: actions/upload-artifact@v4
@@ -100,7 +127,7 @@ jobs:
   testing-windows:
     strategy:
       matrix:
-        example: [Frank2Example1]
+        example: [Frank2Example1, Frank2Example4]
     name: Test windows ${{ matrix.example }}
     runs-on: windows-latest
 
@@ -133,7 +160,7 @@ jobs:
     - name: Configure another SSL port
       run: echo "tomcat.secure.port=8443" >> build.properties
     - name: Start Frank!Runner ${{ matrix.example }}
-      run: cmd /C .\restart.bat
+      run: cmd /C .\restart.bat > ..\..\frankRunnerStartLog.txt
       working-directory: examples\${{ matrix.example }}
     - name: Wait until Frank!Framework is up
       run: .github\workflows\waitForUrl.bat http://localhost:8091/iaf/api/server/health 500
@@ -166,6 +193,7 @@ jobs:
       with:
         name: Windows-${{ matrix.example}}
         path: |
+          frankRunnerStartLog.txt
           build\*\logs
     - name: Check that FrankConfig.xsd exists - for classes
       if: ${{ matrix.example == 'Frank2Example2' }}
