@@ -18,14 +18,15 @@
 		<property name="project.dir" value="${basedir.basename}/examples/Frank2Example1"/>
 		<available property="project.dir.available" file="${projects.dir}/${project.dir}"/>
 		<property file="${projects.dir}/${project.dir}/frank-runner.properties"/>
+		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 
-		<echo message="Checking for existence of ${projects.dir}/${project.dir}/application/war/pom.xml"/>
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/application/war/pom.xml" if:set="debug.true"/>
 		<available property="application.war.pom.xml.available" file="${projects.dir}/${project.dir}/application/war/pom.xml"/>
 		<property name="war.dir" value="application/war" if:set="application.war.pom.xml.available"/>
 		<property name="war.dir" value="war"/>
-		<echo message="Checking for existence of ${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/${war.dir}/pom.xml" if:set="debug.true"/>
 		<available property="war.pom.xml.available" file="${projects.dir}/${project.dir}/${war.dir}/pom.xml"/>
-		<echo message="Checking for existence of ${projects.dir}/${project.dir}/pom.xml"/>
+		<echo message="Checking for existence of ${projects.dir}/${project.dir}/pom.xml" if:set="debug.true"/>
 		<available property="pom.xml.available" file="${projects.dir}/${project.dir}/pom.xml"/>
 		
 		<!-- example foks project structure -->
@@ -66,8 +67,8 @@
 			will become effective. -->
 		<property name="maven" value="true" if:set="war.pom.xml.available"/> <!-- Do not set "maven" to "true" automatically when "application.war.pom.xml.available". Some projects at customers have a pom.xml but they do not use Maven to do the build. -->
 		<property name="maven" value="true" if:set="pom.xml.available"/>
-		<echo message="application.war.pom.xml.available=${application.war.pom.xml.available} and war.pom.xml.available=${war.pom.xml.available} and pom.xml.available=${pom.xml.available}"/>
-		<echo message="Property [maven] was set to [${maven}]"/>
+		<echo message="application.war.pom.xml.available=${application.war.pom.xml.available} and war.pom.xml.available=${war.pom.xml.available} and pom.xml.available=${pom.xml.available}" if:set="debug.true"/>
+		<echo message="Property [maven] was set to [${maven}]" if:set="debug.true"/>
 		<property name="maven.phase" value="compile" if:true="${maven}"/>
 		<property name="maven.skip.clean" value="false" if:true="${maven}"/>
 		<property name="maven.skip.tests" value="false" if:true="${maven}"/>
@@ -315,8 +316,6 @@
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.uninstall.mask" value="postgresql-*"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
-
-		<condition property="debug.true"><equals arg1="${debug}" arg2="true"/></condition>
 
 		<antcall target="install.cacerts"><param name="jdk.dir" value="${fr.jdk.dir}"/></antcall><!-- install cacerts here in case jdk is unzipped by bat or sh (get tasks below need cacerts)-->
 		<property name="get.metadata.maxtime" value="10"/>

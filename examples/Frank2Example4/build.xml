@@ -3,7 +3,6 @@
 		<basename property="project.dir" file="${basedir}"/>
 		<condition property="exe" value="../../restart.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="arg" value="../../restart.sh" else=""><os family="unix"/></condition>
-		<echo message="Frank2Example4 - project.dir=${project.dir}"/>
 		<exec executable="${exe}" vmlauncher="false" failonerror="true">
 			<arg value="${arg}"/>
 			<arg value="-Dprojects.dir=${basedir}/.."/>
