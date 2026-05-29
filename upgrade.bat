@@ -68,6 +68,9 @@ if not exist "%~dp0build\apache-ant-1.10.15\lib\rhino-1.7.15.jar" (
 if not exist "%~dp0build\apache-ant-1.10.15\lib\progressbarget.jar" (
 	copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.15\lib\"
 )
+if not exist "%~dp0build\apache-ant-1.10.15\lib\customexec.jar" (
+	copy "%~dp0extensions\progress-bar\customexec.jar" "%~dp0build\apache-ant-1.10.15\lib\"
+)
 set JDK_8_DIR=%~dp0%build\jdk8u472-b08
 set JDK_11_DIR=%~dp0%build\jdk-11.0.29+7
 set JDK_17_DIR=%~dp0%build\jdk-17.0.17+10

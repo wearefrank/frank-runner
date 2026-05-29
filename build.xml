@@ -1158,6 +1158,9 @@ if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
 if not exist "%~dp0${ant.dir.windows}\lib\progressbarget.jar" (
 	copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0${ant.dir.windows}\lib\"
 )
+if not exist "%~dp0${ant.dir.windows}\lib\customexec.jar" (
+	copy "%~dp0extensions\progress-bar\customexec.jar" "%~dp0${ant.dir.windows}\lib\"
+)
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
@@ -1269,6 +1272,9 @@ if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 fi
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/progressbarget.jar" ]]; then
 	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}${ant.dir}/lib/"
+fi
+if [[ ! -f "${FR_DIR}${ant.dir}/lib/customexec.jar" ]]; then
+	cp "${FR_DIR}extensions/progress-bar/customexec"*.jar "${FR_DIR}${ant.dir}/lib/"
 fi
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
