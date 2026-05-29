@@ -57,7 +57,8 @@
 		<property name="rewrite.dir" location="${basedir}/../rewrite-frankframework"/>
 		<available property="recipes.installed" file="${rewrite.dir}/target"/>
 
-		<property name="maven" value="true" if:set="application.war.pom.xml.available"/>
+		<!-- Do not set "maven" to "true" automatically when "application.war.pom.xml.available"
+		     Many projects at customers have a pom.xml but they do not use Maven to do the build. -->
 		<property name="maven" value="true" if:set="war.pom.xml.available"/>
 		<property name="maven" value="true" if:set="pom.xml.available"/>
 		<property name="maven" value="false"/>
