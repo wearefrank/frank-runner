@@ -9,7 +9,6 @@ public class CustomExec extends ExecTask {
 
     @Override
     protected Execute prepareExec() throws BuildException {
-
         Execute exe = super.prepareExec();
 
         exe.setStreamHandler(
