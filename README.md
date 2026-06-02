@@ -89,17 +89,15 @@ In case your project doesn't contain a build.xml yet you can add it to the root
 folder of your project with the following content:
 
 ```
-<project default="restart">
-   <taskdef name="customexec" classname="org.apache.tools.ant.taskdefs.CustomExec"/>
-   
+<project default="restart">   
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
 		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
 		<condition property="arg" value="../frank-runner/restart.sh" else=""><os family="unix"/></condition>
-		<customexec executable="${exe}" vmlauncher="false" failonerror="true">
+		<exec executable="${exe}" vmlauncher="false" failonerror="true">
 			<arg value="${arg}"/>
 			<arg value="-Dproject.dir=${project.dir}"/>
-		</customexec>
+		</exec>
 	</target>
 </project>
 ```
