@@ -98,6 +98,11 @@
 		<!-- Reminder for manual life cycle management of Frank!Runner 
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
+		<!-- Reminder for manual life cycle management of Frank!Runner 
+		     Update the cheatsheet about installing the Frank!Framework manually.
+			 Open cmd.bat and run "ant cheatsheet". That file substitutes properties in
+			 cheatsheet-template.md to produce a new version of cheatsheet.md. Check-in
+			 both files in git. -->
 		<property name="jdk.8.version.minor" value="492"/><!-- https://adoptium.net/temurin/ -->
 		<property name="jdk.8.version.patch" value="b09"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
@@ -1678,4 +1683,32 @@ fi</echo>
 		}
 	</scriptdef>
 
+	<target name="cheatsheet" depends="init">
+		<copy file="cheatsheet-template.md" toFile="cheatsheet.md"/>
+		<replace file="cheatsheet.md" token="@@mvn.jdk.version@@" value="${mvn.jdk.version}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.version.minor@@" value="${jdk.25.version.minor}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.version.patch@@" value="${jdk.25.version.patch}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.version.plus@@" value="${jdk.25.version.plus}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.url.win@@" value="${jdk.25.url.win}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.url.lin@@" value="${jdk.25.url.lin}"/>
+		<replace file="cheatsheet.md" token="@@jdk.25.url.mac@@" value="${jdk.25.url.mac}"/>
+		<replace file="cheatsheet.md" token="@@ant.version.@@" value="${ant.version.}"/>
+		<replace file="cheatsheet.md" token="@@ant.zip.url@@" value="${ant.zip.url}"/>
+		<replace file="cheatsheet.md" token="@@ant.gz.url@@" value="${ant.gz.url}"/>
+		<replace file="cheatsheet.md" token="@@maven.version@@" value="${maven.version}"/>
+		<replace file="cheatsheet.md" token="@@maven.zip.url@@" value="${maven.zip.url}"/>
+		<replace file="cheatsheet.md" token="@@maven.gz.url@@" value="${maven.gz.url}"/>
+		<replace file="cheatsheet.md" token="@@tomcat.10.version.minor@@" value="${tomcat.10.version.minor}"/>
+		<replace file="cheatsheet.md" token="@@tomcat.10.version.patch@@" value="${tomcat.10.version.patch}"/>
+		<replace file="cheatsheet.md" token="@@tomcat.10.version@@" value="${tomcat.10.version}"/>
+		<replace file="cheatsheet.md" token="@@tomcat.10.url@@" value="${tomcat.10.url}"/>
+		<replace file="cheatsheet.md" token="@@jta.version@@" value="${jta.version}"/>
+		<replace file="cheatsheet.md" token="@@jta.url@@" value="${jta.url}"/>
+		<replace file="cheatsheet.md" token="@@activation.version@@" value="${activation.version}"/>
+		<replace file="cheatsheet.md" token="@@activation.url@@" value="${activation.url}"/>
+		<replace file="cheatsheet.md" token="@@transaction.version@@" value="${transaction.version}"/>
+		<replace file="cheatsheet.md" token="@@transaction.url@@" value="${transaction.url}"/>
+		<replace file="cheatsheet.md" token="@@jms3.version@@" value="${jms3.version}"/>
+		<replace file="cheatsheet.md" token="@@jms3.url@@" value="${jms3.url}"/>
+	</target>
 </project>
