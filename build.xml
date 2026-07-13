@@ -98,11 +98,11 @@
 		<!-- Reminder for manual life cycle management of Frank!Runner 
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
-		<!-- Reminder for manual life cycle management of Frank!Runner 
-		     Update the cheatsheet about installing the Frank!Framework manually.
-			 Open cmd.bat and run "ant cheatsheet". That file substitutes properties in
-			 cheatsheet-template.md to produce a new version of cheatsheet.md. Check-in
-			 both files in git. -->
+		<!-- Reminder for manual life cycle management of Frank!Runner.
+		     This build script also outputs file cheatsheet.md. That file changes when
+			 these properties are updated. Do not forget to check it in, otherwise
+			 it is not published on GitHub. The file will be referenced from
+			 the Frank!Academy -->
 		<property name="jdk.8.version.minor" value="492"/><!-- https://adoptium.net/temurin/ -->
 		<property name="jdk.8.version.patch" value="b09"/>
 		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
