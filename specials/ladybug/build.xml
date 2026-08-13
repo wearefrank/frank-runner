@@ -1,6 +1,7 @@
 <project default="restart-ladybug" xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<target name="restart-ladybug">
 		<property file="build.properties"/>
+		<property name="maven.projects" value=""/>
 		<property name="maven.skip.all" value="false"/>
 		<property name="maven.skip.clean" value="${maven.skip.all}"/>
 		<property name="maven.skip.tests" value="${maven.skip.all}"/>
@@ -154,6 +155,8 @@
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
+			<arg value="--projects" unless:blank="${maven.projects}"/>
+			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
 			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
