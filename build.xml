@@ -963,8 +963,8 @@
 	<target name="get.ff" unless="${maven}">
 		<fail message="Property ff.version has no value" unless="ff.version"/>
 		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
-		<available property="ff.war.finally.available" file="${download.dir}/${ff.war}"/>
-		<get src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true" unless="ff.war.finally.available"/>
+		<available property="ff.war.from.proprietary.nexus.available" file="${download.dir}/${ff.war}"/>
+		<get src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true" unless="ff.war.from.proprietary.nexus.available"/>
 		<available property="ff.war.finally.available" file="${download.dir}/${ff.war}"/>
 		<fail unless="ff.war.finally.available"/>
 	</target>
