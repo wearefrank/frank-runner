@@ -962,8 +962,9 @@
 	<!-- TODO issue https://github.com/wearefrank/frank-runner/issues/173 -->
 	<target name="get.ff" unless="${maven}">
 		<fail message="Property ff.version has no value" unless="ff.version"/>
-		<progressbarget src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
-		<progressbarget src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
+		<get src="${ff.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true"/>
+		<available property="ff.war.from.proprietary.nexus.available" file="${download.dir}/${ff.war}"/>
+		<get src="${ff.maven.central.url}" dest="${download.dir}/${ff.war}" verbose="on" ignoreerrors="true" skipexisting="true" unless:set="ff.war.from.proprietary.nexus.available"/>
 		<available property="ff.war.finally.available" file="${download.dir}/${ff.war}"/>
 		<fail unless="ff.war.finally.available"/>
 	</target>
