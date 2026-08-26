@@ -101,6 +101,25 @@ fi
 if [[ ! -f "${FR_DIR}build/apache-ant-1.10.17/lib/progressbarget.jar" ]]; then
 	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 fi
+if [[ ! -d "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch" ]]; then
+    cp "${FR_DIR}build/apache-ant-1.10.17/lib/ant.jar" "${FR_DIR}build/apache-ant-1.10.17/lib/ant.jar.bak"
+    mkdir -p "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch"
+
+    (
+		cd "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch" || exit 1
+        jar xf "${FR_DIR}build/apache-ant-1.10.17/lib/ant.jar" org/apache/tools/ant/taskdefs/defaults.properties
+    )
+
+    sed -i.bak 's/^exec=.*/exec=org.apache.tools.ant.taskdefs.CustomExec/' "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch/org/apache/tools/ant/taskdefs/defaults.properties"
+
+    cp "${FR_DIR}extensions/custom-exec/build/org/apache/tools/ant/taskdefs/CustomExec.class" "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch/org/apache/tools/ant/taskdefs/"
+
+    (
+        cd "${FR_DIR}build/apache-ant-1.10.17/lib/ant-patch" || exit 1
+        jar uf "${FR_DIR}build/apache-ant-1.10.17/lib/ant.jar" org/apache/tools/ant/taskdefs/defaults.properties
+        jar uf "${FR_DIR}build/apache-ant-1.10.17/lib/ant.jar" org/apache/tools/ant/taskdefs/CustomExec.class
+    )
+fi
 JDK_8_DIR="${FR_DIR}build/jdk8u492-b09"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.31+11"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.19+10"

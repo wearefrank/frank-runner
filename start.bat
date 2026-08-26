@@ -68,6 +68,23 @@ if not exist "%~dp0build\apache-ant-1.10.17\lib\rhino-1.7.15.jar" (
 if not exist "%~dp0build\apache-ant-1.10.17\lib\progressbarget.jar" (
 	copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.17\lib\"
 )
+if not exist "%~dp0build\apache-ant-1.10.17\lib\ant-patch" (
+	copy "%~dp0build\apache-ant-1.10.17\lib\ant.jar" "%~dp0build\apache-ant-1.10.17\lib\ant.jar.bak"
+	mkdir "%~dp0build\apache-ant-1.10.17\lib\ant-patch"
+
+	pushd "%~dp0build\apache-ant-1.10.17\lib\ant-patch"
+	jar xf "%~dp0build\apache-ant-1.10.17\lib\ant.jar" "org\apache\tools\ant\taskdefs\defaults.properties"
+	popd
+
+	powershell -Command "(Get-Content '%~dp0build\apache-ant-1.10.17\lib\ant-patch\org\apache\tools\ant\taskdefs\defaults.properties') -replace '^exec=.*$', 'exec=org.apache.tools.ant.taskdefs.CustomExec' | Set-Content '%~dp0build\apache-ant-1.10.17\lib\ant-patch\org\apache\tools\ant\taskdefs\defaults.properties'"
+
+	copy "%~dp0extensions\custom-exec\build\org\apache\tools\ant\taskdefs\CustomExec.class" "%~dp0build\apache-ant-1.10.17\lib\ant-patch\org\apache\tools\ant\taskdefs\"
+
+	pushd "%~dp0build\apache-ant-1.10.17\lib\ant-patch"
+	jar uf "%~dp0build\apache-ant-1.10.17\lib\ant.jar" org/apache/tools/ant/taskdefs/defaults.properties
+	jar uf "%~dp0build\apache-ant-1.10.17\lib\ant.jar" org/apache/tools/ant/taskdefs/CustomExec.class
+	popd
+)
 set JDK_8_DIR=%~dp0%build\jdk8u492-b09
 set JDK_11_DIR=%~dp0%build\jdk-11.0.31+11
 set JDK_17_DIR=%~dp0%build\jdk-17.0.19+10
