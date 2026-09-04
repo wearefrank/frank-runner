@@ -179,6 +179,7 @@
 			<arg value="-Dwebapp.clean=WEB-INF/classes/**\ WEB-INF/lib/**"/>
 			<arg value="-Dspring.profiles.active=${spring.profiles.active}" if:set="spring.profiles.active"/>
 			<arg value="-Dladybug.dir=ladybug"/><!-- used by springTestToolTestWebapp.xml (used in the past to switch from ibis-ladybug to ladybug) -->
+			<arg value="-Dladybug.data.module=ladybug-common" if:true="${keep.all.ladybug.reports.from.unit.tests}"/><!-- read the reports kept by TestStorages during the JUnit tests instead of ladybug-test-webapp's own data directory -->
 			<arg value="-Dfrankflow.active=false"/>
 		</exec>
 
