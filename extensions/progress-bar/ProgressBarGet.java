@@ -143,11 +143,10 @@ public class ProgressBarGet extends Task {
             //set up logging
             final int logLevel = Project.MSG_INFO;
             DownloadProgress progress = null;
-            boolean interactiveConsole = System.console() != null;
-            if (verbose.equals("on") && interactiveConsole) {
+            if (verbose.equals("on")) {
                 PrintStream rawOut = new PrintStream(new FileOutputStream(FileDescriptor.out), true);
                 progress = new ProgressBarProgress(rawOut);
-            } else if (verbose.equals("dots") || !interactiveConsole) {
+            } else if (verbose.equals("dots")) {
                 progress = new VerboseProgress(System.out);
             }
 

@@ -89,7 +89,7 @@ In case your project doesn't contain a build.xml yet you can add it to the root
 folder of your project with the following content:
 
 ```
-<project default="restart">
+<project default="restart">   
 	<target name="restart">
 		<basename property="project.dir" file="${basedir}"/>
 		<condition property="exe" value="../frank-runner/restart.bat" else="/bin/bash"><os family="windows"/></condition>
