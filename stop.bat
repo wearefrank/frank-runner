@@ -65,7 +65,6 @@ if not exist "%~dp0build\apache-ant-1.10.17\lib\rhino-1.7.15.jar" (
 	del "%~dp0build\apache-ant-1.10.17\lib\rhino-*.jar"
 	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.17\lib\"
 )
-REM Always copy the progressbarget jar. When we add it here user should not need to copy it manually.
 copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.17\lib\"
 set JDK_8_DIR=%~dp0%build\jdk8u492-b09
 set JDK_11_DIR=%~dp0%build\jdk-11.0.31+11

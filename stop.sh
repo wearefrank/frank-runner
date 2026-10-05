@@ -98,7 +98,6 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.17/lib/rhino-1.7.15.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.17/lib/rhino-"*.jar
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 fi
-# Always copy the progressbarget jar. If we edit the jar, users should not have to copy it manually.
 cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.17/lib/"
 JDK_8_DIR="${FR_DIR}build/jdk8u492-b09"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.31+11"
