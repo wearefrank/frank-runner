@@ -1267,9 +1267,8 @@ if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
 	del "%~dp0${ant.dir.windows}\lib\rhino-*.jar"
 	copy "%~dp0${rhino.dir.windows}\lib\rhino-*.jar" "%~dp0${ant.dir.windows}\lib\"
 )
-if not exist "%~dp0${ant.dir.windows}\lib\progressbarget.jar" (
-	copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0${ant.dir.windows}\lib\"
-)
+REM Always copy the progressbarget jar. When we add it here user should not need to copy it manually.
+copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0${ant.dir.windows}\lib\"
 set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
@@ -1387,9 +1386,8 @@ if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	rm "${FR_DIR}${ant.dir}/lib/rhino-"*.jar
 	cp "${FR_DIR}${rhino.dir}/lib/rhino-"*.jar "${FR_DIR}${ant.dir}/lib/"
 fi
-if [[ ! -f "${FR_DIR}${ant.dir}/lib/progressbarget.jar" ]]; then
-	cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}${ant.dir}/lib/"
-fi
+# Always copy the progressbarget jar. If we edit the jar, users should not have to copy it manually.
+cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}${ant.dir}/lib/"
 JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
