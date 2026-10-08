@@ -95,16 +95,19 @@
 		<condition property="os.linux"><and><os family="unix"/><not><os family="mac"/></not></and></condition>
 		<condition property="os.mac"><and><os family="unix"/><os family="mac"/></and></condition>
 
-		<!-- Reminder for manual life cycle management of Frank!Runner 
+		<!-- Reminder for life cycle management of Frank!Runner
+		     Versions preceded by a renovate comment are updated by Renovate (see renovate.json and
+		     .github/workflows/renovate.yml). Update the other versions (e.g. eclipse.version) manually.
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
-		<property name="jdk.8.version.minor" value="492"/><!-- https://adoptium.net/temurin/ -->
-		<property name="jdk.8.version.patch" value="b09"/>
-		<property name="jdk.8.dir.sub" value="jdk8u${jdk.8.version.minor}-${jdk.8.version.patch}"/>
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin8-binaries versioning=regex:^(?<major>8)u(?<patch>\d+)-b(?<build>\d+)$ extractVersion=^jdk(?<version>8u\d+-b\d+)$ -->
+		<property name="jdk.8.version" value="8u492-b09"/><!-- https://adoptium.net/temurin/ -->
+		<loadresource property="jdk.8.version.file"><propertyresource name="jdk.8.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="-" to=""/></tokenfilter></filterchain></loadresource>
+		<property name="jdk.8.dir.sub" value="jdk${jdk.8.version}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
-		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.zip"/>
-		<property name="jdk.8.tar.lin" value="OpenJDK8U-jdk_x64_linux_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.tar"/>
-		<property name="jdk.8.tar.mac" value="OpenJDK8U-jdk_x64_mac_hotspot_8u${jdk.8.version.minor}${jdk.8.version.patch}.tar"/>
+		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_${jdk.8.version.file}.zip"/>
+		<property name="jdk.8.tar.lin" value="OpenJDK8U-jdk_x64_linux_hotspot_${jdk.8.version.file}.tar"/>
+		<property name="jdk.8.tar.mac" value="OpenJDK8U-jdk_x64_mac_hotspot_${jdk.8.version.file}.tar"/>
 		<property name="jdk.8.zip.lin" value="${jdk.8.tar.lin}.gz"/>
 		<property name="jdk.8.zip.mac" value="${jdk.8.tar.mac}.gz"/>
 		<property name="jdk.8.zip" value="${jdk.8.zip.win}" if:true="${os.windows}"/>
@@ -116,14 +119,14 @@
 		<property name="jdk.8.url.lin" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.lin}"/>
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
-		<property name="jdk.11.version.minor" value="0"/>
-		<property name="jdk.11.version.patch" value="31"/>
-		<property name="jdk.11.version.plus" value="11"/>
-		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<property name="jdk.11.version" value="11.0.31+11"/>
+		<loadresource property="jdk.11.version.file"><propertyresource name="jdk.11.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
+		<property name="jdk.11.dir.sub" value="jdk-${jdk.11.version}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
-		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.zip"/>
-		<property name="jdk.11.tar.lin" value="OpenJDK11U-jdk_x64_linux_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
-		<property name="jdk.11.tar.mac" value="OpenJDK11U-jdk_x64_mac_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
+		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_${jdk.11.version.file}.zip"/>
+		<property name="jdk.11.tar.lin" value="OpenJDK11U-jdk_x64_linux_hotspot_${jdk.11.version.file}.tar"/>
+		<property name="jdk.11.tar.mac" value="OpenJDK11U-jdk_x64_mac_hotspot_${jdk.11.version.file}.tar"/>
 		<property name="jdk.11.zip.lin" value="${jdk.11.tar.lin}.gz"/>
 		<property name="jdk.11.zip.mac" value="${jdk.11.tar.mac}.gz"/>
 		<property name="jdk.11.zip" value="${jdk.11.zip.win}" if:true="${os.windows}"/>
@@ -135,14 +138,14 @@
 		<property name="jdk.11.url.lin" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.lin}"/>
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
-		<property name="jdk.17.version.minor" value="0"/>
-		<property name="jdk.17.version.patch" value="19"/>
-		<property name="jdk.17.version.plus" value="10"/>
-		<property name="jdk.17.dir.sub" value="jdk-17.${jdk.17.version.minor}.${jdk.17.version.patch}+${jdk.17.version.plus}"/>
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin17-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<property name="jdk.17.version" value="17.0.19+10"/>
+		<loadresource property="jdk.17.version.file"><propertyresource name="jdk.17.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
+		<property name="jdk.17.dir.sub" value="jdk-${jdk.17.version}"/>
 		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
-		<property name="jdk.17.zip.win" value="OpenJDK17U-jdk_x64_windows_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.zip"/>
-		<property name="jdk.17.tar.lin" value="OpenJDK17U-jdk_x64_linux_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.tar"/>
-		<property name="jdk.17.tar.mac" value="OpenJDK17U-jdk_x64_mac_hotspot_17.${jdk.17.version.minor}.${jdk.17.version.patch}_${jdk.17.version.plus}.tar"/>
+		<property name="jdk.17.zip.win" value="OpenJDK17U-jdk_x64_windows_hotspot_${jdk.17.version.file}.zip"/>
+		<property name="jdk.17.tar.lin" value="OpenJDK17U-jdk_x64_linux_hotspot_${jdk.17.version.file}.tar"/>
+		<property name="jdk.17.tar.mac" value="OpenJDK17U-jdk_x64_mac_hotspot_${jdk.17.version.file}.tar"/>
 		<property name="jdk.17.zip.lin" value="${jdk.17.tar.lin}.gz"/>
 		<property name="jdk.17.zip.mac" value="${jdk.17.tar.mac}.gz"/>
 		<property name="jdk.17.zip" value="${jdk.17.zip.win}" if:true="${os.windows}"/>
@@ -154,14 +157,14 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
-		<property name="jdk.21.version.minor" value="0"/>
-		<property name="jdk.21.version.patch" value="11"/>
-		<property name="jdk.21.version.plus" value="10"/>
-		<property name="jdk.21.dir.sub" value="jdk-21.${jdk.21.version.minor}.${jdk.21.version.patch}+${jdk.21.version.plus}"/>
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin21-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<property name="jdk.21.version" value="21.0.11+10"/>
+		<loadresource property="jdk.21.version.file"><propertyresource name="jdk.21.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
+		<property name="jdk.21.dir.sub" value="jdk-${jdk.21.version}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
-		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.zip"/>
-		<property name="jdk.21.tar.lin" value="OpenJDK21U-jdk_x64_linux_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.tar"/>
-		<property name="jdk.21.tar.mac" value="OpenJDK21U-jdk_x64_mac_hotspot_21.${jdk.21.version.minor}.${jdk.21.version.patch}_${jdk.21.version.plus}.tar"/>
+		<property name="jdk.21.zip.win" value="OpenJDK21U-jdk_x64_windows_hotspot_${jdk.21.version.file}.zip"/>
+		<property name="jdk.21.tar.lin" value="OpenJDK21U-jdk_x64_linux_hotspot_${jdk.21.version.file}.tar"/>
+		<property name="jdk.21.tar.mac" value="OpenJDK21U-jdk_x64_mac_hotspot_${jdk.21.version.file}.tar"/>
 		<property name="jdk.21.zip.lin" value="${jdk.21.tar.lin}.gz"/>
 		<property name="jdk.21.zip.mac" value="${jdk.21.tar.mac}.gz"/>
 		<property name="jdk.21.zip" value="${jdk.21.zip.win}" if:true="${os.windows}"/>
@@ -173,14 +176,14 @@
 		<property name="jdk.21.url.lin" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.lin}"/>
 		<property name="jdk.21.url.mac" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.mac}"/>
 
-		<property name="jdk.25.version.minor" value="0"/>
-		<property name="jdk.25.version.patch" value="3"/>
-		<property name="jdk.25.version.plus" value="9"/>
-		<property name="jdk.25.dir.sub" value="jdk-25.${jdk.25.version.minor}.${jdk.25.version.patch}+${jdk.25.version.plus}"/>
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin25-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<property name="jdk.25.version" value="25.0.3+9"/>
+		<loadresource property="jdk.25.version.file"><propertyresource name="jdk.25.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
+		<property name="jdk.25.dir.sub" value="jdk-${jdk.25.version}"/>
 		<property name="jdk.25.dir" value="build/${jdk.25.dir.sub}"/>
-		<property name="jdk.25.zip.win" value="OpenJDK25U-jdk_x64_windows_hotspot_25.${jdk.25.version.minor}.${jdk.25.version.patch}_${jdk.25.version.plus}.zip"/>
-		<property name="jdk.25.tar.lin" value="OpenJDK25U-jdk_x64_linux_hotspot_25.${jdk.25.version.minor}.${jdk.25.version.patch}_${jdk.25.version.plus}.tar"/>
-		<property name="jdk.25.tar.mac" value="OpenJDK25U-jdk_x64_mac_hotspot_25.${jdk.25.version.minor}.${jdk.25.version.patch}_${jdk.25.version.plus}.tar"/>
+		<property name="jdk.25.zip.win" value="OpenJDK25U-jdk_x64_windows_hotspot_${jdk.25.version.file}.zip"/>
+		<property name="jdk.25.tar.lin" value="OpenJDK25U-jdk_x64_linux_hotspot_${jdk.25.version.file}.tar"/>
+		<property name="jdk.25.tar.mac" value="OpenJDK25U-jdk_x64_mac_hotspot_${jdk.25.version.file}.tar"/>
 		<property name="jdk.25.zip.lin" value="${jdk.25.tar.lin}.gz"/>
 		<property name="jdk.25.zip.mac" value="${jdk.25.tar.mac}.gz"/>
 		<property name="jdk.25.zip" value="${jdk.25.zip.win}" if:true="${os.windows}"/>
@@ -204,6 +207,7 @@
 		<property name="jdk.lib.jspawnhelper" value="lib/jspawnhelper"/><!-- chmod +x to prevent "error=13, Permission denied" since Java 17 for tasks like java and chmod, see also https://askubuntu.com/questions/1480995/permission-denied-trying-to-start-a-new-process-from-a-java-application-as-root -->
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
+		<!-- renovate: datasource=maven packageName=org.apache.ant:ant -->
 		<property name="ant.version." value="1.10.17"/><!-- on update: see extensions/progress-bar/README.md --><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
@@ -213,15 +217,15 @@
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
-		<property name="rhino.version.major" value="1"/> <!-- https://rhino.github.io/releases/ -->
-		<property name="rhino.version.minor" value="7"/>
-		<property name="rhino.version.patch" value="15"/>
-		<property name="rhino.version" value="${rhino.version.major}.${rhino.version.minor}.${rhino.version.patch}"/>
+		<!-- renovate: datasource=maven packageName=org.mozilla:rhino -->
+		<property name="rhino.version" value="1.7.15"/><!-- https://rhino.github.io/releases/ -->
+		<loadresource property="rhino.version.tag"><propertyresource name="rhino.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="." to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="rhino.zip" value="rhino-${rhino.version}.zip"/>
-		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.major}_${rhino.version.minor}_${rhino.version.patch}_Release/${rhino.zip}"/>
+		<property name="rhino.zip.url" value="https://github.com/mozilla/rhino/releases/download/Rhino${rhino.version.tag}_Release/${rhino.zip}"/>
 		<property name="rhino.dir" value="build/rhino${rhino.version}"/>
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
+		<!-- renovate: datasource=maven packageName=org.apache.maven:apache-maven -->
 		<property name="maven.version" value="3.9.16"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
@@ -231,15 +235,13 @@
 		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
-		<property name="tomcat.9.version.minor" value="0"/>
-		<property name="tomcat.9.version.patch" value="120"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
-		<property name="tomcat.9.version" value="9.${tomcat.9.version.minor}.${tomcat.9.version.patch}"/>
+		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
+		<property name="tomcat.9.version" value="9.0.120"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
-		<property name="tomcat.10.version.minor" value="1"/>
-		<property name="tomcat.10.version.patch" value="57"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
-		<property name="tomcat.10.version" value="10.${tomcat.10.version.minor}.${tomcat.10.version.patch}"/>
+		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
+		<property name="tomcat.10.version" value="10.1.57"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
 		<property name="tomcat.10.dir" value="build/apache-tomcat-${tomcat.10.version}"/>
@@ -257,61 +259,76 @@
 		<property name="eclipse.tar" value="${eclipse.file}.tar"/>
 		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
+		<!-- renovate: datasource=maven packageName=org.projectlombok:lombok -->
 		<property name="lombok.version" value="1.18.46"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
+		<!-- renovate: datasource=github-releases packageName=WinMerge/winmerge versioning=loose extractVersion=^v(?<version>.+)$ -->
 		<property name="winmerge.version" value="2.16.56.2"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
+		<!-- renovate: datasource=maven packageName=org.apache.geronimo.specs:geronimo-jta_1.1_spec -->
 		<property name="jta.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jta_1.1_spec/versions -->
 		<property name="jta.jar" value="geronimo-jta_1.1_spec-${jta.version}.jar"/>
 		<property name="jta.uninstall.mask" value="geronimo-jta*"/>
 		<property name="jta.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jta_1.1_spec/${jta.version}/${jta.jar}"/>
+		<!-- renovate: datasource=maven packageName=jakarta.activation:jakarta.activation-api -->
 		<property name="activation.version" value="2.1.4"/> <!-- https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api/versions -->
 		<property name="activation.jar" value="jakarta.activation-api-${activation.version}.jar"/>
 		<property name="activation.uninstall.mask" value="jakarta.activation-api*"/>
 		<property name="activation.url" value="https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/${activation.version}/${activation.jar}"/>
+		<!-- renovate: datasource=maven packageName=jakarta.transaction:jakarta.transaction-api -->
 		<property name="transaction.version" value="2.0.1"/><!-- https://central.sonatype.com/artifact/jakarta.transaction/jakarta.transaction-api/versions -->
 		<property name="transaction.jar" value="jakarta.transaction-api-${transaction.version}.jar"/>
 		<property name="transaction.uninstall.mask" value="jakarta.transaction-api*"/>
 		<property name="transaction.url" value="https://repo1.maven.org/maven2/jakarta/transaction/jakarta.transaction-api/${transaction.version}/${transaction.jar}"/>
+		<!-- renovate: datasource=maven packageName=org.apache.geronimo.specs:geronimo-jms_1.1_spec -->
 		<property name="jms1.version" value="1.1.1"/><!-- https://central.sonatype.com/artifact/org.apache.geronimo.specs/geronimo-jms_1.1_spec/versions -->
 		<property name="jms1.jar" value="geronimo-jms_1.1_spec-${jms1.version}.jar"/>
 		<property name="jms1.uninstall.mask" value="geronimo-jms*"/>
 		<property name="jms1.url" value="https://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/${jms1.version}/${jms1.jar}"/>
+		<!-- renovate: datasource=maven packageName=jakarta.jms:jakarta.jms-api -->
 		<property name="jms3.version" value="3.1.0"/><!-- https://central.sonatype.com/artifact/jakarta.jms/jakarta.jms-api/versions -->
 		<property name="jms3.jar" value="jakarta.jms-api-${jms3.version}.jar"/>
 		<property name="jms3.uninstall.mask" value="jakarta.jms-api*"/>
 		<property name="jms3.url" value="https://repo1.maven.org/maven2/jakarta/jms/jakarta.jms-api/${jms3.version}/${jms3.jar}"/>
+		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
 		<property name="h2v1.version" value="1.4.200"/>
 		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
 		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
 		<property name="h2v1.dir" value="${basedir}/build/h2"/>
+		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
 		<property name="h2v2.version" value="2.3.232"/> <!-- Version 2.4.240 does not work with the FF!. Type datetime does not work anymore -->
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
+		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
 		<property name="h2v2java8.version" value="2.2.224"/>
 		<property name="h2v2java8.jar" value="h2-${h2v2java8.version}.jar"/>
 		<property name="h2v2java8.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2java8.version}/${h2v2java8.jar}"/>
 		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
+		<!-- renovate: datasource=maven packageName=com.oracle.database.jdbc:ojdbc8 -->
 		<property name="ojdbc8.version" value="23.26.2.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
 		<property name="ojdbc8.uninstall.mask" value="ojdbc8-*"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
+		<!-- renovate: datasource=maven packageName=com.oracle.database.jdbc:ojdbc11 -->
 		<property name="ojdbc11.version" value="23.26.2.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.uninstall.mask" value="ojdbc11-*"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
+		<!-- renovate: datasource=maven packageName=com.microsoft.sqlserver:mssql-jdbc versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\.jre8$ -->
 		<property name="mssql8.version" value="13.4.0.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
 		<property name="mssql8.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
+		<!-- renovate: datasource=maven packageName=com.microsoft.sqlserver:mssql-jdbc versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\.jre11$ -->
 		<property name="mssql11.version" value="13.4.0.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
 		<property name="mssql11.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
+		<!-- renovate: datasource=maven packageName=org.postgresql:postgresql -->
 		<property name="pgsql.version" value="42.7.13"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.uninstall.mask" value="postgresql-*"/>
@@ -787,6 +804,11 @@
 		</scriptdef>
 		<multiaddgitignore dirs="${project.dirs}" if:true="${update.config.xsd.and.available}"/>
 		<!-- scripts -->
+		<antcall target="generate.scripts"/>
+	</target>
+
+	<!-- Also used by .github/workflows/generateScripts.sh (Renovate post-upgrade task) with: ant init generate.scripts -->
+	<target name="generate.scripts">
 		<antcall target="generate.bat"><param name="filename" value="ant"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="mvn"/></antcall>
 		<antcall target="generate.bat"><param name="filename" value="env"/></antcall>
