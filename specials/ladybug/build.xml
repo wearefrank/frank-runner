@@ -23,15 +23,12 @@
 			<matches string="${ladybug.pom.xml.project.properties.revision}" pattern="^([0123]\.).*$"/>
 		</condition>
 
-		<!-- When ladybug-ff-test-webapp is a module of the ladybug root pom it cannot be built together with the other
-		     modules as it depends on the ff version that is built after ladybug. Hence build all other modules (and the
-		     root pom) explicitly. Excluding with !ladybug-ff-test-webapp is not possible as mvn.bat uses
-		     enabledelayedexpansion which removes the exclamation mark. Maven still reads the pom of
-		     ladybug-ff-test-webapp, hence the ff root pom it imports is installed before building ladybug -->
-		<condition property="ladybug.ff.test.webapp.is.module">
-			<contains string=",${ladybug.pom.xml.project.modules.module}," substring=",ladybug-ff-test-webapp,"/>
-		</condition>
-		<loadresource property="ladybug.modules.without.ff.test.webapp" if:set="ladybug.ff.test.webapp.is.module">
+		<!-- Module ladybug-ff-test-webapp cannot be built together with the other modules as it depends on the ff version
+		     that is built after ladybug. Hence build all other modules (and the root pom) explicitly. Excluding with
+		     !ladybug-ff-test-webapp is not possible as Frank!Runner's mvn.bat uses enabledelayedexpansion which removes
+			 the exclamation mark. Maven still reads the pom of ladybug-ff-test-webapp, hence the ff root pom it imports is
+			 installed before building ladybug -->
+		<loadresource property="ladybug.modules.without.ff.test.webapp">
 			<string value=".,${ladybug.pom.xml.project.modules.module},"/>
 			<filterchain>
 				<tokenfilter>
@@ -41,10 +38,7 @@
 			</filterchain>
 		</loadresource>
 		<condition property="ladybug.maven.projects" value="${ladybug.modules.without.ff.test.webapp}" else="${maven.projects}">
-			<and>
-				<isset property="ladybug.ff.test.webapp.is.module"/>
-				<equals arg1="${maven.projects}" arg2=""/>
-			</and>
+			<equals arg1="${maven.projects}" arg2=""/>
 		</condition>
 
 		<echo message="ladybug: Check ladybug present"/>
@@ -158,10 +152,7 @@
 		</exec>
 
 		<condition property="install.ff.root.pom">
-			<and>
-				<isset property="ladybug.ff.test.webapp.is.module"/>
-				<resourceexists><file file="../../../frankframework/pom.xml"/></resourceexists>
-			</and>
+			<resourceexists><file file="../../../frankframework/pom.xml"/></resourceexists>
 		</condition>
 		<echo message="ladybug: Install ff root pom imported by ladybug-ff-test-webapp" if:set="install.ff.root.pom"/>
 		<exec executable="${mvn.exe}" dir="../../../frankframework" vmlauncher="false" failonerror="true" if:set="install.ff.root.pom">
