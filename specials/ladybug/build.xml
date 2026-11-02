@@ -30,7 +30,7 @@
 		</condition>
 
 		<!-- Module ladybug-ff-test-webapp cannot be built together with the other modules as it depends on the ff version
-		     that is built after ladybug. Hence build all other modules (and the root pom) explicitly.  -->
+		     that is built after ladybug. Hence build all other modules (and the root pom) explicitly. -->
 		<loadresource property="ladybug.modules.without.ff.test.webapp">
 			<string value=".,${ladybug.pom.xml.project.modules.module},"/>
 			<filterchain>
@@ -151,9 +151,9 @@
 			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
-        <!-- Maven still reads the pom of ladybug-ff-test-webapp when that module is excluded from the ladybug build.
-		     Therefore the Frank!Framework root pom.xml is built here without its submodules. Then Maven sees
-			 that the Frank!Framework version referred in ladybug-ff-test-webapp/pom.xml exists when ladybug will be built. -->
+		<!-- Maven still reads the pom of ladybug-ff-test-webapp when that module is excluded from the ladybug build.
+		     Therefore the Frank!Framework root pom.xml is installed here without its submodules. Then Maven sees
+		     that the Frank!Framework version referred to in ladybug-ff-test-webapp/pom.xml exists when ladybug will be built. -->
 		<echo message="ladybug: Install ff root pom imported by ladybug-ff-test-webapp" if:true="${build.ff}"/>
 		<exec executable="${mvn.exe}" dir="../../../frankframework" vmlauncher="false" failonerror="true" if:true="${build.ff}">
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
