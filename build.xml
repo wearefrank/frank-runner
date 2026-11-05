@@ -118,12 +118,13 @@
 
 		<property name="jdk.11.version.minor" value="0"/>
 		<property name="jdk.11.version.patch" value="32"/>
+		<property name="jdk.11.version.patch.patch" value="1"/>
 		<property name="jdk.11.version.plus" value="1"/>
-		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}+${jdk.11.version.plus}"/>
+		<property name="jdk.11.dir.sub" value="jdk-11.${jdk.11.version.minor}.${jdk.11.version.patch}.${jdk.11.version.patch.patch}+${jdk.11.version.plus}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
-		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.zip"/>
-		<property name="jdk.11.tar.lin" value="OpenJDK11U-jdk_x64_linux_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
-		<property name="jdk.11.tar.mac" value="OpenJDK11U-jdk_x64_mac_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}_${jdk.11.version.plus}.tar"/>
+		<property name="jdk.11.zip.win" value="OpenJDK11U-jdk_x64_windows_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}.${jdk.11.version.patch.patch}_${jdk.11.version.plus}.zip"/>
+		<property name="jdk.11.tar.lin" value="OpenJDK11U-jdk_x64_linux_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}.${jdk.11.version.patch.patch}_${jdk.11.version.plus}.tar"/>
+		<property name="jdk.11.tar.mac" value="OpenJDK11U-jdk_x64_mac_hotspot_11.${jdk.11.version.minor}.${jdk.11.version.patch}.${jdk.11.version.patch.patch}_${jdk.11.version.plus}.tar"/>
 		<property name="jdk.11.zip.lin" value="${jdk.11.tar.lin}.gz"/>
 		<property name="jdk.11.zip.mac" value="${jdk.11.tar.mac}.gz"/>
 		<property name="jdk.11.zip" value="${jdk.11.zip.win}" if:true="${os.windows}"/>
