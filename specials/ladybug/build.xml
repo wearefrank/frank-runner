@@ -16,11 +16,42 @@
 		<condition property="test.with.ladybug.test.webapp"><equals arg1="${test.with}" arg2="ladybug-test-webapp"/></condition>
 		<condition property="test.with.ladybug.ff.test.webapp"><equals arg1="${test.with}" arg2="ladybug-ff-test-webapp"/></condition>
 		<condition property="test.with.iaf"><equals arg1="${test.with}" arg2="iaf-webapp"/></condition>
+		<condition property="build.ff">
+			<or>
+				<isset property="test.with.ladybug.ff.test.webapp"/>
+				<isset property="test.with.iaf"/>
+			</or>
+		</condition>
 		<property name="iaf.module" value="webapp"/>
 
 		<xmlproperty file="../../../ladybug/pom.xml" prefix="ladybug.pom.xml"/>
 		<condition property="separate.ladybug.projects">
 			<matches string="${ladybug.pom.xml.project.properties.revision}" pattern="^([0123]\.).*$"/>
+		</condition>
+
+		<!-- There is a circular dependency between Ladybug and the Frank!Framework. The Frank!Framework
+		     uses Ladybug. Conversely, Ladybug's module ladybug-ff-test-webapp tests Ladybug in combination
+			 with the Frank!Framework and adds that Ladybug depends on the Frank!Framework.
+
+			 We address this as follows. First we calculate the list of Ladybug modules that remain when
+			 ladybug-ff-test-webapp is removed. That is the default list of modules to build for Ladybug.
+			 Before doing that build, we do a special limited build of the Frank!Framework that can be
+			 done without Ladybug. That build does not really build the FF! but introduces the pom.xml that
+			 the Ladybug build still needs. Even with ladybug-ff-test-webapp removed, the Ladybug build
+			 still needs a pom.xml to be installed for the referred FF! version. After this complexity we
+			 can build Ladybug without ladybug-ff-test-webapp, then the Frank!Framework and then
+			 ladybug/ladybug-ff-test-webapp. -->
+		<loadresource property="ladybug.modules.without.ff.test.webapp">
+			<string value=".,${ladybug.pom.xml.project.modules.module},"/>
+			<filterchain>
+				<tokenfilter>
+					<replacestring from=",ladybug-ff-test-webapp," to=","/>
+					<replaceregex pattern=",$" replace=""/>
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+		<condition property="ladybug.maven.projects" value="${ladybug.modules.without.ff.test.webapp}" else="${maven.projects}">
+			<equals arg1="${maven.projects}" arg2=""/>
 		</condition>
 
 		<echo message="ladybug: Check ladybug present"/>
@@ -35,8 +66,8 @@
 		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ladybug.ff.test.webapp}" if:set="separate.ladybug.projects"><not><resourceexists><file file="../../../ladybug/ladybug-ff-test-webapp"/></resourceexists></not></condition>
 		<fail message="Folder ladybug-ff-test-webapp not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
 
-		<echo message="ladybug: Check iaf present"/>
-		<condition property="iaf.not.present" if:true="${test.with.iaf}"><not><resourceexists><file file="../../../frankframework"/></resourceexists></not></condition>
+		<echo message="ladybug: Check iaf present" if:true="${build.ff}"/>
+		<condition property="iaf.not.present" if:true="${build.ff}"><not><resourceexists><file file="../../../frankframework"/></resourceexists></not></condition>
 		<fail message="Folder frankframework not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
 
 		<echo message="ladybug: Check ladybug version in ladybug-test-webapp/pom.xml" if:true="${test.with.ladybug.test.webapp}"/>
@@ -78,10 +109,7 @@
 		<property file="${iaf.module.build.properties}" prefix="iaf.module.build.properties"/>
 		<condition property="maven.projects.not.ok">
 			<and>
-				<or>
-					<equals arg1="${test.with.ladybug.ff.test.webapp}" arg2="true"/>
-					<equals arg1="${test.with.iaf}" arg2="true"/>
-				</or>
+				<equals arg1="${build.ff}" arg2="true"/>
 				<not>
 					<or>
 						<not><resourceexists><file file="${iaf.module.build.properties}"/></resourceexists></not>
@@ -133,14 +161,27 @@
 			<arg value="-Dtomcat.skip.waitfor=${tomcat.skip.waitfor}"/>
 		</exec>
 
+		<!-- Maven still reads the pom of ladybug-ff-test-webapp when that module is excluded from the ladybug build.
+		     Therefore the Frank!Framework root pom.xml is installed here without its submodules. Then Maven sees
+		     that the Frank!Framework version referred to in ladybug-ff-test-webapp/pom.xml exists when ladybug will be built. -->
+		<echo message="ladybug: Install ff root pom imported by ladybug-ff-test-webapp" if:true="${build.ff}"/>
+		<exec executable="${mvn.exe}" dir="../../../frankframework" vmlauncher="false" failonerror="true" if:true="${build.ff}">
+			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
+			<arg value="install"/>
+			<arg value="--non-recursive"/>
+			<arg value="-X" if:true="${maven.verbose}"/>
+			<arg value="--settings" if:set="maven.settings.xml"/>
+			<arg value="${maven.settings.xml}" if:set="maven.settings.xml"/>
+		</exec>
+
 		<echo message="ladybug: Build Ladybug"/>
 		<exec executable="${mvn.exe}" dir="../../../ladybug" vmlauncher="false" failonerror="true">
 			<env key="PATH" path="${java.library.path}:${git.path}" if:set="git.path" unless:true="${maven.skip.copyright}"/>
 			<arg value="${mvn.arg}" unless:blank="${mvn.arg}"/>
 			<arg value="clean" unless:true="${maven.skip.clean}"/>
 			<arg value="install"/>
-			<arg value="--projects" unless:blank="${maven.projects}"/>
-			<arg value="${maven.projects}" unless:blank="${maven.projects}"/>
+			<arg value="--projects" unless:blank="${ladybug.maven.projects}"/>
+			<arg value="${ladybug.maven.projects}" unless:blank="${ladybug.maven.projects}"/>
 			<arg value="-DskipTests" if:true="${maven.skip.tests}"/>
 			<arg value="-Dmaven.javadoc.skip=true" if:true="${maven.skip.javadoc}"/>
 			<arg value="-Dmaven.compiler.useIncrementalCompilation=false" if:true="${maven.skip.recompile.all}"/><!-- prevent unnecessary "recompiling the module", when using an IDE the IDE will already give errors when files don't compile anymore because other files have changed (see also https://stackoverflow.com/questions/16963012/maven-compiler-recompile-all-files-instead-modified/49700942#49700942) -->
