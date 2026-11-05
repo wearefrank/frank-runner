@@ -29,8 +29,18 @@
 			<matches string="${ladybug.pom.xml.project.properties.revision}" pattern="^([0123]\.).*$"/>
 		</condition>
 
-		<!-- Module ladybug-ff-test-webapp cannot be built together with the other modules as it depends on the ff version
-		     that is built after ladybug. Hence build all other modules (and the root pom) explicitly. -->
+		<!-- There is a circular dependency between Ladybug and the Frank!Framework. The Frank!Framework
+		     uses Ladybug. Conversely, Ladybug's module ladybug-ff-test-webapp tests Ladybug in combination
+			 with the Frank!Framework and adds that Ladybug depends on the Frank!Framework.
+
+			 We address this as follows. First we calculate the list of Ladybug modules that remain when
+			 ladybug-ff-test-webapp is removed. That is the default list of modules to build for Ladybug.
+			 Before doing that build, we do a special limited build of the Frank!Framework that can be
+			 done without Ladybug. That build does not really build the FF! but introduces the pom.xml that
+			 the Ladybug build still needs. Even with ladybug-ff-test-webapp removed, the Ladybug build
+			 still needs a pom.xml to be installed for the referred FF! version. After this complexity we
+			 can build Ladybug without ladybug-ff-test-webapp, then the Frank!Framework and then
+			 ladybug/ladybug-ff-test-webapp. -->
 		<loadresource property="ladybug.modules.without.ff.test.webapp">
 			<string value=".,${ladybug.pom.xml.project.modules.module},"/>
 			<filterchain>
