@@ -48,10 +48,10 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	RUN_INSTALL="true"
 fi
 ZIP=apache-ant-1.10.18-bin.tar.gz
-URL=https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.tar.gz
+URL=https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.18-bin.tar.gz
 DIR=build/apache-ant-1.10.18
 SUB=
-DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
+DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script. If that URL does not work, download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.tar.gz instead"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
 	echo In case of errors ${DOWNLOAD_HELP}
 	curl -f -o "${FR_DIR}download/${ZIP}.tmp" -L ${URL}
