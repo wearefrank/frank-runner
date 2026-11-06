@@ -25,10 +25,10 @@ if not exist "%~dp0build\jdk-25.0.5+8\" (
 	)
 	move "%~dp0build\tmp\build\jdk-25.0.5+8" "%~dp0build\jdk-25.0.5+8"
 )
-set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.zip manually, move it to %~dp0download and restart this script
+set DOWNLOAD_HELP=download https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.18-bin.zip manually, move it to %~dp0download and restart this script. If that URL does not work, download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.zip instead
 if not exist "%~dp0download\apache-ant-1.10.18-bin.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\apache-ant-1.10.18-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.zip
+	curl -f -o "%~dp0download\apache-ant-1.10.18-bin.zip.tmp" -L https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.18-bin.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
