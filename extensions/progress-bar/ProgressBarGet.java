@@ -56,6 +56,7 @@ import org.apache.tools.ant.util.StringUtils;
  */
 public class ProgressBarGet extends Task {
     private static final int NUMBER_RETRIES = 3;
+    private static final long RETRY_DELAY_MS = 3000;
     private static final int DOTS_PER_LINE = 50;
     private static final int BIG_BUFFER_SIZE = 100 * 1024;
     private static final FileUtils FILE_UTILS = FileUtils.getFileUtils();
@@ -798,22 +799,42 @@ public class ProgressBarGet extends Task {
 
         private boolean get() throws IOException, BuildException {
 
-            connection = openConnection(source, uname, pword);
+            IOException lastException = null;
+            for (int attempt = 1; attempt <= numberRetries; attempt++) {
+                try {
+                    connection = openConnection(source, uname, pword);
 
-            if (connection == null) {
-                return false;
+                    if (connection == null) {
+                        return false;
+                    }
+
+                    final boolean downloadSucceeded = downloadFile();
+
+                    //if (and only if) the use file time option is set, then
+                    //the saved file now has its timestamp set to that of the
+                    //downloaded file
+                    if (downloadSucceeded && useTimestamp)  {
+                        updateTimeStamp();
+                    }
+
+                    return downloadSucceeded;
+                } catch (final IOException ex) {
+                    lastException = ex;
+                    log("Attempt " + attempt + " of " + numberRetries + " failed: " + ex, logLevel);
+                    if (attempt < numberRetries) {
+                        sleepBeforeRetry();
+                    }
+                }
             }
+            throw lastException;
+        }
 
-            final boolean downloadSucceeded = downloadFile();
-
-            //if (and only if) the use file time option is set, then
-            //the saved file now has its timestamp set to that of the
-            //downloaded file
-            if (downloadSucceeded && useTimestamp)  {
-                updateTimeStamp();
+        private void sleepBeforeRetry() {
+            try {
+                Thread.sleep(RETRY_DELAY_MS);
+            } catch (final InterruptedException ie) {
+                interrupt();
             }
-
-            return downloadSucceeded;
         }
 
 
@@ -944,25 +965,7 @@ public class ProgressBarGet extends Task {
         }
 
         private boolean downloadFile() throws IOException {
-            for (int i = 0; i < numberRetries; i++) {
-                // this three attempt trick is to get round quirks in different
-                // Java implementations. Some of them take a few goes to bind
-                // properly; we ignore the first couple of such failures.
-                try {
-                    is = connection.getInputStream();
-                    break;
-                } catch (final IOException ex) {
-                    log("Error opening connection " + ex, logLevel);
-                }
-            }
-            if (is == null) {
-                log("Can't get " + source + " to " + dest, logLevel);
-                if (ignoreErrors) {
-                    return false;
-                }
-                throw new BuildException("Can't get " + source + " to " + dest,
-                        getLocation());
-            }
+            is = connection.getInputStream();
 
             if (tryGzipEncoding
                 && GZIP_CONTENT_ENCODING.equals(connection.getContentEncoding())) {
