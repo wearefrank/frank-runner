@@ -101,7 +101,7 @@
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin8-binaries versioning=regex:^(?<major>8)u(?<patch>\d+)-b(?<build>\d+)$ extractVersion=^jdk(?<version>8u\d+-b\d+)$ -->
-		<property name="jdk.8.version" value="8u492-b09"/><!-- https://adoptium.net/temurin/ -->
+		<property name="jdk.8.version" value="8u504-b01"/><!-- https://adoptium.net/temurin/ -->
 		<loadresource property="jdk.8.version.file"><propertyresource name="jdk.8.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="-" to=""/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.8.dir.sub" value="jdk${jdk.8.version}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
@@ -120,7 +120,7 @@
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
-		<property name="jdk.11.version" value="11.0.31+11"/>
+		<property name="jdk.11.version" value="11.0.32.1+1"/>
 		<loadresource property="jdk.11.version.file"><propertyresource name="jdk.11.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.11.dir.sub" value="jdk-${jdk.11.version}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
@@ -139,7 +139,7 @@
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin17-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
-		<property name="jdk.17.version" value="17.0.19+10"/>
+		<property name="jdk.17.version" value="17.0.21+9"/>
 		<loadresource property="jdk.17.version.file"><propertyresource name="jdk.17.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.17.dir.sub" value="jdk-${jdk.17.version}"/>
 		<property name="jdk.17.dir" value="build/${jdk.17.dir.sub}"/>
@@ -158,7 +158,7 @@
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin21-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
-		<property name="jdk.21.version" value="21.0.11+10"/>
+		<property name="jdk.21.version" value="21.0.13+9"/>
 		<loadresource property="jdk.21.version.file"><propertyresource name="jdk.21.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.21.dir.sub" value="jdk-${jdk.21.version}"/>
 		<property name="jdk.21.dir" value="build/${jdk.21.dir.sub}"/>
@@ -177,7 +177,7 @@
 		<property name="jdk.21.url.mac" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.mac}"/>
 
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin25-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
-		<property name="jdk.25.version" value="25.0.3+9"/>
+		<property name="jdk.25.version" value="25.0.5+8"/>
 		<loadresource property="jdk.25.version.file"><propertyresource name="jdk.25.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.25.dir.sub" value="jdk-${jdk.25.version}"/>
 		<property name="jdk.25.dir" value="build/${jdk.25.dir.sub}"/>
@@ -208,14 +208,17 @@
 		<property name="jdk.sub.mac" value="Contents/Home"/>
 
 		<!-- renovate: datasource=maven packageName=org.apache.ant:ant -->
-		<property name="ant.version." value="1.10.17"/><!-- on update: see extensions/progress-bar/README.md --><!-- extra . because ant.version is a build-in property -->
+		<property name="ant.version." value="1.10.18"/><!-- on update: see extensions/progress-bar/README.md --><!-- extra . because ant.version is a build-in property -->
 		<property name="ant.base" value="apache-ant-${ant.version.}-bin"/>
 		<property name="ant.zip" value="${ant.base}.zip"/>
 		<property name="ant.tar" value="${ant.base}.tar"/>
 		<property name="ant.gz" value="${ant.tar}.gz"/>
-		<property name="ant.base.url" value="https://archive.apache.org/dist/ant/binaries/"/>
+		<property name="ant.base.url" value="https://dlcdn.apache.org/ant/binaries/"/>
 		<property name="ant.zip.url" value="${ant.base.url}${ant.zip}"/>
 		<property name="ant.gz.url" value="${ant.base.url}${ant.gz}"/>
+		<property name="ant.base.url.alternative" value="https://archive.apache.org/dist/ant/binaries/"/><!-- dlcdn only hosts the latest version, archive also hosts older versions but has a download limit -->
+		<property name="ant.zip.url.alternative" value="${ant.base.url.alternative}${ant.zip}"/>
+		<property name="ant.gz.url.alternative" value="${ant.base.url.alternative}${ant.gz}"/>
 		<property name="ant.dir" value="build/apache-ant-${ant.version.}"/>
 		<!-- renovate: datasource=maven packageName=org.mozilla:rhino -->
 		<property name="rhino.version" value="1.7.15"/><!-- https://rhino.github.io/releases/ -->
@@ -231,19 +234,19 @@
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
 		<property name="maven.gz" value="${maven.tar}.gz"/>
-		<property name="maven.base.url" value="https://archive.apache.org/dist/maven/maven-3/${maven.version}/binaries/"/>
+		<property name="maven.base.url" value="https://repo1.maven.org/maven2/org/apache/maven/apache-maven/${maven.version}/"/>
 		<property name="maven.zip.url" value="${maven.base.url}${maven.zip}"/>
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
-		<property name="tomcat.9.version" value="9.0.120"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version" value="9.0.123"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
-		<property name="tomcat.9.url" value="https://archive.apache.org/dist/tomcat/tomcat-9/v${tomcat.9.version}/bin/${tomcat.9.zip}"/>
+		<property name="tomcat.9.url" value="https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.9.version}/tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
-		<property name="tomcat.10.version" value="10.1.57"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version" value="10.1.61"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
-		<property name="tomcat.10.url" value="https://archive.apache.org/dist/tomcat/tomcat-10/v${tomcat.10.version}/bin/${tomcat.10.zip}"/>
+		<property name="tomcat.10.url" value="https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.10.version}/tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.dir" value="build/apache-tomcat-${tomcat.10.version}"/>
 		<property name="tomcat.connector.port" value="80" /><!-- for backwards compatibility (tomcat.port introduced 20220318) -->
 		<property name="tomcat.port" value="${tomcat.connector.port}"/>
@@ -260,11 +263,11 @@
 		<property name="eclipse.url" value="https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${eclipse.version}/R/${eclipse.zip}"/>
 		<property name="eclipse.dir" value="build/${eclipse.file}"/>
 		<!-- renovate: datasource=maven packageName=org.projectlombok:lombok -->
-		<property name="lombok.version" value="1.18.46"/>
+		<property name="lombok.version" value="1.18.48"/>
 		<property name="lombok.jar" value="lombok-${lombok.version}.jar"/>
 		<property name="lombok.url" value="https://projectlombok.org/downloads/${lombok.jar}"/>
 		<!-- renovate: datasource=github-releases packageName=WinMerge/winmerge versioning=loose extractVersion=^v(?<version>.+)$ -->
-		<property name="winmerge.version" value="2.16.56.2"/>
+		<property name="winmerge.version" value="2.16.60"/>
 		<property name="winmerge.zip" value="winmerge-${winmerge.version}-exe.zip"/>
 		<property name="winmerge.url" value="https://github.com/WinMerge/winmerge/releases/download/v${winmerge.version}/${winmerge.zip}"/>
 		<property name="winmerge.dir" value="build/winmerge-${winmerge.version}-x64-exe"/>
@@ -309,27 +312,27 @@
 		<property name="h2v2java8.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2java8.version}/${h2v2java8.jar}"/>
 		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
 		<!-- renovate: datasource=maven packageName=com.oracle.database.jdbc:ojdbc8 -->
-		<property name="ojdbc8.version" value="23.26.2.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
+		<property name="ojdbc8.version" value="23.26.4.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
 		<property name="ojdbc8.uninstall.mask" value="ojdbc8-*"/>
 		<property name="ojdbc8.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/${ojdbc8.version}/${ojdbc8.jar}"/>
 		<!-- renovate: datasource=maven packageName=com.oracle.database.jdbc:ojdbc11 -->
-		<property name="ojdbc11.version" value="23.26.2.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
+		<property name="ojdbc11.version" value="23.26.4.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc11/versions -->
 		<property name="ojdbc11.jar" value="ojdbc11-${ojdbc11.version}.jar"/>
 		<property name="ojdbc11.uninstall.mask" value="ojdbc11-*"/>
 		<property name="ojdbc11.url" value="https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/${ojdbc11.version}/${ojdbc11.jar}"/>
 		<!-- renovate: datasource=maven packageName=com.microsoft.sqlserver:mssql-jdbc versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\.jre8$ -->
-		<property name="mssql8.version" value="13.4.0.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql8.version" value="13.6.2.jre8"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql8.jar" value="mssql-jdbc-${mssql8.version}.jar"/>
 		<property name="mssql8.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql8.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql8.version}/${mssql8.jar}"/>
 		<!-- renovate: datasource=maven packageName=com.microsoft.sqlserver:mssql-jdbc versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\.jre11$ -->
-		<property name="mssql11.version" value="13.4.0.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
+		<property name="mssql11.version" value="13.6.2.jre11"/><!-- https://central.sonatype.com/artifact/com.microsoft.sqlserver/mssql-jdbc/versions -->
 		<property name="mssql11.jar" value="mssql-jdbc-${mssql11.version}.jar"/>
 		<property name="mssql11.uninstall.mask" value="mssql-jdbc-*"/>
 		<property name="mssql11.url" value="https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/${mssql11.version}/${mssql11.jar}"/>
 		<!-- renovate: datasource=maven packageName=org.postgresql:postgresql -->
-		<property name="pgsql.version" value="42.7.13"/><!-- https://jdbc.postgresql.org/download/ -->
+		<property name="pgsql.version" value="42.7.14"/><!-- https://jdbc.postgresql.org/download/ -->
 		<property name="pgsql.jar" value="postgresql-${pgsql.version}.jar"/>
 		<property name="pgsql.uninstall.mask" value="postgresql-*"/>
 		<property name="pgsql.url" value="https://jdbc.postgresql.org/download/${pgsql.jar}"/>
@@ -1282,7 +1285,7 @@ if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )</echo>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${fr.jdk.zip.win}"/><param name="url" value="${fr.jdk.url.win}"/><param name="dir.windows" value="${fr.jdk.dir.windows}"/><param name="run.install" value="true" if:set="mvn.or.env.or.cmd"/></antcall>
-		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
+		<antcall target="generate.bat.download.unzip"><param name="zip" value="${ant.zip}"/><param name="url" value="${ant.zip.url}"/><param name="url.alternative" value="${ant.zip.url.alternative}"/><param name="dir.windows" value="${ant.dir.windows}"/></antcall>
 		<antcall target="generate.bat.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir.windows" value="${rhino.dir.windows}"/></antcall>
 		<echo file="${filename}.bat" append="true">
 if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
@@ -1400,7 +1403,7 @@ if [[ ! -d "$${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "$${FR_DIR}build/tmp/build"
 fi</echo>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${fr.jdk.zip.lin}"/><param name="zip.mac" value="${fr.jdk.zip.mac}"/><param name="url" value="${fr.jdk.url.lin}"/><param name="url.mac" value="${fr.jdk.url.mac}"/><param name="dir" value="${fr.jdk.dir}"/><param name="sub.mac" value="${jdk.sub.mac}"/><param name="run.chmod.jspawnhelper" value="true"/><param name="run.install" value="true" if:set="mvn.or.env"/></antcall>
-		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="dir" value="${ant.dir}"/></antcall>
+		<antcall target="generate.sh.download.unzip"><param name="zip" value="${ant.gz}"/><param name="url" value="${ant.gz.url}"/><param name="url.alternative" value="${ant.gz.url.alternative}"/><param name="dir" value="${ant.dir}"/></antcall>
 		<antcall target="generate.sh.download.unzip"><param name="zip" value="${rhino.zip}"/><param name="url" value="${rhino.zip.url}"/><param name="dir" value="${rhino.dir}"/></antcall>
 		<echo file="${filename}.sh" append="true">
 if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
@@ -1481,7 +1484,7 @@ echo "MAVEN: $${FR_DIR}${maven.dir}"
 
 	<target name="generate.bat.download.unzip">
 		<echo file="${filename}.bat" append="true">
-set DOWNLOAD_HELP=download ${url} manually, move it to %~dp0download and restart this script
+set DOWNLOAD_HELP=download ${url} manually, move it to %~dp0download and restart this script</echo><echo file="${filename}.bat" append="true" if:set="url.alternative">. If that URL does not work, download ${url.alternative} instead</echo><echo file="${filename}.bat" append="true">
 if not exist "%~dp0download\${zip}" (
 	echo "In case of errors %DOWNLOAD_HELP%"
 	curl -f -o "%~dp0download\${zip}.tmp" -L ${url}<!-- -f will set errorlevel and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->
@@ -1514,7 +1517,7 @@ if [[ "$$OSTYPE" == "darwin"* ]]; then
 	URL=${url.mac}
 	SUB=${sub.mac}
 fi</echo><echo file="${filename}.sh" append="true">
-DOWNLOAD_HELP="download $${URL} manually, move it to $${FR_DIR}download and restart this script"
+DOWNLOAD_HELP="download $${URL} manually, move it to $${FR_DIR}download and restart this script</echo><echo file="${filename}.sh" append="true" if:set="url.alternative">. If that URL does not work, download ${url.alternative} instead</echo><echo file="${filename}.sh" append="true">"
 if [[ ! -f "$${FR_DIR}download/$${ZIP}" ]]; then
 	echo In case of errors $${DOWNLOAD_HELP}
 	curl -f -o "$${FR_DIR}download/$${ZIP}.tmp" -L $${URL}<!-- -f will return error 22 and prevent html being written to output file when for example html with an error message and http status code 404 is returned -->

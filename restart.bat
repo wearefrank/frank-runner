@@ -7,41 +7,41 @@ if not exist "%~dp0download\" (
 if not exist "%~dp0build\tmp\build\" (
 	mkdir "%~dp0build\tmp\build"
 )
-set DOWNLOAD_HELP=download https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip" (
+set DOWNLOAD_HELP=download https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5+8/OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip.tmp" -L https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.3+9/OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip
+	curl -f -o "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip.tmp" -L https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5+8/OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip.tmp" "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip"
+	move "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip.tmp" "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip"
 )
-if not exist "%~dp0build\jdk-25.0.3+9\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.3_9.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\jdk-25.0.5+8\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\OpenJDK25U-jdk_x64_windows_hotspot_25.0.5_8.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\jdk-25.0.3+9" "%~dp0build\jdk-25.0.3+9"
+	move "%~dp0build\tmp\build\jdk-25.0.5+8" "%~dp0build\jdk-25.0.5+8"
 )
-set DOWNLOAD_HELP=download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.17-bin.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\apache-ant-1.10.17-bin.zip" (
+set DOWNLOAD_HELP=download https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.18-bin.zip manually, move it to %~dp0download and restart this script. If that URL does not work, download https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.18-bin.zip instead
+if not exist "%~dp0download\apache-ant-1.10.18-bin.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\apache-ant-1.10.17-bin.zip.tmp" -L https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.17-bin.zip
+	curl -f -o "%~dp0download\apache-ant-1.10.18-bin.zip.tmp" -L https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.18-bin.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\apache-ant-1.10.17-bin.zip.tmp" "%~dp0download\apache-ant-1.10.17-bin.zip"
+	move "%~dp0download\apache-ant-1.10.18-bin.zip.tmp" "%~dp0download\apache-ant-1.10.18-bin.zip"
 )
-if not exist "%~dp0build\apache-ant-1.10.17\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-ant-1.10.17-bin.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\apache-ant-1.10.18\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\apache-ant-1.10.18-bin.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\apache-ant-1.10.17" "%~dp0build\apache-ant-1.10.17"
+	move "%~dp0build\tmp\build\apache-ant-1.10.18" "%~dp0build\apache-ant-1.10.18"
 )
 set DOWNLOAD_HELP=download https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip manually, move it to %~dp0download and restart this script
 if not exist "%~dp0download\rhino-1.7.15.zip" (
@@ -61,19 +61,19 @@ if not exist "%~dp0build\rhino1.7.15\" (
 	)
 	move "%~dp0build\tmp\build\rhino1.7.15" "%~dp0build\rhino1.7.15"
 )
-if not exist "%~dp0build\apache-ant-1.10.17\lib\rhino-1.7.15.jar" (
-	del "%~dp0build\apache-ant-1.10.17\lib\rhino-*.jar"
-	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.17\lib\"
+if not exist "%~dp0build\apache-ant-1.10.18\lib\rhino-1.7.15.jar" (
+	del "%~dp0build\apache-ant-1.10.18\lib\rhino-*.jar"
+	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.18\lib\"
 )
-copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.17\lib\"
-set JDK_8_DIR=%~dp0%build\jdk8u492-b09
-set JDK_11_DIR=%~dp0%build\jdk-11.0.31+11
-set JDK_17_DIR=%~dp0%build\jdk-17.0.19+10
-set JDK_21_DIR=%~dp0%build\jdk-21.0.11+10
-set JDK_25_DIR=%~dp0%build\jdk-25.0.3+9
+copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.18\lib\"
+set JDK_8_DIR=%~dp0%build\jdk8u504-b01
+set JDK_11_DIR=%~dp0%build\jdk-11.0.32.1+1
+set JDK_17_DIR=%~dp0%build\jdk-17.0.21+9
+set JDK_21_DIR=%~dp0%build\jdk-21.0.13+9
+set JDK_25_DIR=%~dp0%build\jdk-25.0.5+8
 set JAVA_HOME=%JDK_25_DIR%
-set ANT_HOME=%~dp0build\apache-ant-1.10.17
-call "%~dp0build\apache-ant-1.10.17\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs -buildfile "%~dp0build.xml" %* restart
+set ANT_HOME=%~dp0build\apache-ant-1.10.18
+call "%~dp0build\apache-ant-1.10.18\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs -buildfile "%~dp0build.xml" %* restart
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
