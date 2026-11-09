@@ -2,12 +2,20 @@ This folder is a temporary solution for adding the functionality of a progressba
 
 The goal is to replace the current verbose behaviour of the Ant Get-task with a progressbar as to give more actually useful information.
 
+progressbarget.jar is compiled against the Ant version in property `ant.version.` of build.xml (the version is stored as `Compiled-Against-Ant-Version` in the manifest of the jar). Target `progressbarget.jar` of build.xml rebuilds the jar when it was compiled against another Ant version. It downloads ant.jar and ant-launcher.jar of that Ant version from Maven Central and compiles ProgressBarGet.java for Java 17.
+
+When Renovate updates Ant, its post-upgrade task (.github/workflows/generateScripts.sh) runs this target, so the rebuilt jar is part of the Renovate pull request. When you update Ant manually, run the target yourself and commit the new jar:
+
+```
+ant.bat init progressbarget.jar
+```
+
+(or `./ant.sh init progressbarget.jar` on Linux and Mac).
+
 If you want to make any changes:
 
 1. Make your changes in ProgressBarGet.java.
-2. Check if build\apache-ant-1.10.18 exists, the class needs ant.jar and ant-launcher.jar to compile.
-3. Compile the class: ```javac -cp "build\apache-ant-1.10.18\lib\ant.jar;build\apache-ant-1.10.18\lib\ant-launcher.jar" -d extensions\progress-bar\build extensions\progress-bar\ProgressBarGet.java```. Note that this used to be done with JDK 17!.
-4. Create the .jar-file: ```jar cf extensions\progress-bar\progressbarget.jar -C extensions\progress-bar\build .```
-5. You can commit and push your new .jar-file, but make sure it's located in frank-runner\extensions\progress-bar\progressbarget.jar.
+2. Rebuild the jar, forcing a rebuild because the Ant version did not change: ```ant.bat init progressbarget.jar -Dprogressbarget.jar.force=true```
+3. You can commit and push your new .jar-file, but make sure it's located in frank-runner\extensions\progress-bar\progressbarget.jar.
 
-This .jar-file gets automatically copied to the lib-folder of Ant when running start.bat/restart.bat/etc., which makes it accessible for use in the build.xml.
+This .jar-file gets automatically copied to the lib-folder of Ant when running start.bat/restart.bat/etc., which makes it accessible for use in the build.xml. The new jar is therefore used from the next run of these scripts on.

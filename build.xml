@@ -119,7 +119,7 @@
 		<property name="jdk.8.url.lin" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.lin}"/>
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
-		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
 		<property name="jdk.11.version" value="11.0.32.1+1"/>
 		<loadresource property="jdk.11.version.file"><propertyresource name="jdk.11.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.11.dir.sub" value="jdk-${jdk.11.version}"/>
@@ -138,7 +138,7 @@
 		<property name="jdk.11.url.lin" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.lin}"/>
 		<property name="jdk.11.url.mac" value="https://github.com/adoptium/temurin11-binaries/releases/download/${jdk.11.dir.sub}/${jdk.11.zip.mac}"/>
 
-		<!-- renovate: datasource=github-releases packageName=adoptium/temurin17-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin17-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
 		<property name="jdk.17.version" value="17.0.21+9"/>
 		<loadresource property="jdk.17.version.file"><propertyresource name="jdk.17.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.17.dir.sub" value="jdk-${jdk.17.version}"/>
@@ -157,7 +157,7 @@
 		<property name="jdk.17.url.lin" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.lin}"/>
 		<property name="jdk.17.url.mac" value="https://github.com/adoptium/temurin17-binaries/releases/download/${jdk.17.dir.sub}/${jdk.17.zip.mac}"/>
 
-		<!-- renovate: datasource=github-releases packageName=adoptium/temurin21-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin21-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
 		<property name="jdk.21.version" value="21.0.13+9"/>
 		<loadresource property="jdk.21.version.file"><propertyresource name="jdk.21.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.21.dir.sub" value="jdk-${jdk.21.version}"/>
@@ -176,7 +176,7 @@
 		<property name="jdk.21.url.lin" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.lin}"/>
 		<property name="jdk.21.url.mac" value="https://github.com/adoptium/temurin21-binaries/releases/download/${jdk.21.dir.sub}/${jdk.21.zip.mac}"/>
 
-		<!-- renovate: datasource=github-releases packageName=adoptium/temurin25-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)\+(?<build>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
+		<!-- renovate: datasource=github-releases packageName=adoptium/temurin25-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
 		<property name="jdk.25.version" value="25.0.5+8"/>
 		<loadresource property="jdk.25.version.file"><propertyresource name="jdk.25.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.25.dir.sub" value="jdk-${jdk.25.version}"/>
@@ -831,6 +831,43 @@
 		<antcall target="generate.sh"><param name="filename" value="restart"/></antcall>
 		<antcall target="generate.sh"><param name="filename" value="rerun"/></antcall>
 		<antcall target="generate.sh"><param name="filename" value="upgrade"/></antcall>
+	</target>
+
+	<!-- Rebuild extensions/progress-bar/progressbarget.jar when it was not compiled against ant.version. (see
+	     extensions/progress-bar/README.md). Add -Dprogressbarget.jar.force=true to rebuild it anyway (e.g. after
+	     changing ProgressBarGet.java). Also used by .github/workflows/generateScripts.sh (Renovate post-upgrade
+	     task) with: ant init generate.scripts progressbarget.jar -->
+	<target name="progressbarget.jar" depends="progressbarget.jar.check" unless="progressbarget.jar.up.to.date">
+		<echo message="Rebuild ${progressbarget.jar} against Ant ${ant.version.}"/>
+		<mkdir dir="${progressbarget.build.dir}/lib"/>
+		<progressbarget src="https://repo1.maven.org/maven2/org/apache/ant/ant/${ant.version.}/ant-${ant.version.}.jar" dest="${progressbarget.build.dir}/lib/ant-${ant.version.}.jar" verbose="on" skipexisting="true"/>
+		<progressbarget src="https://repo1.maven.org/maven2/org/apache/ant/ant-launcher/${ant.version.}/ant-launcher-${ant.version.}.jar" dest="${progressbarget.build.dir}/lib/ant-launcher-${ant.version.}.jar" verbose="on" skipexisting="true"/>
+		<delete dir="${progressbarget.build.dir}/classes"/>
+		<mkdir dir="${progressbarget.build.dir}/classes"/>
+		<javac srcdir="extensions/progress-bar" includes="ProgressBarGet.java" destdir="${progressbarget.build.dir}/classes" release="17" encoding="UTF-8" debug="true" debuglevel="lines,source" includeantruntime="false">
+			<classpath>
+				<pathelement location="${progressbarget.build.dir}/lib/ant-${ant.version.}.jar"/>
+				<pathelement location="${progressbarget.build.dir}/lib/ant-launcher-${ant.version.}.jar"/>
+			</classpath>
+		</javac>
+		<jar destfile="${progressbarget.jar}" basedir="${progressbarget.build.dir}/classes">
+			<manifest>
+				<attribute name="Compiled-Against-Ant-Version" value="${ant.version.}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="progressbarget.jar.check">
+		<property name="progressbarget.jar" value="extensions/progress-bar/progressbarget.jar"/>
+		<property name="progressbarget.build.dir" value="build/progressbarget"/>
+		<loadresource property="progressbarget.jar.manifest" quiet="true"><zipentry zipfile="${progressbarget.jar}" name="META-INF/MANIFEST.MF"/></loadresource>
+		<condition property="progressbarget.jar.up.to.date">
+			<and>
+				<isset property="progressbarget.jar.manifest"/>
+				<matches string="${progressbarget.jar.manifest}" pattern="^Compiled-Against-Ant-Version: \Q${ant.version.}\E\s*$" multiline="true"/>
+				<not><istrue value="${progressbarget.jar.force}"/></not>
+			</and>
+		</condition>
 	</target>
 
 	<target name="tomcat">

@@ -19,7 +19,7 @@
       "groupName": "download versions",
       "postUpgradeTasks": {
         "commands": ["bash .github/workflows/generateScripts.sh"],
-        "fileFilters": ["*.bat", "*.sh"],
+        "fileFilters": ["*.bat", "*.sh", "extensions/progress-bar/progressbarget.jar"],
         "executionMode": "branch"
       }
     },
@@ -39,7 +39,7 @@
     },
     {
       "matchDepNames": ["ant.version."],
-      "prBodyNotes": ["Ant was updated: see extensions/progress-bar/README.md"]
+      "prBodyNotes": ["Ant was updated: progressbarget.jar should have been rebuilt against the new Ant version by the post-upgrade task, check that it is part of this pull request (see extensions/progress-bar/README.md)"]
     },
     {
       "matchDepNames": ["h2v1.version"],
