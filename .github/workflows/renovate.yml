@@ -1,0 +1,37 @@
+name: Renovate.
+on:
+  schedule:
+    # Every Monday at 02:00 UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: renovate
+jobs:
+  renovate:
+    name: Update download versions in build.xml
+    runs-on: ubuntu-latest
+
+    steps:
+    # Renovate is run directly on the runner (not with renovatebot/github-action, which runs Renovate in a
+    # Docker container) so that the post-upgrade task (.github/workflows/generateScripts.sh) has bash, curl,
+    # tar and unzip available to bootstrap the Frank!Runner.
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24
+    - name: Run Renovate
+      run: npx --yes renovate@44
+      env:
+        # Personal access token or GitHub App token with read/write access to contents, pull requests and
+        # issues (for the Dependency Dashboard). The default GITHUB_TOKEN cannot be used because pull
+        # requests created with it do not trigger the other workflows (e.g. TestFrankRunner).
+        RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+        RENOVATE_PLATFORM: github
+        RENOVATE_REPOSITORIES: ${{ github.repository }}
+        RENOVATE_ONBOARDING: false
+        RENOVATE_ALLOWED_COMMANDS: '["^bash \\.github/workflows/generateScripts\\.sh$"]'
+        # The post-upgrade task downloads and installs the Frank!Runner dependencies
+        RENOVATE_EXECUTION_TIMEOUT: 30
+        LOG_LEVEL: info
