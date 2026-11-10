@@ -850,6 +850,7 @@
 				<pathelement location="${progressbarget.build.dir}/lib/ant-launcher-${ant.version.}.jar"/>
 			</classpath>
 		</javac>
+		<echo message="Jar task: destfile=${progressbarget.jar} basedir=${progressbarget.build.dir}/classes"/>
 		<jar destfile="${progressbarget.jar}" basedir="${progressbarget.build.dir}/classes">
 			<manifest>
 				<attribute name="Compiled-Against-Ant-Version" value="${ant.version.}"/>
