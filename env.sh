@@ -71,9 +71,9 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
-ZIP=rhino-1.7.15.zip
-URL=https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip
-DIR=build/rhino1.7.15
+ZIP=rhino-1.9.2.zip
+URL=https://github.com/mozilla/rhino/releases/download/Rhino1_9_2_Release/rhino-1.9.2.zip
+DIR=build/rhino1.9.2
 SUB=
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
 if [[ ! -f "${FR_DIR}download/${ZIP}" ]]; then
@@ -95,13 +95,13 @@ if [[ ! -d "${FR_DIR}${DIR}/" ]]; then
 	fi
 	mv "${FR_DIR}build/tmp/${DIR}/${SUB}" "${FR_DIR}${DIR}"
 fi
-if [[ ! -f "${FR_DIR}build/apache-ant-1.10.18/lib/rhino-1.7.15.jar" ]]; then
+if [[ ! -f "${FR_DIR}build/apache-ant-1.10.18/lib/rhino-1.9.2.jar" ]]; then
 	rm "${FR_DIR}build/apache-ant-1.10.18/lib/rhino-"*.jar
-	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
+	cp "${FR_DIR}build/rhino1.9.2/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
 fi
 cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
-JDK_8_DIR="${FR_DIR}build/jdk8u504-b01"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.32.1+1"
+JDK_8_DIR="${FR_DIR}build/jdk8u512-b09"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.33+10"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.21+9"
 JDK_21_DIR="${FR_DIR}build/jdk-21.0.13+9"
 JDK_25_DIR="${FR_DIR}build/jdk-25.0.5+8"
@@ -117,7 +117,7 @@ fi
 if [[ ! -d "${JDK_21_DIR}" ]]; then
 	RUN_INSTALL="true"
 fi
-if [[ ! -d "${FR_DIR}build/apache-maven-3.9.16" ]]; then
+if [[ ! -d "${FR_DIR}build/apache-maven-3.10.0" ]]; then
 	RUN_INSTALL="true"
 fi
 export JAVA_HOME="${JDK_25_DIR}"
@@ -125,7 +125,7 @@ export ANT_HOME="${FR_DIR}build/apache-ant-1.10.18"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.18/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
 fi
-export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.9.16/bin:${PATH}"
+export PATH="${JAVA_HOME}/bin:${ANT_HOME}/bin:${FR_DIR}build/apache-maven-3.10.0/bin:${PATH}"
 echo "JAVA : ${JAVA_HOME}"
 echo "ANT  : ${ANT_HOME}"
-echo "MAVEN: ${FR_DIR}build/apache-maven-3.9.16"
+echo "MAVEN: ${FR_DIR}build/apache-maven-3.10.0"

@@ -44,31 +44,31 @@ if not exist "%~dp0build\apache-ant-1.10.18\" (
 	)
 	move "%~dp0build\tmp\build\apache-ant-1.10.18" "%~dp0build\apache-ant-1.10.18"
 )
-set DOWNLOAD_HELP=download https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip manually, move it to %~dp0download and restart this script
-if not exist "%~dp0download\rhino-1.7.15.zip" (
+set DOWNLOAD_HELP=download https://github.com/mozilla/rhino/releases/download/Rhino1_9_2_Release/rhino-1.9.2.zip manually, move it to %~dp0download and restart this script
+if not exist "%~dp0download\rhino-1.9.2.zip" (
 	echo "In case of errors %DOWNLOAD_HELP%"
-	curl -f -o "%~dp0download\rhino-1.7.15.zip.tmp" -L https://github.com/mozilla/rhino/releases/download/Rhino1_7_15_Release/rhino-1.7.15.zip
+	curl -f -o "%~dp0download\rhino-1.9.2.zip.tmp" -L https://github.com/mozilla/rhino/releases/download/Rhino1_9_2_Release/rhino-1.9.2.zip
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0download\rhino-1.7.15.zip.tmp" "%~dp0download\rhino-1.7.15.zip"
+	move "%~dp0download\rhino-1.9.2.zip.tmp" "%~dp0download\rhino-1.9.2.zip"
 )
-if not exist "%~dp0build\rhino1.7.15\" (
-	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\rhino-1.7.15.zip" -C "%~dp0build\tmp\build"
+if not exist "%~dp0build\rhino1.9.2\" (
+	tar --exclude=*/demo --exclude=*/sample --exclude=*/manual --exclude=*/src.zip -xvf "%~dp0download\rhino-1.9.2.zip" -C "%~dp0build\tmp\build"
 	if !errorlevel! neq 0 (
 		echo "Please %DOWNLOAD_HELP%"
 		goto error
 	)
-	move "%~dp0build\tmp\build\rhino1.7.15" "%~dp0build\rhino1.7.15"
+	move "%~dp0build\tmp\build\rhino1.9.2" "%~dp0build\rhino1.9.2"
 )
-if not exist "%~dp0build\apache-ant-1.10.18\lib\rhino-1.7.15.jar" (
+if not exist "%~dp0build\apache-ant-1.10.18\lib\rhino-1.9.2.jar" (
 	del "%~dp0build\apache-ant-1.10.18\lib\rhino-*.jar"
-	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.18\lib\"
+	copy "%~dp0build\rhino1.9.2\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.18\lib\"
 )
 copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.18\lib\"
-set JDK_8_DIR=%~dp0%build\jdk8u504-b01
-set JDK_11_DIR=%~dp0%build\jdk-11.0.32.1+1
+set JDK_8_DIR=%~dp0%build\jdk8u512-b09
+set JDK_11_DIR=%~dp0%build\jdk-11.0.33+10
 set JDK_17_DIR=%~dp0%build\jdk-17.0.21+9
 set JDK_21_DIR=%~dp0%build\jdk-21.0.13+9
 set JDK_25_DIR=%~dp0%build\jdk-25.0.5+8
@@ -84,7 +84,7 @@ if not exist "%JDK_17_DIR%" (
 if not exist "%JDK_21_DIR%" (
 	set RUN_INSTALL=true
 )
-if not exist "%~dp0build\apache-maven-3.9.16" (
+if not exist "%~dp0build\apache-maven-3.10.0" (
 	set RUN_INSTALL=true
 )
 set JAVA_HOME=%JDK_25_DIR%
@@ -92,5 +92,5 @@ set ANT_HOME=%~dp0build\apache-ant-1.10.18
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.18\bin\ant" -emacs -buildfile "%~dp0build.xml" install
 )
-set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0build\apache-maven-3.9.16\bin;%PATH%
-C:\Windows\System32\cmd.exe /k "echo JAVA : %JAVA_HOME%& echo ANT  : %ANT_HOME%& echo MAVEN: %~dp0build\apache-maven-3.9.16"
+set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0build\apache-maven-3.10.0\bin;%PATH%
+C:\Windows\System32\cmd.exe /k "echo JAVA : %JAVA_HOME%& echo ANT  : %ANT_HOME%& echo MAVEN: %~dp0build\apache-maven-3.10.0"
