@@ -2,6 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "enabledManagers": ["custom.regex"],
+  "vulnerabilityAlerts": {
+    "description": "Dependabot alerts would not work if enabled: Dependabot only knows dependencies in manifests it understands (pom.xml, package.json, ...), not the download versions in build.xml that are found by the regex manager below. Disabled to avoid the warning that they cannot be accessed",
+    "enabled": false
+  },
   "customManagers": [
     {
       "customType": "regex",
