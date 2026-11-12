@@ -46,6 +46,11 @@
       "prBodyNotes": ["Ant was updated: progressbarget.jar should have been rebuilt against the new Ant version by the post-upgrade task, check that it is part of this pull request (see extensions/progress-bar/README.md)"]
     },
     {
+      "description": "Pinned to 1.7.15. Rhino 1.8.0 and later do not publish rhino-<version>.zip as GitHub release asset anymore, so the download URL in build.xml would give a 404. Rhino 1.7.15.1 does publish the zip, but its main jar is named lib/rhino-patch-1.7.15.1.jar instead of lib/rhino-<version>.jar, which the generated scripts check for (they would copy the Rhino jars into the Ant lib directory on every run) and which has not been tested with Ant",
+      "matchDepNames": ["rhino.version"],
+      "allowedVersions": "/^1\\.7\\.15$/"
+    },
+    {
       "matchDepNames": ["h2v1.version"],
       "allowedVersions": "/^1\\./"
     },
