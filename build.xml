@@ -101,7 +101,7 @@
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin8-binaries versioning=regex:^(?<major>8)u(?<patch>\d+)-b(?<build>\d+)$ extractVersion=^jdk(?<version>8u\d+-b\d+)$ -->
-		<property name="jdk.8.version" value="8u504-b01"/><!-- https://adoptium.net/temurin/ -->
+		<property name="jdk.8.version" value="8u512-b09"/><!-- https://adoptium.net/temurin/ -->
 		<loadresource property="jdk.8.version.file"><propertyresource name="jdk.8.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="-" to=""/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.8.dir.sub" value="jdk${jdk.8.version}"/>
 		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
@@ -120,7 +120,7 @@
 		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
 
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
-		<property name="jdk.11.version" value="11.0.32.1+1"/>
+		<property name="jdk.11.version" value="11.0.33+10"/>
 		<loadresource property="jdk.11.version.file"><propertyresource name="jdk.11.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
 		<property name="jdk.11.dir.sub" value="jdk-${jdk.11.version}"/>
 		<property name="jdk.11.dir" value="build/${jdk.11.dir.sub}"/>
@@ -229,7 +229,7 @@
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
 		<!-- renovate: datasource=maven packageName=org.apache.maven:apache-maven -->
-		<property name="maven.version" value="3.9.16"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.10.0"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
