@@ -229,7 +229,7 @@
 		<property name="maven.remark.line1" value="Maven will by default use 1.8 for source and target (independent of Java version being used to run Maven)"/>
 		<property name="maven.remark.line2" value="For example java 11 can be specified in the pom.xml of your project by adding property &lt;maven.compiler.release>11&lt;/maven.compiler.release>"/>
 		<!-- renovate: datasource=maven packageName=org.apache.maven:apache-maven -->
-		<property name="maven.version" value="3.10.0"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
+		<property name="maven.version" value="3.10.1"/><!-- check whether remark above about 1.8 is still correct, see https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 		<property name="maven.base" value="apache-maven-${maven.version}-bin"/>
 		<property name="maven.zip" value="${maven.base}.zip"/>
 		<property name="maven.tar" value="${maven.base}.tar"/>
@@ -239,12 +239,12 @@
 		<property name="maven.gz.url" value="${maven.base.url}${maven.gz}"/>
 		<property name="maven.dir" value="build/apache-maven-${maven.version}"/>
 		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
-		<property name="tomcat.9.version" value="9.0.123"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.9.version" value="9.0.124"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.9.zip" value="apache-tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.url" value="https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.9.version}/tomcat-${tomcat.9.version}.zip"/>
 		<property name="tomcat.9.dir" value="build/apache-tomcat-${tomcat.9.version}"/>
 		<!-- renovate: datasource=maven packageName=org.apache.tomcat:tomcat -->
-		<property name="tomcat.10.version" value="10.1.61"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
+		<property name="tomcat.10.version" value="10.1.62"/><!-- on update: also check these for updates: jms, ojdbc, mssql and pgsql -->
 		<property name="tomcat.10.zip" value="apache-tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.url" value="https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.10.version}/tomcat-${tomcat.10.version}.zip"/>
 		<property name="tomcat.10.dir" value="build/apache-tomcat-${tomcat.10.version}"/>
