@@ -1385,6 +1385,10 @@ set ANT_HOME=%~dp0${ant.dir.windows}</echo><!-- prevent problems on systems with
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd">
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0${ant.dir.windows}\bin\ant" -emacs -buildfile "%~dp0build.xml" install
+	if errorlevel 1 (
+		echo Install of Frank Runner dependencies failed, see output above
+		exit /b 1
+	)
 )</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
@@ -1503,6 +1507,12 @@ export ANT_HOME="$${FR_DIR}${ant.dir}"</echo><!-- prevent problems on systems wi
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env">
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"$${FR_DIR}${ant.dir}/bin/ant" -emacs -buildfile "$${FR_DIR}build.xml" install
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Install of Frank Runner dependencies failed, see output above"
+		# Use return when this file is sourced (e.g. source env.sh) to prevent closing the shell of the user
+		return $retVal 2&gt;/dev/null || exit $retVal
+	fi
 fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
