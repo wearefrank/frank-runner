@@ -14,6 +14,7 @@
 		<property name="maven.verbose" value="false"/>
 		<property name="test.with" value="ladybug-test-webapp"/>
 		<condition property="test.with.ladybug.test.webapp"><equals arg1="${test.with}" arg2="ladybug-test-webapp"/></condition>
+		<condition property="test.with.ladybug.test.webapp.otel"><equals arg1="${test.with}" arg2="ladybug-test-webapp.otel"/></condition>
 		<condition property="test.with.ladybug.ff.test.webapp"><equals arg1="${test.with}" arg2="ladybug-ff-test-webapp"/></condition>
 		<condition property="test.with.iaf"><equals arg1="${test.with}" arg2="iaf-webapp"/></condition>
 		<condition property="build.ff">
@@ -22,12 +23,15 @@
 				<isset property="test.with.iaf"/>
 			</or>
 		</condition>
+		<condition property="test.with.standalone.ladybug.test.webapp">
+			<or>
+				<isset property="test.with.ladybug.test.webapp"/>
+				<isset property="test.with.ladybug.test.webapp.otel"/>
+			</or>
+		</condition>
 		<property name="iaf.module" value="webapp"/>
 
 		<xmlproperty file="../../../ladybug/pom.xml" prefix="ladybug.pom.xml"/>
-		<condition property="separate.ladybug.projects">
-			<matches string="${ladybug.pom.xml.project.properties.revision}" pattern="^([0123]\.).*$"/>
-		</condition>
 
 		<!-- There is a circular dependency between Ladybug and the Frank!Framework. The Frank!Framework
 		     uses Ladybug. Conversely, Ladybug's module ladybug-ff-test-webapp tests Ladybug in combination
@@ -58,27 +62,16 @@
 		<condition property="ladybug.not.present"><not><resourceexists><file file="../../../ladybug"/></resourceexists></not></condition>
 		<fail message="Folder ladybug not found, please clone https://github.com/wearefrank/ladybug.git" if:set="ladybug.not.present"/>
 
-		<echo message="ladybug: Check ladybug-test-webapp present" if:set="separate.ladybug.projects"/>
-		<condition property="ladybug-test-webapp.not.present" if:true="${test.with.ladybug.test.webapp}" if:set="separate.ladybug.projects"><not><resourceexists><file file="../../../ladybug-test-webapp"/></resourceexists></not></condition>
-		<fail message="Folder ladybug-test-webapp not found, please clone https://github.com/wearefrank/ladybug-test-webapp.git" if:true="${ladybug-test-webapp.not.present}"/>
-
-		<echo message="ladybug: Check ladybug-ff-test-webapp present" if:set="separate.ladybug.projects"/>
-		<condition property="ladybug-ff-test-webapp.not.present" if:true="${test.with.ladybug.ff.test.webapp}" if:set="separate.ladybug.projects"><not><resourceexists><file file="../../../ladybug/ladybug-ff-test-webapp"/></resourceexists></not></condition>
-		<fail message="Folder ladybug-ff-test-webapp not found, please clone https://github.com/wearefrank/ladybug-ff-test-webapp.git" if:true="${ladybug-ff-test-webapp.not.present}"/>
-
 		<echo message="ladybug: Check iaf present" if:true="${build.ff}"/>
 		<condition property="iaf.not.present" if:true="${build.ff}"><not><resourceexists><file file="../../../frankframework"/></resourceexists></not></condition>
 		<fail message="Folder frankframework not found, please clone https://github.com/frankframework/frankframework.git" if:set="iaf.not.present"/>
 
-		<echo message="ladybug: Check ladybug version in ladybug-test-webapp/pom.xml" if:true="${test.with.ladybug.test.webapp}"/>
-		<echo message="ladybug: Check ladybug version in frankframework/ladybug/pom.xml" unless:true="${test.with.ladybug.test.webapp}"/>
-		<property name="pom.xml" location="${basedir}/../../../ladybug-test-webapp/pom.xml" if:true="${test.with.ladybug.test.webapp}" if:set="separate.ladybug.projects"/>
-		<property name="pom.xml" location="${basedir}/../../../frankframework/ladybug/pom.xml" unless:true="${test.with.ladybug.test.webapp}"/>
+		<echo message="ladybug: Check ladybug version in frankframework/ladybug/pom.xml" unless:true="${test.with.standalone.ladybug.test.webapp}"/>
+		<property name="pom.xml" location="${basedir}/../../../frankframework/ladybug/pom.xml" unless:true="${test.with.standalone.ladybug.test.webapp}"/>
 		<xmlproperty file="${pom.xml}" prefix="pom.xml"/>
 		<condition property="ladybug.version.not.ok">
 			<and>
 				<or>
-					<isset property="test.with.ladybug.test.webapp" if:set="separate.ladybug.projects"/><!-- version of ladybug test webapp as module is automatically in sync with parent, hence doesn't need to be checked -->
 					<isset property="test.with.ladybug.ff.test.webapp"/>
 					<isset property="test.with.iaf"/>
 				</or>
@@ -195,10 +188,11 @@
 		</exec>
 
 		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.ladybug.test.webapp}"/>
-		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.ladybug.test.webapp}">
+		<echo message="ladybug: Test with ladybug-test-webapp-otel" if:true="${test.with.ladybug.test.webapp-otel}"/>
+		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.standalone.ladybug.test.webapp}">
 			<arg value="${start.arg}"/>
-			<arg value="-Dproject.dir=ladybug-test-webapp" if:set="separate.ladybug.projects"/>
-			<arg value="-Dproject.dir=ladybug/ladybug-test-webapp" unless:set="separate.ladybug.projects"/>
+			<arg value="-Dproject.dir=ladybug/ladybug-test-webapp" if:set="test.with.ladybug.test.webapp"/>
+			<arg value="-Dproject.dir=ladybug/ladybug-test-webapp-otel" if:set="test.with.ladybug.test.webapp.otel"/>
 			<arg value="-Dmaven=true"/>
 			<arg value="-Dmaven.verbose=true" if:true="${maven.verbose}"/>
 			<arg value="-Dwebapp.gitignore.skip=true"/>
