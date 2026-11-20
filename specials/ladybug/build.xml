@@ -188,7 +188,7 @@
 		</exec>
 
 		<echo message="ladybug: Test with ladybug-test-webapp" if:true="${test.with.ladybug.test.webapp}"/>
-		<echo message="ladybug: Test with ladybug-test-webapp-otel" if:true="${test.with.ladybug.test.webapp-otel}"/>
+		<echo message="ladybug: Test with ladybug-test-webapp-otel" if:true="${test.with.ladybug.test.webapp.otel}"/>
 		<exec executable="${start.exe}" vmlauncher="false" failonerror="true" if:true="${test.with.standalone.ladybug.test.webapp}">
 			<arg value="${start.arg}"/>
 			<arg value="-Dproject.dir=ladybug/ladybug-test-webapp" if:set="test.with.ladybug.test.webapp"/>
