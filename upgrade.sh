@@ -16,13 +16,13 @@ fi
 if [[ ! -d "${FR_DIR}build/tmp/build" ]]; then
 	mkdir -p "${FR_DIR}build/tmp/build"
 fi
-ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.5_8.tar.gz
-URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5+8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.5_8.tar.gz
-DIR=build/jdk-25.0.5+8
+ZIP=OpenJDK25U-jdk_x64_linux_hotspot_25.0.5.1_2.tar.gz
+URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1+2/OpenJDK25U-jdk_x64_linux_hotspot_25.0.5.1_2.tar.gz
+DIR=build/jdk-25.0.5.1+2
 SUB=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.5_8.tar.gz
-	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5+8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.5_8.tar.gz
+	ZIP=OpenJDK25U-jdk_x64_mac_hotspot_25.0.5.1_2.tar.gz
+	URL=https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1+2/OpenJDK25U-jdk_x64_mac_hotspot_25.0.5.1_2.tar.gz
 	SUB=Contents/Home
 fi
 DOWNLOAD_HELP="download ${URL} manually, move it to ${FR_DIR}download and restart this script"
@@ -99,11 +99,11 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.18/lib/rhino-1.7.15.jar" ]]; then
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
 fi
 cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
-JDK_8_DIR="${FR_DIR}build/jdk8u512-b09"
-JDK_11_DIR="${FR_DIR}build/jdk-11.0.33+10"
-JDK_17_DIR="${FR_DIR}build/jdk-17.0.21+9"
-JDK_21_DIR="${FR_DIR}build/jdk-21.0.13+9"
-JDK_25_DIR="${FR_DIR}build/jdk-25.0.5+8"
+JDK_8_DIR="${FR_DIR}build/jdk8u514-b01"
+JDK_11_DIR="${FR_DIR}build/jdk-11.0.33.1+1"
+JDK_17_DIR="${FR_DIR}build/jdk-17.0.21.1+2"
+JDK_21_DIR="${FR_DIR}build/jdk-21.0.13.1+2"
+JDK_25_DIR="${FR_DIR}build/jdk-25.0.5.1+2"
 export JAVA_HOME="${JDK_25_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.18"
 "${FR_DIR}build/apache-ant-1.10.18/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -Dfr.jdk.25.dir="${JDK_25_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" upgrade
