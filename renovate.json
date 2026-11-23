@@ -51,20 +51,11 @@
       "allowedVersions": "/^1\\.7\\.15$/"
     },
     {
-      "matchDepNames": ["h2v1.version"],
-      "allowedVersions": "/^1\\./"
-    },
-    {
       "description": "Version 2.4.240 does not work with the FF!. Type datetime does not work anymore",
       "matchDepNames": ["h2v2.version"],
       "allowedVersions": "!/^2\\.4\\./",
       "groupName": "h2 version",
       "prBodyNotes": ["Check whether type datetime works with the FF!, see the comment on h2v2.version in build.xml"]
-    },
-    {
-      "description": "Last version that supports Java 8",
-      "matchDepNames": ["h2v2java8.version"],
-      "allowedVersions": "/^2\\.2\\./"
     },
     {
       "description": "A new major version of these APIs belongs to another Jakarta EE version",

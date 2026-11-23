@@ -99,11 +99,10 @@ if [[ ! -f "${FR_DIR}build/apache-ant-1.10.18/lib/rhino-1.7.15.jar" ]]; then
 	cp "${FR_DIR}build/rhino1.7.15/lib/rhino-"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
 fi
 cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}build/apache-ant-1.10.18/lib/"
-JDK_8_DIR="${FR_DIR}build/jdk8u512-b09"
 JDK_11_DIR="${FR_DIR}build/jdk-11.0.33+10"
 JDK_17_DIR="${FR_DIR}build/jdk-17.0.21+9"
 JDK_21_DIR="${FR_DIR}build/jdk-21.0.13+9"
 JDK_25_DIR="${FR_DIR}build/jdk-25.0.5+8"
 export JAVA_HOME="${JDK_25_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.18"
-"${FR_DIR}build/apache-ant-1.10.18/bin/ant" -Dfr.jdk.8.dir="${JDK_8_DIR}" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -Dfr.jdk.25.dir="${JDK_25_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" run
+"${FR_DIR}build/apache-ant-1.10.18/bin/ant" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -Dfr.jdk.25.dir="${JDK_25_DIR}" -emacs -buildfile "${FR_DIR}build.xml" "$@" run

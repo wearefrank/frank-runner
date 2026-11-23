@@ -66,14 +66,13 @@ if not exist "%~dp0build\apache-ant-1.10.18\lib\rhino-1.7.15.jar" (
 	copy "%~dp0build\rhino1.7.15\lib\rhino-*.jar" "%~dp0build\apache-ant-1.10.18\lib\"
 )
 copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0build\apache-ant-1.10.18\lib\"
-set JDK_8_DIR=%~dp0%build\jdk8u512-b09
 set JDK_11_DIR=%~dp0%build\jdk-11.0.33+10
 set JDK_17_DIR=%~dp0%build\jdk-17.0.21+9
 set JDK_21_DIR=%~dp0%build\jdk-21.0.13+9
 set JDK_25_DIR=%~dp0%build\jdk-25.0.5+8
 set JAVA_HOME=%JDK_25_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.18
-call "%~dp0build\apache-ant-1.10.18\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs -buildfile "%~dp0build.xml" %* run
+call "%~dp0build\apache-ant-1.10.18\bin\ant" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs -buildfile "%~dp0build.xml" %* run
 if %errorlevel% equ 0 goto end
 :error
 rem https://superuser.com/questions/527898/how-to-pause-only-if-executing-in-a-new-window
