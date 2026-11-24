@@ -100,25 +100,6 @@
 		     .github/workflows/renovate.yml). Update the other versions (e.g. eclipse.version) manually.
 		     Apart from updating these versions, update the FF! version
 			 referenced in examples/Frank2Example4 -->
-		<!-- renovate: datasource=github-releases packageName=adoptium/temurin8-binaries versioning=regex:^(?<major>8)u(?<patch>\d+)-b(?<build>\d+)$ extractVersion=^jdk(?<version>8u\d+-b\d+)$ -->
-		<property name="jdk.8.version" value="8u512-b09"/><!-- https://adoptium.net/temurin/ -->
-		<loadresource property="jdk.8.version.file"><propertyresource name="jdk.8.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="-" to=""/></tokenfilter></filterchain></loadresource>
-		<property name="jdk.8.dir.sub" value="jdk${jdk.8.version}"/>
-		<property name="jdk.8.dir" value="build/${jdk.8.dir.sub}"/>
-		<property name="jdk.8.zip.win" value="OpenJDK8U-jdk_x64_windows_hotspot_${jdk.8.version.file}.zip"/>
-		<property name="jdk.8.tar.lin" value="OpenJDK8U-jdk_x64_linux_hotspot_${jdk.8.version.file}.tar"/>
-		<property name="jdk.8.tar.mac" value="OpenJDK8U-jdk_x64_mac_hotspot_${jdk.8.version.file}.tar"/>
-		<property name="jdk.8.zip.lin" value="${jdk.8.tar.lin}.gz"/>
-		<property name="jdk.8.zip.mac" value="${jdk.8.tar.mac}.gz"/>
-		<property name="jdk.8.zip" value="${jdk.8.zip.win}" if:true="${os.windows}"/>
-		<property name="jdk.8.tar" value="${jdk.8.tar.lin}" if:true="${os.linux}"/>
-		<property name="jdk.8.zip" value="${jdk.8.zip.lin}" if:true="${os.linux}"/>
-		<property name="jdk.8.tar" value="${jdk.8.tar.mac}" if:true="${os.mac}"/>
-		<property name="jdk.8.zip" value="${jdk.8.zip.mac}" if:true="${os.mac}"/>
-		<property name="jdk.8.url.win" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.win}"/>
-		<property name="jdk.8.url.lin" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.lin}"/>
-		<property name="jdk.8.url.mac" value="https://github.com/adoptium/temurin8-binaries/releases/download/${jdk.8.dir.sub}/${jdk.8.zip.mac}"/>
-
 		<!-- renovate: datasource=github-releases packageName=adoptium/temurin11-binaries versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(\.(?<build>\d+))?\+(?<revision>\d+)$ extractVersion=^jdk-(?<version>.+)$ -->
 		<property name="jdk.11.version" value="11.0.33+10"/>
 		<loadresource property="jdk.11.version.file"><propertyresource name="jdk.11.version"/><filterchain><tokenfilter><filetokenizer/><replacestring from="+" to="_"/></tokenfilter></filterchain></loadresource>
@@ -297,20 +278,10 @@
 		<property name="jms3.uninstall.mask" value="jakarta.jms-api*"/>
 		<property name="jms3.url" value="https://repo1.maven.org/maven2/jakarta/jms/jakarta.jms-api/${jms3.version}/${jms3.jar}"/>
 		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
-		<property name="h2v1.version" value="1.4.200"/>
-		<property name="h2v1.jar" value="h2-${h2v1.version}.jar"/>
-		<property name="h2v1.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v1.version}/${h2v1.jar}"/>
-		<property name="h2v1.dir" value="${basedir}/build/h2"/>
-		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
 		<property name="h2v2.version" value="2.5.252"/> <!-- Version 2.4.240 does not work with the FF!. Type datetime does not work anymore -->
 		<property name="h2v2.jar" value="h2-${h2v2.version}.jar"/>
 		<property name="h2v2.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2.version}/${h2v2.jar}"/>
 		<property name="h2v2.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
-		<!-- renovate: datasource=maven packageName=com.h2database:h2 -->
-		<property name="h2v2java8.version" value="2.2.224"/>
-		<property name="h2v2java8.jar" value="h2-${h2v2java8.version}.jar"/>
-		<property name="h2v2java8.url" value="https://repo1.maven.org/maven2/com/h2database/h2/${h2v2java8.version}/${h2v2java8.jar}"/>
-		<property name="h2v2java8.dir" value="${basedir}/build/h2/v2.2"/><!-- changed v2 to v2.2 on upgrade from 2.1.210 to 2.2.220 to prevent: The write format 2 is smaller than the supported format 3 -->
 		<!-- renovate: datasource=maven packageName=com.oracle.database.jdbc:ojdbc8 -->
 		<property name="ojdbc8.version" value="23.26.4.0.0"/><!-- https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc8/versions -->
 		<property name="ojdbc8.jar" value="ojdbc8-${ojdbc8.version}.jar"/>
@@ -351,8 +322,15 @@
 		<echo message="maven=${maven}, ff.version=${ff.version}, should.set.ff.version.from.update.strategy=${should.set.ff.version.from.update.strategy}" if:set="debug.true"/>
 		<antcall target="set.ff.version.from.update.strategy" if:set="should.set.ff.version.from.update.strategy"/>
 		<property file="${download.dir}/metadata/update.strategy.result.txt" if:set="should.set.ff.version.from.update.strategy"/>
-		<condition property="ff.war" value="ibis-adapterframework-webapp-${ff.version}.war"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
-		<condition property="ff.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/ibis-adapterframework-webapp/${ff.version}/${ff.war}"><matches string="${ff.version}" pattern="^[1-7]\..*$"/></condition>
+		<fail message="Frank!Framework ${ff.version} requires JDK 8, which is no longer supported by this version of the Frank!Runner. Upgrade to Frank!Framework 8.x or later, or use an older release of the Frank!Runner.">
+			<condition>
+				<and>
+					<equals arg1="${maven}" arg2="false"/>
+					<isset property="ff.version"/>
+					<matches string="${ff.version}" pattern="^[0-7]\."/>
+				</and>
+			</condition>
+		</fail>
 		<property name="ff.war" value="frankframework-webapp-${ff.version}.war"/>
 		<property name="ff.url" value="https://nexus.frankframework.org/repository/public/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
 		<property name="ff.maven.central.url" value="https://repo1.maven.org/maven2/org/frankframework/frankframework-webapp/${ff.version}/${ff.war}"/>
@@ -363,15 +341,14 @@
 		<move file="${download.dir}/metadata/frank-flow/maven-metadata-tmp.xml" tofile="${download.dir}/metadata/frank-flow/maven-metadata.xml" failonerror="false" quiet="true"/>
 		<xmlproperty file="${download.dir}/metadata/frank-flow/maven-metadata.xml" prefix="frankflow"/>
 		<echo file="${download.dir}/metadata/frank-flow/maven-metadata-${get.metadata.tstamp}.txt" if:set="frankflow.get.metadata">metadata.versioning.release=${frankflow.metadata.versioning.release}</echo>
-		<condition property="frankflow.version" value="2.27.1-20240202.120321"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
+		<condition property="frankflow.version" value="2.27.1-20240202.120321"><matches string="${ff.version}" pattern="^([8]\.[01]).*$"/></condition>
 		<property name="frankflow.version" value="${frankflow.metadata.versioning.release}" if:set="frankflow.metadata.versioning.release"/>
 		<property name="frankflow.version" value="3.0.0-20250402.135324"/><!-- will be used when metadata xml download failed (which will not be retried for one hour) -->
-		<condition property="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
-		<condition property="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"><matches string="${ff.version}" pattern="^([7]\.|[8]\.[01]).*$"/></condition>
+		<condition property="frankflow.war" value="frank-flow-webapp-${frankflow.version}.war"><matches string="${ff.version}" pattern="^([8]\.[01]).*$"/></condition>
+		<condition property="frankflow.url" value="https://nexus.frankframework.org/repository/public/org/ibissource/frank-flow-webapp/${frankflow.version}/${frankflow.war}"><matches string="${ff.version}" pattern="^([8]\.[01]).*$"/></condition>
 		<property name="frankflow.war" value="frank-flow-${frankflow.version}.war"/>
 		<property name="frankflow.url" value="https://nexus.frankframework.org/repository/frank-flow/org/frankframework/frank-flow/${frankflow.version}/${frankflow.war}"/>
 
-		<available property="jdk.8.zip.available" file="${download.dir}/${jdk.8.zip}"/>
 		<available property="jdk.11.zip.available" file="${download.dir}/${jdk.11.zip}"/>
 		<available property="jdk.17.zip.available" file="${download.dir}/${jdk.17.zip}"/>
 		<available property="jdk.21.zip.available" file="${download.dir}/${jdk.21.zip}"/>
@@ -397,9 +374,7 @@
 		<available property="transaction.jar.available" file="${download.dir}/${transaction.jar}"/>
 		<available property="jms1.jar.available" file="${download.dir}/${jms1.jar}"/>
 		<available property="jms3.jar.available" file="${download.dir}/${jms3.jar}"/>
-		<available property="h2v1.jar.available" file="${download.dir}/${h2v1.jar}"/>
 		<available property="h2v2.jar.available" file="${download.dir}/${h2v2.jar}"/>
-		<available property="h2v2java8.jar.available" file="${download.dir}/${h2v2java8.jar}"/>
 		<available property="ojdbc8.jar.available" file="${download.dir}/${ojdbc8.jar}"/>
 		<available property="ojdbc11.jar.available" file="${download.dir}/${ojdbc11.jar}"/>
 		<available property="mssql8.jar.available" file="${download.dir}/${mssql8.jar}"/>
@@ -536,7 +511,6 @@
 		</scriptdef>
 		<testsproperties name="tests.properties" projectsdirabs="${projects.dir.abs}" scenariosrootdefault="${scenariosroot.default}" testsdirs="${tests.dirs}"/>
 
-		<loadresource property="jdk.8.dir.windows"><propertyresource name="jdk.8.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.11.dir.windows"><propertyresource name="jdk.11.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.17.dir.windows"><propertyresource name="jdk.17.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
 		<loadresource property="jdk.21.dir.windows"><propertyresource name="jdk.21.dir"/><filterchain><tokenfilter><filetokenizer/><replacestring from="/" to="\"/></tokenfilter></filterchain></loadresource>
@@ -566,10 +540,9 @@
 		<delete file="${download.dir}/metadata/last.stable.version.txt" unless:set="should.set.ff.version.from.update.strategy"/>
 	</target>
 
-	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v1,get.h2v2,get.h2v2java8,get.ojdbc,get.mssql,get.pgsql">
+	<target name="install" depends="init,get.java,get.ant,get.maven,get.tomcat,get.eclipse,get.lombok,get.winmerge,get.ff,get.frankflow,get.jta,get.activation,get.transaction,get.jms,get.h2v2,get.ojdbc,get.mssql,get.pgsql">
 		<property file="${download.dir}/metadata/goal.init.output.txt"/>
 		<!-- jdk -->
-		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.8.dir}"/><param name="jdk.zip" value="${jdk.8.zip}"/><param name="jdk.tar" value="${jdk.8.tar}"/><param name="cacerts.dir" value="jre/lib/security"/></antcall><!-- default cacerts.dir for cacerts task is lib/security -->
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.11.dir}"/><param name="jdk.zip" value="${jdk.11.zip}"/><param name="jdk.tar" value="${jdk.11.tar}"/></antcall>
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.17.dir}"/><param name="jdk.zip" value="${jdk.17.zip}"/><param name="jdk.tar" value="${jdk.17.tar}"/></antcall>
 		<antcall target="install.jdk"><param name="jdk.dir" value="${jdk.21.dir}"/><param name="jdk.zip" value="${jdk.21.zip}"/><param name="jdk.tar" value="${jdk.21.tar}"/></antcall>
@@ -664,16 +637,15 @@
 		<!-- ff version dependent properties -->
 		<property file="${webapp.dir}/META-INF/maven/org.frankframework/frankframework-webapp/pom.properties" prefix="ff.pom.properties."/>
 		<property file="${webapp.dir}/META-INF/maven/org.ibissource/ibis-adapterframework-webapp/pom.properties" prefix="ff.pom.properties."/>
-		<condition property="tomcat.dir" value="${tomcat.9.dir}"><matches string="${ff.pom.properties.version}" pattern="^([567]\.|[8]\.[01]).*$"/></condition><!-- 8.1 is the last version running on Tomcat 9 -->
-		<condition property="tomcat.dir.windows" value="${tomcat.9.dir.windows}"><matches string="${ff.pom.properties.version}" pattern="^([567]\.|[8]\.[01]).*$"/></condition>
+		<condition property="tomcat.dir" value="${tomcat.9.dir}"><matches string="${ff.pom.properties.version}" pattern="^([8]\.[01]).*$"/></condition><!-- 8.1 is the last version running on Tomcat 9 -->
+		<condition property="tomcat.dir.windows" value="${tomcat.9.dir.windows}"><matches string="${ff.pom.properties.version}" pattern="^([8]\.[01]).*$"/></condition>
 		<property name="tomcat.dir" value="${tomcat.10.dir}"/>
 		<property name="tomcat.dir.windows" value="${tomcat.10.dir.windows}"/>
-		<fileset id="jdk8.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version (now ff.pom.properties.version can probably be used) -->
-			<filename regex="core-7\."/>
+		<fileset id="old.core.jar.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar"><!-- check jar files as maven doesn't use ff.version (now ff.pom.properties.version can probably be used) -->
+			<filename regex="core-[1-7]\."/>
 		</fileset>
-		<pathconvert property="jdk8.fallback" refid="jdk8.fallback.fileset" />
-		<property name="tomcat.jdk.dir" value="${jdk.8.dir}" unless:blank="${jdk8.fallback}"/>
-		<property name="tomcat.jdk.dir.windows" value="${jdk.8.dir.windows}" unless:blank="${jdk8.fallback}"/>
+		<pathconvert property="old.core.jar" refid="old.core.jar.fileset"><flattenmapper/></pathconvert>
+		<fail message="Your Maven project uses an old version of the Frank!Framework (found ${old.core.jar}) that requires JDK 8. JDK 8 is no longer supported. Please use an older version of the Frank!Runner or upgrade your Frank!Framework version." unless:blank="${old.core.jar}"/>
 		<fileset id="jdk11.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="frankframework-core-*.jar">
 			<filename regex="core-8\.0"/>
 		</fileset>
@@ -682,19 +654,7 @@
 		<property name="tomcat.jdk.dir.windows" value="${jdk.11.dir.windows}" unless:blank="${jdk11.fallback}"/>
 		<property name="tomcat.jdk.dir" value="${tomcat.jdk.default.dir}"/>
 		<property name="tomcat.jdk.dir.windows" value="${tomcat.jdk.default.dir.windows}"/>
-		<fileset id="h2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
-			<or><filename regex="core-7\.[0-6]"/><filename regex="core-7\.7-2021"/><filename regex="core-7\.7-2022010"/><filename regex="core-7\.7-2022011[0-7]"/></or><!-- <= 7.7-20220117.131048: h2 + liquibase requires h2 version 1, >= 7.7-20220119.104942: h2 + liquibase requires h2 version 2 -->
-		</fileset>
-		<pathconvert property="h2.fallback" refid="h2.fallback.fileset" />
-		<fileset id="h2v2.fallback.fileset" dir="${webapp.dir}/WEB-INF/lib" includes="ibis-adapterframework-core-*.jar">
-			<or><filename regex="core-7\.7-2022011[8-9]"/><filename regex="core-7\.7-202201[2-9]"/><filename regex="core-7\.7-20220[2-9]"/><filename regex="core-7\.[8-9]"/></or> <!-- > 7.7.20220117, 7.8 and 7.9 require an older version of h2 version 2 that supports Java 8. Only 8.x or later supports the latest h2 version 2 driver, which requires Java 11 or later -->
-		</fileset>
-		<pathconvert property="h2v2.fallback" refid="h2v2.fallback.fileset" />
-		<property name="h2.jar" value="${h2v1.jar}" unless:blank="${h2.fallback}"/>
-		<property name="h2.jar" value="${h2v2java8.jar}" unless:blank="${h2v2.fallback}"/>
 		<property name="h2.jar" value="${h2v2.jar}"/>
-		<property name="h2.dir" value="${h2v1.dir}" unless:blank="${h2.fallback}"/>
-		<property name="h2.dir" value="${h2v2java8.dir}" unless:blank="${h2v2.fallback}"/>
 		<property name="h2.dir" value="${h2v2.dir}"/>
 		<!-- h2 -->
 		<delete><fileset dir="${tomcat.dir}/lib" includes="h2-*.jar" excludes="${h2.jar}"/></delete>
@@ -719,7 +679,6 @@
 		<delete dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" unless:true="${maven}"/>
 		<available property="java.dir.available" file="${projects.dir}/${project.dir}/${java.dir}"/>
-		<property name="javac.release" value="8" unless:blank="${jdk8.fallback}"/>
 		<property name="javac.release" value="11"/>
 		<javac srcdir="${projects.dir}/${project.dir}/${java.dir}" destdir="${webapp.dir}/WEB-INF/classes" release="${javac.release}" includeantruntime="false" if:set="java.dir.available" unless:true="${maven}">
 			<classpath>
@@ -889,7 +848,7 @@
 		<property name="spawn" value="true"/>
 		<java jvm="${tomcat.java.jvm}" classname="org.apache.catalina.startup.Bootstrap" fork="true" failonerror="true" spawn="${spawn}" maxmemory="${maxmemory}" if:true="${use.java}">
 			<jvmarg value="-Dcatalina.home=${tomcat.dir}"/>
-			<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED" if:blank="${jdk8.fallback}"/><!-- Fixes classloading issue, see https://github.com/wearefrank/frank-runner/pull/86 (this option is not available on JDK 8) -->
+			<jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/><!-- Fixes classloading issue, see https://github.com/wearefrank/frank-runner/pull/86 -->
 			<arg value="${action}"/>
 			<classpath>
 				<fileset dir="${tomcat.dir}/bin"><include name="*.jar"/></fileset>
@@ -978,9 +937,6 @@
 	</target>
 
 	<target name="get.java">
-		<progressbarget src="${jdk.8.url.win}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.8.zip.available}"/>
-		<progressbarget src="${jdk.8.url.lin}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.8.zip.available}"/>
-		<progressbarget src="${jdk.8.url.mac}" dest="${download.dir}/${jdk.8.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.8.zip.available}"/>
 		<progressbarget src="${jdk.11.url.win}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.windows}" unless:true="${jdk.11.zip.available}"/>
 		<progressbarget src="${jdk.11.url.lin}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.linux}" unless:true="${jdk.11.zip.available}"/>
 		<progressbarget src="${jdk.11.url.mac}" dest="${download.dir}/${jdk.11.zip}" verbose="on" if:true="${os.mac}" unless:true="${jdk.11.zip.available}"/>
@@ -1051,14 +1007,6 @@
 	<target name="get.jms">
 		<progressbarget src="${jms1.url}" dest="${download.dir}/${jms1.jar}" verbose="on" unless:true="${jms1.jar.available}"/>
 		<progressbarget src="${jms3.url}" dest="${download.dir}/${jms3.jar}" verbose="on" unless:true="${jms3.jar.available}"/>
-	</target>
-
-	<target name="get.h2v1" unless="${h2v1.jar.available}">
-		<progressbarget src="${h2v1.url}" dest="${download.dir}/${h2v1.jar}" verbose="on"/>
-	</target>
-
-	<target name="get.h2v2java8" unless="${h2v2java8.jar.available}">
-		<progressbarget src="${h2v2java8.url}" dest="${download.dir}/${h2v2java8.jar}" verbose="on"/>
 	</target>
 
 	<target name="get.h2v2" unless="${h2v2.jar.available}">
@@ -1151,9 +1099,9 @@
 		<property name="tomcat.dir" value="${tomcat.9.dir}"/>
 		<property name="tomcat.dir.available" value="${tomcat.9.dir.available}"/>
 		<property name="activation.required" value="false"/><!-- all ff versions running on tomcat 9 include the activation jar in the webapp -->
-		<property name="ojdbc.jar" value="${ojdbc8.jar}"/><!-- older ff versions run with jdk 8, hence ojdbc8 -->
+		<property name="ojdbc.jar" value="${ojdbc8.jar}"/><!-- may or may not be needed now that JDK 8 is gone -->
 		<property name="ojdbc.uninstall.mask" value="${ojdbc8.uninstall.mask}"/>
-		<property name="mssql.jar" value="${mssql8.jar}"/><!-- older ff versions run with jdk 8, hence mssql8 -->
+		<property name="mssql.jar" value="${mssql8.jar}"/><!-- may or may not be needed now that JDK 8 is gone -->
 		<property name="mssql.uninstall.mask" value="${mssql8.uninstall.mask}"/>
 		<property name="jms.jar" value="${jms1.jar}"/>
 		<property name="jms.uninstall.mask" value="${jms1.uninstall.mask}"/>
@@ -1211,7 +1159,7 @@
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" match="&lt;!--(\s+.*org.apache.coyote.http11.Http11NioProtocol)" replace="\1" unless:true="${tomcat.dir.available}"/>
 		<replaceregexp file="${tomcat.dir}/conf/server.xml" flags="s" match="(org.apache.coyote.http11.Http11NioProtocol.*?)-->" replace="\1" unless:true="${tomcat.dir.available}"/>
 		<replaceregexp file="${tomcat.dir}/conf/tomcat-users.xml" match="&lt;/tomcat-users>" replace="  &lt;user username=&quot;IbisWebService&quot; password=&quot;IbisWebService&quot; roles=&quot;IbisWebService&quot;/>&#10;  &lt;user username=&quot;IbisObserver&quot; password=&quot;IbisObserver&quot; roles=&quot;IbisObserver&quot;/>&#10;  &lt;user username=&quot;IbisDataAdmin&quot; password=&quot;IbisDataAdmin&quot; roles=&quot;IbisDataAdmin&quot;/>&#10;  &lt;user username=&quot;IbisAdmin&quot; password=&quot;IbisAdmin&quot; roles=&quot;IbisAdmin&quot;/>&#10;  &lt;user username=&quot;IbisTester&quot; password=&quot;IbisTester&quot; roles=&quot;IbisTester&quot;/>&#10;  &lt;user username=&quot;IbisObserverWebService&quot; password=&quot;IbisObserverWebService&quot; roles=&quot;IbisObserver,IbisWebService&quot;/>&#10;&lt;/tomcat-users>" unless:true="${tomcat.dir.available}"/>
-		<exec executable="${jdk.8.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:true="${tomcat.dir.available}">
+		<exec executable="${fr.jdk.dir}/bin/keytool" vmlauncher="false" failonerror="true" unless:true="${tomcat.dir.available}">
 			<arg value="-noprompt"/><arg value="-storepass"/><arg value="changeit"/><arg value="-keypass"/><arg value="changeit"/><arg value="-genkey"/><arg value="-alias"/><arg value="tomcat"/><arg value="-keyalg"/><arg value="RSA"/><arg value="-keystore"/><arg value="${tomcat.dir}/conf/localhost-rsa.jks"/><arg value="-storetype"/><arg value="pkcs12"/><arg value="-dname"/><arg value="CN=Frank"/>
 		</exec>
 		<replace file="${tomcat.dir}/conf/catalina.properties" token="jarsToSkip=\" value="jarsToSkip=*&#10;tomcat.util.scan.StandardJarScanFilter.jarsToSkip.OLD=\" summary="${debug.true}" unless:true="${tomcat.dir.available}"/><!-- speed up startup time -->
@@ -1331,16 +1279,10 @@ if not exist "%~dp0${ant.dir.windows}\lib\rhino-${rhino.version}.jar" (
 	copy "%~dp0${rhino.dir.windows}\lib\rhino-*.jar" "%~dp0${ant.dir.windows}\lib\"
 )
 copy "%~dp0extensions\progress-bar\progressbarget.jar" "%~dp0${ant.dir.windows}\lib\"
-set JDK_8_DIR=%~dp0%${jdk.8.dir.windows}
 set JDK_11_DIR=%~dp0%${jdk.11.dir.windows}
 set JDK_17_DIR=%~dp0%${jdk.17.dir.windows}
 set JDK_21_DIR=%~dp0%${jdk.21.dir.windows}
 set JDK_25_DIR=%~dp0%${jdk.25.dir.windows}</echo>
-		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
-		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.8">
-if not exist "%JDK_8_DIR%" (
-	set RUN_INSTALL=true
-)</echo>
 		<condition property="fr.use.jdk.11"><equals arg1="${fr.jdk.dir}" arg2="${jdk.11.dir}"/></condition>
 		<echo file="${filename}.bat" append="true" if:set="ant.or.mvn.or.env.or.cmd" unless:set="fr.use.jdk.11">
 if not exist "%JDK_11_DIR%" (
@@ -1365,8 +1307,6 @@ if not exist "%JDK_25_DIR%" (
 if not exist "%~dp0${maven.dir.windows}" (
 	set RUN_INSTALL=true
 )</echo>
-		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.8" unless:set="mvn">
-set JAVA_HOME=%JDK_8_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.11" unless:set="mvn">
 set JAVA_HOME=%JDK_11_DIR%</echo>
 		<echo file="${filename}.bat" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
@@ -1388,7 +1328,7 @@ if "%RUN_INSTALL%" == "true" (
 )</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd">
 call "%~dp0</echo>
-		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.8.dir="%JDK_8_DIR%" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.bat" append="true" unless:set="mvn.or.env.or.cmd">${ant.dir.windows}\bin\ant" -Dfr.jdk.11.dir="%JDK_11_DIR%" -Dfr.jdk.17.dir="%JDK_17_DIR%" -Dfr.jdk.21.dir="%JDK_21_DIR%" -Dfr.jdk.25.dir="%JDK_25_DIR%" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.bat" append="true" if:set="mvn">${maven.dir.windows}\bin\mvn.cmd"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="ant.or.mvn.or.env.or.cmd"> -buildfile "%~dp0build.xml"</echo>
 		<echo file="${filename}.bat" append="true" unless:set="env.or.cmd"> %*</echo>
@@ -1449,16 +1389,10 @@ if [[ ! -f "${FR_DIR}${ant.dir}/lib/rhino-${rhino.version}.jar" ]]; then
 	cp "${FR_DIR}${rhino.dir}/lib/rhino-"*.jar "${FR_DIR}${ant.dir}/lib/"
 fi
 cp "${FR_DIR}extensions/progress-bar/progressbarget"*.jar "${FR_DIR}${ant.dir}/lib/"
-JDK_8_DIR="$${FR_DIR}${jdk.8.dir}"
 JDK_11_DIR="$${FR_DIR}${jdk.11.dir}"
 JDK_17_DIR="$${FR_DIR}${jdk.17.dir}"
 JDK_21_DIR="$${FR_DIR}${jdk.21.dir}"
 JDK_25_DIR="$${FR_DIR}${jdk.25.dir}"</echo>
-		<condition property="fr.use.jdk.8"><equals arg1="${fr.jdk.dir}" arg2="${jdk.8.dir}"/></condition>
-		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.8">
-if [[ ! -d "$${JDK_8_DIR}" ]]; then
-	RUN_INSTALL="true"
-fi</echo>
 		<condition property="fr.use.jdk.11"><equals arg1="${fr.jdk.dir}" arg2="${jdk.11.dir}"/></condition>
 		<echo file="${filename}.sh" append="true" if:set="ant.or.mvn.or.env" unless:set="fr.use.jdk.11">
 if [[ ! -d "$${JDK_11_DIR}" ]]; then
@@ -1483,8 +1417,6 @@ fi</echo>
 if [[ ! -d "$${FR_DIR}${maven.dir}" ]]; then
 	RUN_INSTALL="true"
 fi</echo>
-		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.8" unless:set="mvn">
-export JAVA_HOME="$${JDK_8_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.11" unless:set="mvn">
 export JAVA_HOME="$${JDK_11_DIR}"</echo>
 		<echo file="${filename}.sh" append="true" if:set="fr.use.jdk.17" unless:set="mvn">
@@ -1506,7 +1438,7 @@ if [[ "$RUN_INSTALL" == "true" ]]; then
 fi</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env">
 "$${FR_DIR}</echo>
-		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.8.dir="$${JDK_8_DIR}" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -Dfr.jdk.17.dir="$${JDK_17_DIR}" -Dfr.jdk.21.dir="$${JDK_21_DIR}" -Dfr.jdk.25.dir="$${JDK_25_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
+		<echo file="${filename}.sh" append="true" unless:set="mvn.or.env">${ant.dir}/bin/ant" -Dfr.jdk.11.dir="$${JDK_11_DIR}" -Dfr.jdk.17.dir="$${JDK_17_DIR}" -Dfr.jdk.21.dir="$${JDK_21_DIR}" -Dfr.jdk.25.dir="$${JDK_25_DIR}" -emacs</echo><!-- -emacs will prevent prefix being added to every line of output -->
 		<echo file="${filename}.sh" append="true" if:set="mvn">${maven.dir}/bin/mvn"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="ant.or.mvn.or.env"> -buildfile "$${FR_DIR}build.xml"</echo>
 		<echo file="${filename}.sh" append="true" unless:set="env"> "$$@"</echo>
