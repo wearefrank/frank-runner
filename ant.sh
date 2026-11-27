@@ -116,5 +116,11 @@ export JAVA_HOME="${JDK_25_DIR}"
 export ANT_HOME="${FR_DIR}build/apache-ant-1.10.18"
 if [[ "$RUN_INSTALL" == "true" ]]; then
 	"${FR_DIR}build/apache-ant-1.10.18/bin/ant" -emacs -buildfile "${FR_DIR}build.xml" install
+	retVal=$?
+	if [[ $retVal -ne 0 ]]; then
+		echo "Install of Frank Runner dependencies failed, see output above"
+		# Use return when this file is sourced (e.g. source env.sh) to prevent closing the shell of the user
+		return $retVal 2>/dev/null || exit $retVal
+	fi
 fi
 "${FR_DIR}build/apache-ant-1.10.18/bin/ant" -Dfr.jdk.11.dir="${JDK_11_DIR}" -Dfr.jdk.17.dir="${JDK_17_DIR}" -Dfr.jdk.21.dir="${JDK_21_DIR}" -Dfr.jdk.25.dir="${JDK_25_DIR}" -emacs "$@"

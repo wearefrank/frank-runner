@@ -87,6 +87,10 @@ set JAVA_HOME=%JDK_25_DIR%
 set ANT_HOME=%~dp0build\apache-ant-1.10.18
 if "%RUN_INSTALL%" == "true" (
 	call "%~dp0build\apache-ant-1.10.18\bin\ant" -emacs -buildfile "%~dp0build.xml" install
+	if errorlevel 1 (
+		echo Install of Frank Runner dependencies failed, see output above
+		exit /b 1
+	)
 )
 set PATH=%JAVA_HOME%\bin;%ANT_HOME%\bin;%~dp0build\apache-maven-3.10.1\bin;%PATH%
 C:\Windows\System32\cmd.exe /k "echo JAVA : %JAVA_HOME%& echo ANT  : %ANT_HOME%& echo MAVEN: %~dp0build\apache-maven-3.10.1"
